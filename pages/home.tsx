@@ -41,7 +41,7 @@ class HomePage extends React.PureComponent {
                             />
                         </Col>
                         <Col lg={5} >
-                            <TextAnimation words={["CO<sub>2</sub> Gashouse <br/> Emission", "Human Activities"]} />
+                            <TextAnimation words={[ "CO<sub>2</sub> Gashouse <br/> Emission", "Human Activities" ]} />
                             < Text type="xxl-heading" color="white" fontweight="bold" >
 
                             </Text>
@@ -51,8 +51,8 @@ class HomePage extends React.PureComponent {
 
                 </div>
             </>
-        )
+        );
     }
 }
 
-export default HomePage
+export default HomePage;

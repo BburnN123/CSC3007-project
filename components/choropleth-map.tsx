@@ -33,9 +33,9 @@ class ChoroplethMap extends React.PureComponent<I_Props> {
 
     async componentDidMount() {
         const promiseData = await axios.get("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson");
-        const data = promiseData.data as T_Data
+        const data = promiseData.data as T_Data;
 
-        this.drawMap(data)
+        this.drawMap(data);
     }
 
     render(): JSX.Element {
@@ -56,28 +56,28 @@ class ChoroplethMap extends React.PureComponent<I_Props> {
                 `}</style>
                 <div id="ctn-map"></div>
             </>
-        )
+        );
     }
 
     drawMap = (data: T_Data) => {
 
 
-        const { drawGraticules, enableRotation } = this.props
+        const { drawGraticules, enableRotation } = this.props;
         const ctnMap = d3.select("#ctn-map").select("svg");
         if (ctnMap.size() > 0) {
-            return
+            return;
         }
 
         d3.select("#ctn-map").append("svg")
             .attr("viewBox", "0 0 800 500")
-            .attr("preserveAspectRatio", "xMidYMid meet")
+            .attr("preserveAspectRatio", "xMidYMid meet");
 
-        let projection = this.getProjection()
-        let geopath = d3.geoPath().projection(projection); // Transform it to x y position
+        const projection = this.getProjection();
+        const geopath = d3.geoPath().projection(projection); // Transform it to x y position
 
 
-        this.colourOcean(geopath)
-        this.drawCountries(data, geopath)
+        this.colourOcean(geopath);
+        this.drawCountries(data, geopath);
 
         if (drawGraticules) {
             this.drawGraticules(geopath);
@@ -86,10 +86,10 @@ class ChoroplethMap extends React.PureComponent<I_Props> {
         if (enableRotation) {
             this.enhableRotation(projection, geopath);
         }
-    }
+    };
 
     colourOcean = (geopath: d3.GeoPath<any, d3.GeoPermissibleObjects>) => {
-        let svg = d3.select("#ctn-map").select("svg");
+        const svg = d3.select("#ctn-map").select("svg");
 
         // Def gradient
         const def = svg.append("defs")
@@ -98,46 +98,47 @@ class ChoroplethMap extends React.PureComponent<I_Props> {
             .attr("x1", "0%")
             .attr("y1", "0%")
             .attr("x2", "100%")
-            .attr("y2", "0%")
+            .attr("y2", "0%");
 
         def.append("stop")
             .attr("offset", "0%")
             .style("stop-color", "rgb(0,0,27)")
-            .style("stop-opacity", 1)
+            .style("stop-opacity", 1);
 
         def.append("stop")
             .attr("offset", "100%")
             .style("stop-color", "rgb(51,122,183)")
-            .style("stop-opacity", 1)
+            .style("stop-opacity", 1);
 
         svg.append("path")
             .datum({ type: "Sphere" })
             .attr("id", "ocean")
             .attr("d", geopath as any)
-            .attr("fill", "url(#oceanGradient)")
+            .attr("fill", "url(#oceanGradient)");
+
         // .attr("fill", "lightBlue");
-    }
+    };
 
     // GeoGraticule - Grid 
     drawGraticules = (geopath: d3.GeoPath<any, d3.GeoPermissibleObjects>): void => {
 
-        let svg = d3.select("#ctn-map").select("svg")
+        const svg = d3.select("#ctn-map").select("svg");
 
 
-        let graticule = d3.geoGraticule()
-            .step([10, 10]);
+        const graticule = d3.geoGraticule()
+            .step([ 10, 10 ]);
 
         svg.append("g")
             .attr("id", "graticules")
             .selectAll("path")
-            .data([graticule()])
+            .data([ graticule() ])
             .enter()
             .append("path")
             .attr("d", d => geopath(d))
             .attr("fill", "none")
             .attr("stroke", "#aaa")
             .attr("stroke-width", 0.2);
-    }
+    };
 
     // Counties
     drawCountries = (
@@ -145,7 +146,7 @@ class ChoroplethMap extends React.PureComponent<I_Props> {
         geopath: d3.GeoPath<any, d3.GeoPermissibleObjects>
     ) => {
 
-        let svg = d3.select("#ctn-map").select("svg")
+        const svg = d3.select("#ctn-map").select("svg");
 
         const def = svg.append("defs")
             .append("linearGradient")
@@ -153,17 +154,17 @@ class ChoroplethMap extends React.PureComponent<I_Props> {
             .attr("x1", "0%")
             .attr("y1", "0%")
             .attr("x2", "100%")
-            .attr("y2", "0%")
+            .attr("y2", "0%");
 
         def.append("stop")
             .attr("offset", "0%")
             .style("stop-color", "#074C00")
-            .style("stop-opacity", 1)
+            .style("stop-opacity", 1);
 
         def.append("stop")
             .attr("offset", "100%")
             .style("stop-color", "#B8E2A3")
-            .style("stop-opacity", 1)
+            .style("stop-opacity", 1);
 
         // Draw the map
         svg.append("g")
@@ -185,10 +186,10 @@ class ChoroplethMap extends React.PureComponent<I_Props> {
 
                 d3.select(event.currentTarget)
                     .classed("selected", false);
-            }).attr("fill", "#42A341")
+            }).attr("fill", "#42A341");
 
-      
-    }
+
+    };
 
     // Enable Rotation
     enhableRotation = (
@@ -196,42 +197,43 @@ class ChoroplethMap extends React.PureComponent<I_Props> {
         geopath: d3.GeoPath<any, d3.GeoPermissibleObjects>
     ) => {
 
-        let svg = d3.select("#ctn-map").select("svg")
+        const svg = d3.select("#ctn-map").select("svg");
 
         const config = {
-            speed: 0.009,
-            verticalTilt: 0,
+            speed:          0.009,
+            verticalTilt:   0,
             horizontalTilt: 0
-        }
+        };
 
         d3.timer(function (elapsed) {
-            projection.rotate([config.speed * elapsed - 120, config.verticalTilt, config.horizontalTilt]);
+            projection.rotate([ config.speed * elapsed - 120, config.verticalTilt, config.horizontalTilt ]);
             svg.selectAll("path").attr("d", geopath as any);
         });
-    }
+    };
 
     // Get Projection
     getProjection = (): d3.GeoProjection => {
+
         // Map and projection
-        const { type } = this.props
+        const { type } = this.props;
 
         let projection = d3
-            .geoOrthographic()
+            .geoOrthographic();
 
         switch (type) {
-            case "globe":
-                projection = d3.geoOrthographic();
-                break;
-            case "map":
-                projection = d3.geoEquirectangular();
-                break;
+        case "globe":
+            projection = d3.geoOrthographic();
+            break;
+        case "map":
+            projection = d3.geoEquirectangular();
+            break;
         }
 
-        return projection
+        return projection;
 
-    }
+    };
 
 
 }
 
-export default ChoroplethMap
+export default ChoroplethMap;

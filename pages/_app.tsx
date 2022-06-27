@@ -15,26 +15,26 @@ import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
 class MyApp extends React.PureComponent<AppProps>{
 
-  constructor(props: AppProps) {
-    super(props);
-  }
+    constructor(props: AppProps) {
+        super(props);
+    }
 
-  render(): React.ReactNode {
-    const { Component, pageProps } = this.props;
+    render(): React.ReactNode {
+        const { Component, pageProps } = this.props;
 
-    return (
-      <>
-        <SSRProvider>
-          <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css" />
+        return (
+            <>
+                <SSRProvider>
+                    <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css" />
 
-          <AppShellMain>
-            <Component {...pageProps} />
-          </AppShellMain>
-        </SSRProvider>
-      </>
+                    <AppShellMain>
+                        <Component {...pageProps} />
+                    </AppShellMain>
+                </SSRProvider>
+            </>
 
-    );
-  }
+        );
+    }
 
 }
 
