@@ -6,7 +6,6 @@ import Reveal from "@base/design/reveal";
 import Text from "@base/design/text";
 
 /* UTILS */
-import { E_Layout } from "@base/utils/presentation-layout";
 import {
     Col, Container, Row
 } from "react-bootstrap";
@@ -15,7 +14,7 @@ import {
 
 /* DESIGN SYSTEM */
 
-class PresentationSlide2 extends React.PureComponent {
+class PresentationSlide3 extends React.PureComponent {
 
     render(): JSX.Element {
         return (
@@ -50,10 +49,11 @@ class PresentationSlide2 extends React.PureComponent {
                                     type="hero-heading"
                                     textAlign="center"
                                 >
-                                    “Greenhouse gases” are crucial in keeping our
-                                    <br />
-                                    <br />
-                                    planet at a suitable temperature for life.
+                                    The increase of human activities such as burning
+                                    <br /><br />
+                                    fossil fuels, causes the rapid growth of carbon dioxide.
+
+
 
                                 </Text>
 
@@ -67,4 +67,4 @@ class PresentationSlide2 extends React.PureComponent {
         );
     }
 }
-export default PresentationSlide2;
+export default PresentationSlide3;

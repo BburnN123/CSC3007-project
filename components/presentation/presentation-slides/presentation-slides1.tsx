@@ -5,7 +5,6 @@ import React from "react";
 /* COMPONENTS */
 import Reveal from "@base/design/reveal";
 import Text from "@base/design/text";
-import TextAnimation from "@base/design/text-animation";
 import D3ChoroplethMap from "@base/components/d3/d3-choropleth-map";
 
 /* UTILS */
@@ -29,18 +28,15 @@ class PresentationSlide1 extends React.PureComponent {
                     background-image: url(${E_Layout.PLAINLAYOUT});
                     background-repeat: no-repeat;
                     background-size: cover;
-                    
-                    width: 100vw;
+                    width: 100%;
                     height:100vh;
-
-
                 }`}
                 </style>
 
 
 
                 <div className="ctn-main">
-                    <Container fluid >
+                    <Container fluid>
                         <Row className="align-items-center justify-content-center" style={{
                             height: "100vh",
 

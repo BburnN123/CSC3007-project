@@ -71,7 +71,7 @@ class Text extends React.PureComponent<I_Props> {
                     .hero-heading{
                         font-size: 40px;
                         font-weight: 700;
-                        line-height: 22px;
+                        line-height: 30px;
                     }
                     .heading{
                         font-size: 32px;
