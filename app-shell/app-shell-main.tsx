@@ -19,17 +19,19 @@ class AppShellMain extends React.PureComponent<I_Props> {
         return (
             <>
                 <style jsx>{`
-                    .ctn-header-logo{
-                       display: flex;
-                       padding: 20px;
-                    }
+
                     .ctn-body{
-                        padding : 0px 50px;
+                        width:100vw;
+                        height: 100vh;
+                        background: #00b09b;
+                        background: linear-gradient(to right, #96c93d, #00b09b);
+                        overflow: hidden; /* Hide scrollbars */
+                        
                     }
                 `}</style>
 
                 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=EB+Garamond"></link>
-                <div>
+                <div className="ctn-body">
                     {this.props.children}
                 </div>
 

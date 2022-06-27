@@ -1,10 +1,13 @@
 /* NODE MODULES */
 import React from "react";
+import SSRProvider from "react-bootstrap/SSRProvider";
 
 /* STYLES */
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import AppShellMain from "@base/app-shell/app-shell-main";
+
+import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
 /* UTILS */
 
@@ -21,11 +24,13 @@ class MyApp extends React.PureComponent<AppProps>{
 
     return (
       <>
-        <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css" />
+        <SSRProvider>
+          <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css" />
 
-        <AppShellMain>
-          <Component {...pageProps} />
-        </AppShellMain>
+          <AppShellMain>
+            <Component {...pageProps} />
+          </AppShellMain>
+        </SSRProvider>
       </>
 
     );
