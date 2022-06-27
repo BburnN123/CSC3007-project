@@ -1,6 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-}
+    reactStrictMode: true,
 
-module.exports = nextConfig
+    // images: {
+    //   loader: 'akamai',
+    //   path: "/"
+    // },
+    basePath:    "/CSC3007-project",
+    assetPrefix: "/CSC3007-project",
+};
+  
+module.exports = nextConfig;

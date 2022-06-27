@@ -1,5 +1,6 @@
 /* NODE MODULES */
 import React from "react";
+import { Container } from "react-bootstrap";
 
 /* COMPONENTS */
 
@@ -20,20 +21,25 @@ class AppShellMain extends React.PureComponent<I_Props> {
             <>
                 <style jsx>{`
 
-                    .ctn-body{
-                        width:100vw;
-                        height: 100vh;
-                        background: #00b09b;
-                        background: linear-gradient(to right, #96c93d, #00b09b);
-                        overflow: hidden; /* Hide scrollbars */
-                        
-                    }
+                    // .ctn-body{
+                    //     width:100%;
+                    //     height: 100vh;
+                    //     // background: #00b09b;
+                    //     // background: linear-gradient(to right, #96c93d, #00b09b);
+                      
+                       
+                    // }
+                   
                 `}</style>
 
-                <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=EB+Garamond"></link>
+
+
                 <div className="ctn-body">
+                 
                     {this.props.children}
+                  
                 </div>
+
 
             </>
         );
