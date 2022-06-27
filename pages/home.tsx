@@ -3,7 +3,7 @@ import React from "react";
 import { Col, Row } from "react-bootstrap";
 
 /* COMPONENTS */
-import ChoroplethMap from "@base/components/choropleth-map";
+import ChoroplethMap from "@base/components/d3/d3-choropleth-map";
 import Text from "@base/design/text";
 import TextAnimation from "@base/design/text-animation";
 

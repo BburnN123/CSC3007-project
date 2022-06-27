@@ -6,6 +6,7 @@ import Text from "@base/design/text";
 
 interface I_Props {
     words: string[]
+    interval?: number
 }
 
 interface I_State {
@@ -19,15 +20,15 @@ class TextAnimation extends React.PureComponent<I_Props, I_State> {
         super(props);
         this.state = {
             counter: 0,
-            text: ""
-        }
+            text:    ""
+        };
     }
 
     async componentDidMount() {
 
         this.setState({
             text: this.props.words[0]
-        })
+        });
     }
 
     render(): JSX.Element {
@@ -39,10 +40,20 @@ class TextAnimation extends React.PureComponent<I_Props, I_State> {
                     #changeTextContainer {
                         transition: opacity 400ms;
                     }
+
+                    .ctn-reveal{
+                        position: relative;
+                        transform: translateY(150px);
+                        opacity: 0;
+                        transition: all 2s ease;
+                    }
+                    .ctn-reveal.active{
+                        transform: translateY(0px);
+                        opacity: 1;
+                    }
+
                 `}</style>
                 <div id="changeTextContainer">
-
-.
                     <Text type="xxl-heading" color="white" fontweight="bold">
                         <div
 
@@ -52,31 +63,33 @@ class TextAnimation extends React.PureComponent<I_Props, I_State> {
                     </Text>
                 </div>
             </>
-        )
+        );
     }
 
     animateText = () => {
 
-        let { counter } = this.state
-        const { words } = this.props
+        const interval = this.props.interval || 700;
+
+        let { counter } = this.state;
+        const { words } = this.props;
 
         setTimeout(() => {
 
-            counter = counter + 1
+            counter = counter + 1;
 
             if (counter >= words.length) {
-                counter = 0
+                counter = 0;
             }
 
             this.setState({
                 counter: counter,
-                text: words[counter]
-            })
+                text:    words[counter]
+            });
 
-        }, (700));
+        }, (interval));
 
 
-    }
+    };
 }
 
-export default TextAnimation
+export default TextAnimation;
