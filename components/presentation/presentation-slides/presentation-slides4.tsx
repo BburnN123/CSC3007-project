@@ -47,7 +47,7 @@ class PresentationSlide4 extends React.PureComponent {
                     }}>
                         <Col lg={8}>
                             <Reveal>
-                                <div className=".ctn-main">
+                                <div className="ctn-main">
 
 
                                     <Text

@@ -6,7 +6,6 @@ import Reveal from "@base/design/reveal";
 import Text from "@base/design/text";
 
 /* UTILS */
-import { E_Layout } from "@base/utils/presentation-layout";
 import {
     Col, Container, Row
 } from "react-bootstrap";
