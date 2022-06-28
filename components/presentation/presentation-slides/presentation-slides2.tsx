@@ -49,12 +49,11 @@ class PresentationSlide2 extends React.PureComponent {
                                     type="hero-heading"
                                     textAlign="center"
                                 >
-                                    “Greenhouse gases” are crucial in keeping our
-                                    <br />
-                                    <br />
-                                    planet at a suitable temperature for life.
+                                    “Greenhouse gases” are crucial in keeping our planet at a suitable temperature for life.
 
                                 </Text>
+
+
 
 
                             </Reveal>

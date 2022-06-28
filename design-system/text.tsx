@@ -4,7 +4,7 @@ import React from "react";
 /* STYLES */
 
 /* TYPES */
-export type T_TextColor = "white" | "black" | "error" | "warning"
+export type T_TextColor = "white" | "black" | "error" | "warning" | "blue"
 
 export type T_TextType =
     "xxl-heading" |
@@ -71,7 +71,7 @@ class Text extends React.PureComponent<I_Props> {
                     .hero-heading{
                         font-size: 40px;
                         font-weight: 700;
-                        line-height: 30px;
+                        line-height: 55px;
                     }
                     .heading{
                         font-size: 32px;
@@ -115,6 +115,9 @@ class Text extends React.PureComponent<I_Props> {
                     }
                     .warning{
                         color : #FFCC00;
+                    }
+                    .blue {
+                        color : #6CdAE9;
                     }
                 /* TEXT ALIGN STYLE */
                     .text-center{

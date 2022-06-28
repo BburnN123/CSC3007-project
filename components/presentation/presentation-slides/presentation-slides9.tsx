@@ -14,7 +14,7 @@ import { E_Layout } from "@base/utils/presentation-layout";
 
 /* DESIGN SYSTEM */
 
-class PresentationSlide4 extends React.PureComponent {
+class PresentationSlide9 extends React.PureComponent {
 
     render(): JSX.Element {
         return (
@@ -54,7 +54,7 @@ class PresentationSlide4 extends React.PureComponent {
                                 type="xxl-heading"
                                 textAlign="center"
                             >
-                                Case Study 1
+                                Case Study 2
                             </Text>
                             <br />
                             <br />
@@ -65,7 +65,7 @@ class PresentationSlide4 extends React.PureComponent {
                                 type="hero-heading"
                                 textAlign="center"
                             >
-                                Alluvial Diagram
+                               Interactive Pie Chart
                             </Text>
                             <br />
                             <br />
@@ -76,7 +76,8 @@ class PresentationSlide4 extends React.PureComponent {
                                 type="sub-heading"
                                 textAlign="center"
                             >
-                                Display how each sector contributed to greenhouse gasses(GHG). The sector is further broken down into different types of human activities. Dotted lines represent flow of less than 0.1% percent of the total GHG emissions.
+                                Display an interactive chart displaying the GHG emissions by country and economic sector. 
+
 
                             </Text>
                         </div>
@@ -91,4 +92,4 @@ class PresentationSlide4 extends React.PureComponent {
         );
     }
 }
-export default PresentationSlide4;
+export default PresentationSlide9;
