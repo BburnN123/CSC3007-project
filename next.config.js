@@ -5,7 +5,7 @@ const nextConfig = {
         domains: [ "farm1.staticflickr.com" ],
 
         loader: "akamai",
-        path:   "/"
+        path:   "/CSC3007-project"
     },
 
     basePath:    "/CSC3007-project",
