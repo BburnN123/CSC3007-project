@@ -65,57 +65,55 @@ class PresentationSlide11 extends React.PureComponent {
                     <div className="ctn-main">
                         <Reveal>
 
+                            <Row className="align-items-center justify-content-center" style={{
+                                marginBottom: 50
+                            }} >
+                                <Col lg={7}>
+                                    <Text
+                                        color="white"
+                                        fontweight="bold"
+                                        type="xxl-heading"
+                                    >
+                                        Data
+                                    </Text>
 
-                            <div className="txt-content">
-                                <Row className="align-items-center justify-content-center" style={{
-                                    marginTop: 10
-                                }} >
-                                    <Col lg={7}>
-                                        <Text
-                                            color="white"
-                                            fontweight="bold"
-                                            type="hero-heading"
-                                        >
-                                            Data
-                                        </Text>
+                                </Col>
 
-                                    </Col>
+                                <Col lg={4}>
+                                    <Text
+                                        color="white"
+                                        fontweight="bold"
+                                        type="title"
+                                    >
+                                        <u>
+                                            Dataset Type
+                                        </u>
+                                    </Text>
+                                    <Text
+                                        color="white"
+                                        fontweight="bold"
+                                        type="title"
+                                    >
+                                        <ul>
+                                            <li>
+                                                Categorical Data
+                                            </li>
+                                            <li>
+                                                Quantitative Data
+                                            </li>
+                                        </ul>
 
-                                    <Col lg={4}>
-                                        <Text
-                                            color="white"
-                                            fontweight="bold"
-                                            type="title"
-                                        >
-                                            <u>
-                                                Dataset Type
-                                            </u>
-                                        </Text>
-                                        <Text
-                                            color="white"
-                                            fontweight="bold"
-                                            type="title"
-                                        >
-                                            <ul>
-                                                <li>
-                                                    Categorical Data
-                                                </li>
-                                                <li>
-                                                    Quantitative Data
-                                                </li>
-                                            </ul>
+                                    </Text>
 
-                                        </Text>
-
-                                    </Col>
-                                </Row>
+                                </Col>
+                            </Row>
 
 
-                                <PresentationProsContsList
-                                    listOfText={list}
-                                />
+                            <PresentationProsContsList
+                                listOfText={list}
+                            />
 
-                            </div>
+
                         </Reveal>
                     </div>
                 </Container>

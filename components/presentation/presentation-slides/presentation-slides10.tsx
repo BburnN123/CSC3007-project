@@ -42,6 +42,8 @@ class PresentationSlide10 extends React.PureComponent {
      
                     .ctn-frame{
                         transform:scale(0.6);
+                        position:absolute;
+                        top:-70px;
                     }
                 
                     #frame-content{
@@ -50,12 +52,16 @@ class PresentationSlide10 extends React.PureComponent {
                         border: 0;
                     }
 
-                    @media screen and (min-width: 1280px) {
+                    @media screen and (max-width: 1024px) {            
+                        .ctn-frame{
+                            right:180px;
+                        }
+                    } 
 
+                    @media screen and (min-width: 1441px) {            
                         .ctn-frame{
                             transform:scale(0.8);
                         }
-                    
                     } 
 
                 `}
@@ -65,7 +71,10 @@ class PresentationSlide10 extends React.PureComponent {
                     <div className="ctn-main">
                         <Reveal>
 
-                            <Row className="align-items-center justify-content-center">
+
+                            <Row className="align-items-center justify-content-center" style={{
+                                marginBottom: 50
+                            }} >
                                 <Col lg={7}>
 
                                     <div className="ctn-frame">
@@ -77,7 +86,13 @@ class PresentationSlide10 extends React.PureComponent {
                                 </Col>
 
                                 <Col lg={4}>
-                                    <div>
+                                    <div style={{
+                                        height:         "100vh",
+                                        display:        "flex",
+                                        justifyContent: "center",
+                                        alignItems:     "center"
+
+                                    }}>
 
 
                                         <Text

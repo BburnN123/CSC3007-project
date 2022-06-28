@@ -66,19 +66,19 @@ class PresentationSlide4 extends React.PureComponent {
                     <div className="ctn-main">
                         <Reveal>
                             <Row className="align-items-center justify-content-center" style={{
-                                marginTop: 10
+                                marginBottom: 50
                             }} >
                                 <Col lg={7}>
                                     <Text
                                         color="white"
                                         fontweight="bold"
-                                        type="hero-heading"
+                                        type="xxl-heading"
                                     >
                                         Data
                                     </Text>
 
                                 </Col>
-
+                   
                                 <Col lg={4}>
                                     <Text
                                         color="white"
@@ -86,7 +86,7 @@ class PresentationSlide4 extends React.PureComponent {
                                         type="title"
                                     >
                                         <u>
-                                            Dataset Type
+                                        Dataset Type
                                         </u>
                                     </Text>
                                     <Text
@@ -94,7 +94,7 @@ class PresentationSlide4 extends React.PureComponent {
                                         fontweight="bold"
                                         type="title"
                                     >
-                                        Categorical Data
+                                    Categorical Data
                                     </Text>
 
                                 </Col>

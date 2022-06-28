@@ -73,9 +73,9 @@ class PresentationSlide16 extends React.PureComponent {
                                         height={600}
                                         alt="case study 1" />
 
-
                                 </Col>
-                                <Col lg={4}>
+                           
+                                <Col lg={3}>
                                     <Text
                                         color="white"
                                         fontweight="bold"

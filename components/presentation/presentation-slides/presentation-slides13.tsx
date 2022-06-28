@@ -61,13 +61,13 @@ class PresentationSlide13 extends React.PureComponent {
                         <Reveal>
 
                             <Row className="align-items-center justify-content-center" style={{
-                                marginTop: 10
+                                marginBottom: 50
                             }} >
                                 <Col lg={11}>
                                     <Text
                                         color="white"
                                         fontweight="bold"
-                                        type="hero-heading"
+                                        type="xxl-heading"
                                     >
                                         Idiom
                                     </Text>

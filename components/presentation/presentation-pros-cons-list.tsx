@@ -35,7 +35,7 @@ class PresentationProsContsList extends React.PureComponent<I_Props> {
                         display: inline-block;
                         height: 70px;
                         width: 70px;
-                        left:70px;
+                        left:35px;
                         background-size:contain;
                         background-image: url('milestone1/image/cross.png');
                     }
@@ -46,7 +46,7 @@ class PresentationProsContsList extends React.PureComponent<I_Props> {
                         display: inline-block;
                         height: 70px;
                         width: 70px;
-                        left:70px;
+                        left:35px;
                         background-size:contain;
                         background-image: url('milestone1/image/tick.png');
                     }
@@ -56,7 +56,7 @@ class PresentationProsContsList extends React.PureComponent<I_Props> {
                         .ul-list-items li.cons::before, .ul-list-items li.pros::before {
                             height: 60px;
                             width: 60px;
-                            left:40px;
+                            left:20px;
                         }
 
                     } 
