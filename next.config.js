@@ -3,9 +3,11 @@ const nextConfig = {
     reactStrictMode: true,
     images:          {
         domains: [ "farm1.staticflickr.com" ],
-        loader:  "akamai",
-        path:    "/"
+
+        loader: "akamai",
+        path:   "/"
     },
+
     basePath:    "/CSC3007-project",
     assetPrefix: "/CSC3007-project",
 };

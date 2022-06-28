@@ -4,7 +4,7 @@ import PresentationPage from "@base/pages/presentation";
 
 const Home: NextPage = () => {
     return (
-        <PresentationPage />
+        <HomePage />
     );
 };
 

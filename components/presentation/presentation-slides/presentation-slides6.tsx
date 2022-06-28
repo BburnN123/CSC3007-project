@@ -72,6 +72,7 @@ class PresentationSlide4 extends React.PureComponent {
                             width:60%;       
                         }
                     } 
+                    
                 `}
                 </style>
 
