@@ -19,6 +19,8 @@ import PresentationSlide12 from "@base/components/presentation/presentation-slid
 import PresentationSlide13 from "@base/components/presentation/presentation-slides/presentation-slides13";
 import PresentationSlide14 from "@base/components/presentation/presentation-slides/presentation-slides14";
 import PresentationSlide15 from "@base/components/presentation/presentation-slides/presentation-slides15-1";
+import PresentationSlide16 from "@base/components/presentation/presentation-slides/presentation-slides16-1";
+import PresentationSlide17 from "@base/components/presentation/presentation-slides/presentation-slides17";
 
 /* UTILS */
 import { E_Layout } from "@base/utils/presentation-layout";
@@ -113,11 +115,11 @@ class PresentationManager extends React.PureComponent<I_Props, I_State> {
             },
             {
                 index:      15,
-                components: < PresentationSlide13 />
+                components: < PresentationSlide16 />
             },
             {
                 index:      16,
-                components: < PresentationSlide4 />
+                components: < PresentationSlide17 />
             } ],
             activeComponents: <></>,
             activeTagSlug:    ""
