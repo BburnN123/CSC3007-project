@@ -97,28 +97,29 @@ class PresentationManager extends React.PureComponent<I_Props, I_State> {
                 index:      10,
                 components: < PresentationSlide11 />
             },
+
+            // {
+            //     index:      11,
+            //     components: < PresentationSlide12 />
+            // },
             {
                 index:      11,
-                components: < PresentationSlide12 />
-            },
-            {
-                index:      12,
                 components: < PresentationSlide13 />
             },
             {
-                index:      13,
+                index:      12,
                 components: < PresentationSlide14 />
             },
             {
-                index:      14,
+                index:      13,
                 components: < PresentationSlide15 />
             },
             {
-                index:      15,
+                index:      14,
                 components: < PresentationSlide16 />
             },
             {
-                index:      16,
+                index:      15,
                 components: < PresentationSlide17 />
             } ],
             activeComponents: <></>,

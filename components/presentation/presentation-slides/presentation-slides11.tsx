@@ -32,6 +32,10 @@ class PresentationSlide11 extends React.PureComponent {
             type: "cons",
             text: "Ambiguity - Does “All Emissions 2018” represent all the GHG (including CO2, Methane, Nitrous Oxide) or only CO2. For the chart, it only shows CO2 produced for each country."
         },
+        {
+            type: "cons",
+            text: "The data displayed only shows the emission of the GHG but it does not provide a clear linkage to the consequences of emissions in GHG. "
+        },
         ];
 
         return (
