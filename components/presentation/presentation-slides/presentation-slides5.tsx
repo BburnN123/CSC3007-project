@@ -35,10 +35,10 @@ class PresentationSlide5 extends React.PureComponent {
                 <Container fluid>
                     <Reveal>
                         <div className="ctn-main">
-                            <Image src="https://farm1.staticflickr.com/457/31520587594_d1af8b11a0_o.jpg"
-                                width={1000}
+                            <img src="https://farm1.staticflickr.com/457/31520587594_d1af8b11a0_o.jpg" width={1000}
                                 height={700}
                                 alt="case study 1" />
+                          
 
                         </div>
 
