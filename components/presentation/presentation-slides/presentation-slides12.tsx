@@ -9,8 +9,10 @@ import PresentationProsContsList, { T_ProConList } from "@base/components/presen
 
 /* UTILS */
 
-import { E_Layout } from "@base/utils/presentation-layout";
-import { Col, Row } from "react-bootstrap";
+import {
+    Col, Row, Container
+} from "react-bootstrap";
+import { E_CARTOON } from "@base/utils/presentation-layout";
 
 
 
@@ -30,102 +32,46 @@ class PresentationSlide12 extends React.PureComponent {
             <>
 
                 <style jsx>{`
-                
                     .ctn-main{
-                        background-image: url(${E_Layout.LAYOUT4});
+                        background-image : url("${E_CARTOON.BLUE_RECTANGLE}");
                         background-repeat: no-repeat;
-                        background-size: contain;
-                        background-position: center;
+                        background-size: 150px;
+                        background-position: bottom right;
                         
                         width: 100%;
                         height:100vh;
-                    }
 
-                    .txt-content{
-                        position:absolute;
-                        top: 150px;
-                        right:250px;
-                        width:61%;       
-                    }
-
-                    
-                    @media screen and (min-width: 1280px) {
-                       
-                        .txt-content{
-                            position:absolute;
-                            top: 150px;
-                            right:450px;
-                            padding:20px;
-                            width:60%;       
-                        }
+                        padding : 30px
                     } 
                 `}
                 </style>
 
 
-
-                <Reveal>
+                <Container fluid>
                     <div className="ctn-main">
-
-                        <div className="txt-content">
+                        <Reveal>
 
                             <Row className="align-items-center justify-content-center" style={{
-                                marginTop: 10
+                                marginBottom: 50
                             }} >
-                                <Col lg={6}>
+                                <Col lg={11}>
                                     <Text
                                         color="white"
                                         fontweight="bold"
-                                        type="hero-heading"
+                                        type="xxl-heading"
                                     >
-                                        Data
-                                    </Text>
-
-                                </Col>
-                                <Col lg={2} >
-                                    <Text
-                                        color="white"
-                                        fontweight="bold"
-                                        type="title"
-                                    >
-                                        Dataset:
-
-
-                                    </Text>
-
-                                </Col>
-                                <Col lg={4}>
-                                    <Text
-                                        color="white"
-                                        fontweight="bold"
-                                        type="title"
-                                    >
-                                        Categorical Data <br /> Quantitative Data
-
-
+                                        Idiom
                                     </Text>
 
                                 </Col>
                             </Row>
 
-                            <div style={{
-                                marginTop: 10
-                            }}>
-
-                            </div>
-
-
                             <PresentationProsContsList
                                 listOfText={list}
                             />
-
-                        </div>
-
-
+                        </Reveal>
                     </div>
-
-                </Reveal>
-
+                </Container>
 
             </>
         );

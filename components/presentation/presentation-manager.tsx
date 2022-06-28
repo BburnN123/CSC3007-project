@@ -19,7 +19,9 @@ import PresentationSlide12 from "@base/components/presentation/presentation-slid
 import PresentationSlide13 from "@base/components/presentation/presentation-slides/presentation-slides13";
 import PresentationSlide14 from "@base/components/presentation/presentation-slides/presentation-slides14";
 import PresentationSlide15 from "@base/components/presentation/presentation-slides/presentation-slides15-1";
+import PresentationSlide15Part2 from "@base/components/presentation/presentation-slides/presentation-slides15-2";
 import PresentationSlide16 from "@base/components/presentation/presentation-slides/presentation-slides16-1";
+import PresentationSlide16Part2 from "@base/components/presentation/presentation-slides/presentation-slides16-2";
 import PresentationSlide17 from "@base/components/presentation/presentation-slides/presentation-slides17";
 
 /* UTILS */
@@ -98,10 +100,6 @@ class PresentationManager extends React.PureComponent<I_Props, I_State> {
                 components: < PresentationSlide11 />
             },
 
-            // {
-            //     index:      11,
-            //     components: < PresentationSlide12 />
-            // },
             {
                 index:      11,
                 components: < PresentationSlide13 />
@@ -116,10 +114,19 @@ class PresentationManager extends React.PureComponent<I_Props, I_State> {
             },
             {
                 index:      14,
-                components: < PresentationSlide16 />
+                components: < PresentationSlide15Part2 />
             },
             {
                 index:      15,
+                components: < PresentationSlide16 />
+            },
+
+            {
+                index:      16,
+                components: < PresentationSlide16Part2 />
+            },
+            {
+                index:      17,
                 components: < PresentationSlide17 />
             } ],
             activeComponents: <></>,

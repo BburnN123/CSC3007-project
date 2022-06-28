@@ -1,5 +1,8 @@
 /* NODE MODULES */
 import React from "react";
+import {
+    Col, Row, Container
+} from "react-bootstrap";
 
 
 /* COMPONENTS */
@@ -9,7 +12,7 @@ import PresentationProsContsList, { T_ProConList } from "@base/components/presen
 
 /* UTILS */
 
-import { E_Layout } from "@base/utils/presentation-layout";
+import { E_CARTOON, E_Layout } from "@base/utils/presentation-layout";
 
 
 
@@ -37,67 +40,49 @@ class PresentationSlide13 extends React.PureComponent {
             <>
 
                 <style jsx>{`
-                
                     .ctn-main{
-                        background-image: url(${E_Layout.LAYOUT3});
+                        background-image : url("${E_CARTOON.BLUE_RECTANGLE}");
                         background-repeat: no-repeat;
-                        background-size: contain;
-                        background-position: center;
+                        background-size: 150px;
+                        background-position: bottom right;
                         
                         width: 100%;
                         height:100vh;
-                    }
 
-                    .txt-content{
-                        position:absolute;
-                        top: 150px;
-                        right:250px;
-                        width:61%;       
-                    }
-
-                    
-                    @media screen and (min-width: 1280px) {
-                       
-                        .txt-content{
-                            position:absolute;
-                            top: 150px;
-                            right:450px;
-                            padding:20px;
-                            width:60%;       
-                        }
+                        padding : 30px
                     } 
                 `}
                 </style>
 
 
 
-                <Reveal>
+                <Container fluid>
                     <div className="ctn-main">
+                        <Reveal>
 
-                        <div className="txt-content">
-                            <div style={{
-                                marginTop: 10
-                            }}>
-                                <Text
-                                    color="white"
-                                    fontweight="bold"
-                                    type="hero-heading"
-                                >
-                                    Idiom
-                                </Text>
-                            </div>
+                            <Row className="align-items-center justify-content-center" style={{
+                                marginBottom: 50
+                            }} >
+                                <Col lg={11}>
+                                    <Text
+                                        color="white"
+                                        fontweight="bold"
+                                        type="xxl-heading"
+                                    >
+                                        Idiom
+                                    </Text>
 
+                                </Col>
+                            </Row>
 
                             <PresentationProsContsList
                                 listOfText={list}
                             />
 
-                        </div>
-
-
+                        </Reveal>
                     </div>
+                </Container>
 
-                </Reveal>
 
 
             </>

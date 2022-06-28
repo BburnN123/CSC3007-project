@@ -11,6 +11,7 @@ import Text from "@base/design/text";
 import {
     Container, Row, Col
 } from "react-bootstrap";
+import { E_CARTOON } from "@base/utils/presentation-layout";
 
 
 
@@ -29,38 +30,52 @@ class PresentationSlide16 extends React.PureComponent {
                 }
 
                 .ctn-main{
-                    padding:0 20px;
+                    background-image : url("${E_CARTOON.PURPLE_CIRCLE}");
+                    background-repeat: no-repeat;
+                    background-size: 150px;
+                    background-position: bottom right;
                     
-                }`}
+                    width: 100%;
+                    height:100vh;
+
+                    padding : 30px
+                }
+                `}
                 </style>
 
                 <Container fluid>
-                    <Reveal>
-                        <div className="ctn-main">
-                            <div className="txt-title">
-                                <Text
-                                    color="white"
-                                    fontweight="bold"
-                                    type="xxl-heading"
-                                    textAlign="right"
-                                >
-                                    Proposal
-                                </Text>
-                            </div>
+                    <div className="ctn-main">
+                        <Reveal>
+                            <Row className="align-items-center justify-content-center" style={{
+                                marginBottom: 50
+                            }} >
+                                <Col lg={11}>
+
+                                    <Text
+                                        color="white"
+                                        fontweight="bold"
+                                        type="xxl-heading"
+                                        textAlign="right"
+                                    >
+                                        Proposal
+                                    </Text>
+
+                                </Col>
+                            </Row>
 
                             <Row className="align-items-center justify-content-center" style={{
                                 marginTop: 10
                             }} >
                                 <Col lg={7}>
-                                    <div className="ctn-main">
-                                        <Image src="/milestone1/image/proposal_chorelpth_map.png"
-                                            width={1000}
-                                            height={700}
-                                            alt="case study 1" />
 
-                                    </div>
+                                    <Image src="/milestone1/image/proposal_chorelpth_map.png"
+                                        width={800}
+                                        height={600}
+                                        alt="case study 1" />
+
                                 </Col>
-                                <Col lg={4}>
+                           
+                                <Col lg={3}>
                                     <Text
                                         color="white"
                                         fontweight="bold"
@@ -70,7 +85,7 @@ class PresentationSlide16 extends React.PureComponent {
                                         From Case Study 2
                                     </Text>
                                     <br />
-
+                                    <br />
                                     <Text
                                         color="white"
                                         fontweight="bold"
@@ -103,34 +118,12 @@ class PresentationSlide16 extends React.PureComponent {
 
                                         </ul>
                                     </Text>
-                                    <br />
-                                    <Text
-                                        color="white"
-                                        fontweight="bold"
-                                        type="title"
-                                        textAlign="right"
-                                    >
-                                        <u>
-                                            Idioms
-                                        </u>
-
-                                        <br />
-                                        <ul>
-                                            <li>Choropleth Map</li>
-                                            <li>Temperature Color
-                                                <ul>
-                                                    <li>Ex. Blue to Red</li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </Text>
+                               
 
                                 </Col>
                             </Row>
-                        </div>
-
-
-                    </Reveal>
+                        </Reveal>
+                    </div>
                 </Container>
             </>
         );

@@ -1,16 +1,16 @@
 /* NODE MODULES */
 import React from "react";
-
+import {
+    Col, Container, Row
+} from "react-bootstrap";
 
 /* COMPONENTS */
 import Reveal from "@base/design/reveal";
 import Text from "@base/design/text";
 import PresentationProsContsList, { T_ProConList } from "@base/components/presentation/presentation-pros-cons-list";
+import { E_CARTOON } from "@base/utils/presentation-layout";
 
 /* UTILS */
-
-import { E_Layout } from "@base/utils/presentation-layout";
-
 
 
 /* DESIGN SYSTEM */
@@ -35,10 +35,7 @@ class PresentationSlide7 extends React.PureComponent {
             type: "cons",
             text: "Dotted lines does not clearly show the flow "
         },
-        {
-            type: "cons",
-            text: "Overlapping flow path blocks the cognitive of the person trying to perceive"
-        },
+
 
         ];
 
@@ -48,65 +45,43 @@ class PresentationSlide7 extends React.PureComponent {
                 <style jsx>{`
                 
                     .ctn-main{
-                        background-image: url(${E_Layout.LAYOUT3});
+                        background-image : url(${E_CARTOON.BLUE_RECTANGLE});
                         background-repeat: no-repeat;
-                        background-size: contain;
-                        background-position: center;
+                        background-size: 150px;
+                        background-position: bottom right;
                         
                         width: 100%;
                         height:100vh;
+
+                        padding : 30px
                     }
 
-                    .txt-content{
-                        position:absolute;
-                        top: 150px;
-                        right:250px;
-                        width:61%;       
-                    }
-
-                    
-                    @media screen and (min-width: 1280px) {
-                       
-                        .txt-content{
-                            position:absolute;
-                            top: 150px;
-                            right:450px;
-                            padding:20px;
-                            width:60%;       
-                        }
-                    } 
                 `}
                 </style>
-
-
-
-                <Reveal>
+                <Container fluid>
                     <div className="ctn-main">
+                        <Reveal>
+                            <Row className="align-items-center justify-content-center" style={{
+                                marginBottom: 50
+                            }} >
+                                <Col lg={11}>
+                                    <Text
+                                        color="white"
+                                        fontweight="bold"
+                                        type="xxl-heading"
+                                    >
+                                        Idiom
+                                    </Text>
 
-                        <div className="txt-content">
-                            <div style={{
-                                marginTop: 10
-                            }}>
-                                <Text
-                                    color="white"
-                                    fontweight="bold"
-                                    type="hero-heading"
-                                >
-                                    Idiom
-                                </Text>
-                            </div>
-
+                                </Col>
+                            </Row>
 
                             <PresentationProsContsList
                                 listOfText={list}
                             />
-
-                        </div>
-
-
+                        </Reveal>
                     </div>
-
-                </Reveal>
+                </Container>
 
 
             </>

@@ -45,7 +45,7 @@ class PresentationSlide2 extends React.PureComponent {
 
                                 <Text
                                     color="white"
-                                    fontweight="bolder"
+                                    fontweight="bold"
                                     type="hero-heading"
                                     textAlign="center"
                                 >

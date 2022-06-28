@@ -8,3 +8,10 @@ export enum E_Layout {
     LAYOUT6 = "milestone1/slides/layout6.png",
     
 }
+
+export enum E_CARTOON {
+    RED_SQUARE = "icon/cartoon/red-square.png",
+    BLUE_RECTANGLE = "icon/cartoon/blue-rectangle.png",
+    GREEN_HEX = "icon/cartoon/green-hex.png",
+    PURPLE_CIRCLE = "icon/cartoon/purple-circle.png",
+}

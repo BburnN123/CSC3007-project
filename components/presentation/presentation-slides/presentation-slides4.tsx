@@ -44,9 +44,10 @@ class PresentationSlide4 extends React.PureComponent {
 
 
 
+              
+                
                 <Reveal>
                     <div className="ctn-main">
-
                         <div className="txt-content">
                             <Text
                                 color="error"
@@ -72,7 +73,7 @@ class PresentationSlide4 extends React.PureComponent {
 
                             <Text
                                 color="white"
-                                fontweight="bolder"
+                                fontweight="bold"
                                 type="sub-heading"
                                 textAlign="center"
                             >
@@ -80,11 +81,11 @@ class PresentationSlide4 extends React.PureComponent {
 
                             </Text>
                         </div>
-
-
                     </div>
-
                 </Reveal>
+            
+
+      
 
 
             </>

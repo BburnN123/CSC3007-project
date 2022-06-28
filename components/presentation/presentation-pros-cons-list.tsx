@@ -18,19 +18,24 @@ class PresentationProsContsList extends React.PureComponent<I_Props> {
         return (
             <>
                 <style jsx>{`
+                
+                    .ul-list-items{
+                        padding: 0px 10px;
+                        margin:auto;
+                        width: 85%;
+                    }
+
                     .ul-list-items li{
-                   
-                        padding:8px;
+                        padding:20px 0px;
                     }
 
                     .ul-list-items li.cons::before {
                         content: '';
                         position:absolute;
-                        left:-40px;
                         display: inline-block;
-                        height: 50px;
-                        width: 50px;
-            
+                        height: 70px;
+                        width: 70px;
+                        left:35px;
                         background-size:contain;
                         background-image: url('milestone1/image/cross.png');
                     }
@@ -38,14 +43,24 @@ class PresentationProsContsList extends React.PureComponent<I_Props> {
                     .ul-list-items li.pros::before {
                         content: '';
                         position:absolute;
-                        left:-40px;
                         display: inline-block;
-                        height: 50px;
-                        width: 50px;
-            
+                        height: 70px;
+                        width: 70px;
+                        left:35px;
                         background-size:contain;
                         background-image: url('milestone1/image/tick.png');
                     }
+
+                    @media screen and (max-width: 1280px) {
+
+                        .ul-list-items li.cons::before, .ul-list-items li.pros::before {
+                            height: 60px;
+                            width: 60px;
+                            left:20px;
+                        }
+
+                    } 
+
                 `}</style>
 
                 <ul className="ul-list-items">

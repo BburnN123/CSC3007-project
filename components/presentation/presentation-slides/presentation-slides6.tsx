@@ -1,16 +1,17 @@
 /* NODE MODULES */
 import React from "react";
-
+import {
+    Col, Container, Row
+} from "react-bootstrap";
 
 /* COMPONENTS */
 import Reveal from "@base/design/reveal";
 import Text from "@base/design/text";
 import PresentationProsContsList, { T_ProConList } from "@base/components/presentation/presentation-pros-cons-list";
+import { E_CARTOON } from "@base/utils/presentation-layout";
 
 /* UTILS */
 
-import { E_Layout } from "@base/utils/presentation-layout";
-import { Col, Row } from "react-bootstrap";
 
 
 
@@ -45,95 +46,68 @@ class PresentationSlide4 extends React.PureComponent {
                 <style jsx>{`
                 
                     .ctn-main{
-                        background-image: url(${E_Layout.LAYOUT4});
+                        background-image : url(${E_CARTOON.RED_SQUARE});
                         background-repeat: no-repeat;
-                        background-size: contain;
-                        background-position: center;
+                        background-size: 150px;
+                        background-position: bottom right;
                         
                         width: 100%;
                         height:100vh;
+
+                        padding : 30px
                     }
 
-                    .txt-content{
-                        position:absolute;
-                        top: 150px;
-                        right:250px;
-                        width:61%;       
-                    }
-
-                    
-                    @media screen and (min-width: 1280px) {
-                       
-                        .txt-content{
-                            position:absolute;
-                            top: 150px;
-                            right:450px;
-                            padding:20px;
-                            width:60%;       
-                        }
-                    } 
                     
                 `}
                 </style>
 
 
-
-                <Reveal>
+                <Container fluid>
                     <div className="ctn-main">
-
-                        <div className="txt-content">
-
+                        <Reveal>
                             <Row className="align-items-center justify-content-center" style={{
-                                marginTop: 10
+                                marginBottom: 50
                             }} >
-                                <Col lg={6}>
+                                <Col lg={7}>
                                     <Text
                                         color="white"
                                         fontweight="bold"
-                                        type="hero-heading"
+                                        type="xxl-heading"
                                     >
                                         Data
                                     </Text>
 
                                 </Col>
-                                <Col lg={2}>
-                                    <Text
-                                        color="white"
-                                        fontweight="bold"
-                                        type="title"
-                                    >
-                                        Dataset:
-                                    </Text>
-                                </Col>
+                   
                                 <Col lg={4}>
                                     <Text
                                         color="white"
                                         fontweight="bold"
                                         type="title"
                                     >
-                                        Categorical Data
+                                        <u>
+                                        Dataset Type
+                                        </u>
+                                    </Text>
+                                    <Text
+                                        color="white"
+                                        fontweight="bold"
+                                        type="title"
+                                    >
+                                    Categorical Data
                                     </Text>
 
                                 </Col>
                             </Row>
 
-                            <div style={{
-                                marginTop: 10
-                            }}>
-
-                            </div>
-
 
                             <PresentationProsContsList
                                 listOfText={list}
                             />
-
-                        </div>
-
-
+                        </Reveal>
                     </div>
+                </Container>
 
-                </Reveal>
 
 
             </>
