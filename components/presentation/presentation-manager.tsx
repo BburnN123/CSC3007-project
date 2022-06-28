@@ -8,6 +8,17 @@ import PresentationSlide1 from "@base/components/presentation/presentation-slide
 import PresentationSlide2 from "@base/components/presentation/presentation-slides/presentation-slides2";
 import PresentationSlide3 from "@base/components/presentation/presentation-slides/presentation-slides3";
 import PresentationSlide4 from "@base/components/presentation/presentation-slides/presentation-slides4";
+import PresentationSlide5 from "@base/components/presentation/presentation-slides/presentation-slides5";
+import PresentationSlide6 from "@base/components/presentation/presentation-slides/presentation-slides6";
+import PresentationSlide7 from "@base/components/presentation/presentation-slides/presentation-slides7";
+import PresentationSlide8 from "@base/components/presentation/presentation-slides/presentation-slides8";
+import PresentationSlide9 from "@base/components/presentation/presentation-slides/presentation-slides9";
+import PresentationSlide10 from "@base/components/presentation/presentation-slides/presentation-slides10";
+import PresentationSlide11 from "@base/components/presentation/presentation-slides/presentation-slides11";
+import PresentationSlide12 from "@base/components/presentation/presentation-slides/presentation-slides12";
+import PresentationSlide13 from "@base/components/presentation/presentation-slides/presentation-slides13";
+import PresentationSlide14 from "@base/components/presentation/presentation-slides/presentation-slides14";
+import PresentationSlide15 from "@base/components/presentation/presentation-slides/presentation-slides15-1";
 
 /* UTILS */
 import { E_Layout } from "@base/utils/presentation-layout";
@@ -58,6 +69,54 @@ class PresentationManager extends React.PureComponent<I_Props, I_State> {
             },
             {
                 index:      4,
+                components: < PresentationSlide5 />
+            },
+            {
+                index:      5,
+                components: < PresentationSlide6 />
+            },
+            {
+                index:      6,
+                components: < PresentationSlide7 />
+            },
+            {
+                index:      7,
+                components: < PresentationSlide8 />
+            },
+            {
+                index:      8,
+                components: < PresentationSlide9 />
+            },
+            {
+                index:      9,
+                components: < PresentationSlide10 />
+            },
+            {
+                index:      10,
+                components: < PresentationSlide11 />
+            },
+            {
+                index:      11,
+                components: < PresentationSlide12 />
+            },
+            {
+                index:      12,
+                components: < PresentationSlide13 />
+            },
+            {
+                index:      13,
+                components: < PresentationSlide14 />
+            },
+            {
+                index:      14,
+                components: < PresentationSlide15 />
+            },
+            {
+                index:      15,
+                components: < PresentationSlide13 />
+            },
+            {
+                index:      16,
                 components: < PresentationSlide4 />
             } ],
             activeComponents: <></>,
@@ -76,7 +135,7 @@ class PresentationManager extends React.PureComponent<I_Props, I_State> {
             let slides = this.getSlideNumber();
 
             if (!slides) {
-                slides = "0";
+                slides = "1";
             }
 
             this.getAndSetSlide(parseInt(slides) - 1);
@@ -100,6 +159,9 @@ class PresentationManager extends React.PureComponent<I_Props, I_State> {
                         
                         width: 100%;
                         height:100vh;
+
+                        overflow:hidden;      
+                      
                     }
 
                 `}</style>

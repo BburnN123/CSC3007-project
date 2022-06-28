@@ -49,9 +49,7 @@ class PresentationSlide3 extends React.PureComponent {
                                     type="hero-heading"
                                     textAlign="center"
                                 >
-                                    The increase of human activities such as burning
-                                    <br /><br />
-                                    fossil fuels, causes the rapid growth of carbon dioxide.
+                                    The increase of human activities such as burning fossil fuels, causes the rapid growth of carbon dioxide.
 
 
 
