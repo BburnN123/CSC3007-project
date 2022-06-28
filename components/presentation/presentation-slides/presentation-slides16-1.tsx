@@ -16,7 +16,7 @@ import {
 
 /* DESIGN SYSTEM */
 
-class PresentationSlide15 extends React.PureComponent {
+class PresentationSlide16 extends React.PureComponent {
 
     render(): JSX.Element {
         return (
@@ -53,7 +53,7 @@ class PresentationSlide15 extends React.PureComponent {
                             }} >
                                 <Col lg={7}>
                                     <div className="ctn-main">
-                                        <Image src="/milestone1/image/proposal_force_diagram.png"
+                                        <Image src="/milestone1/image/proposal_chorelpth_map.png"
                                             width={1000}
                                             height={700}
                                             alt="case study 1" />
@@ -67,7 +67,7 @@ class PresentationSlide15 extends React.PureComponent {
                                         type="heading"
                                         textAlign="right"
                                     >
-                                        From Case Study 1 and 2
+                                        From Case Study 2
                                     </Text>
                                     <br />
 
@@ -80,9 +80,8 @@ class PresentationSlide15 extends React.PureComponent {
                                         <u>
                                             What
                                         </u>
-
                                         <br />
-                                        Shows how much GHG each sector is producing over the year. A board will show the break down of the GHG.
+                                        Shows the climate change over the years that was caused by a specific country. Relationship between the greenhouse gases produced and the climate change
                                     </Text>
                                     <br />
                                     <Text
@@ -96,7 +95,13 @@ class PresentationSlide15 extends React.PureComponent {
                                         </u>
 
                                         <br />
-                                        GHG Emission by Sector and Year
+                                        <ul>
+                                            <li>Temperature</li>
+                                            <li>Geolocation of the countries</li>
+                                            <li>GHG produced</li>
+
+
+                                        </ul>
                                     </Text>
                                     <br />
                                     <Text
@@ -111,9 +116,12 @@ class PresentationSlide15 extends React.PureComponent {
 
                                         <br />
                                         <ul>
-                                            <li>Force Diagram</li>
-                                            <li>Pie Chart</li>
-                                            <li>Statistic Table</li>
+                                            <li>Choropleth Map</li>
+                                            <li>Temperature Color
+                                                <ul>
+                                                    <li>Ex. Blue to Red</li>
+                                                </ul>
+                                            </li>
                                         </ul>
                                     </Text>
 
@@ -128,4 +136,4 @@ class PresentationSlide15 extends React.PureComponent {
         );
     }
 }
-export default PresentationSlide15;
+export default PresentationSlide16;
