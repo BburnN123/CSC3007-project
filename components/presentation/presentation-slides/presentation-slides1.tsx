@@ -12,6 +12,7 @@ import { E_Layout } from "@base/utils/presentation-layout";
 import {
     Row, Col, Container
 } from "react-bootstrap";
+import PresentationArrowKey from "@base/components/presentation/presentation-arrow-key";
 
 
 
@@ -70,6 +71,9 @@ class PresentationSlide1 extends React.PureComponent {
                                         Gay Hui Jie 1901866
 
                                     </Text>
+                                    <br />
+
+                                    <PresentationArrowKey />
                                 </Reveal>
 
                             </Col>
