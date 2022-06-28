@@ -9,8 +9,10 @@ import PresentationProsContsList, { T_ProConList } from "@base/components/presen
 
 /* UTILS */
 
-import { E_Layout } from "@base/utils/presentation-layout";
-import { Col, Row } from "react-bootstrap";
+import { E_CARTOON } from "@base/utils/presentation-layout";
+import {
+    Col, Row, Container
+} from "react-bootstrap";
 
 
 
@@ -44,101 +46,79 @@ class PresentationSlide11 extends React.PureComponent {
                 <style jsx>{`
                 
                     .ctn-main{
-                        background-image: url(${E_Layout.LAYOUT4});
+                        background-image : url(${E_CARTOON.RED_SQUARE});
                         background-repeat: no-repeat;
-                        background-size: contain;
-                        background-position: center;
+                        background-size: 150px;
+                        background-position: bottom right;
                         
                         width: 100%;
                         height:100vh;
+
+                        padding : 30px
                     }
 
-                    .txt-content{
-                        position:absolute;
-                        top: 150px;
-                        right:250px;
-                        width:61%;       
-                    }
 
-                    
-                    @media screen and (min-width: 1280px) {
-                       
-                        .txt-content{
-                            position:absolute;
-                            top: 150px;
-                            right:450px;
-                            padding:20px;
-                            width:60%;       
-                        }
-                    } 
                 `}
                 </style>
 
-
-
-                <Reveal>
+                <Container fluid>
                     <div className="ctn-main">
-
-                        <div className="txt-content">
-
-                            <Row className="align-items-center justify-content-center" style={{
-                                marginTop: 10
-                            }} >
-                                <Col lg={5}>
-                                    <Text
-                                        color="white"
-                                        fontweight="bold"
-                                        type="hero-heading"
-                                    >
-                                        Data
-                                    </Text>
-
-                                </Col>
-                                <Col lg={3} >
-                                    <Text
-                                        color="white"
-                                        fontweight="bold"
-                                        type="title"
-                                    >
-                                        Dataset :
+                        <Reveal>
 
 
-                                    </Text>
+                            <div className="txt-content">
+                                <Row className="align-items-center justify-content-center" style={{
+                                    marginTop: 10
+                                }} >
+                                    <Col lg={7}>
+                                        <Text
+                                            color="white"
+                                            fontweight="bold"
+                                            type="hero-heading"
+                                        >
+                                            Data
+                                        </Text>
 
-                                </Col>
-                                <Col lg={4}>
-                                    <Text
-                                        color="white"
-                                        fontweight="bold"
-                                        type="title"
-                                    >
-                                        Categorical Data <br /> Quantitative Data
+                                    </Col>
+
+                                    <Col lg={4}>
+                                        <Text
+                                            color="white"
+                                            fontweight="bold"
+                                            type="title"
+                                        >
+                                            <u>
+                                                Dataset Type
+                                            </u>
+                                        </Text>
+                                        <Text
+                                            color="white"
+                                            fontweight="bold"
+                                            type="title"
+                                        >
+                                            <ul>
+                                                <li>
+                                                    Categorical Data
+                                                </li>
+                                                <li>
+                                                    Quantitative Data
+                                                </li>
+                                            </ul>
+
+                                        </Text>
+
+                                    </Col>
+                                </Row>
 
 
-                                    </Text>
-
-                                </Col>
-                            </Row>
-
-                            <div style={{
-                                marginTop: 10
-                            }}>
+                                <PresentationProsContsList
+                                    listOfText={list}
+                                />
 
                             </div>
-
-
-                            <PresentationProsContsList
-                                listOfText={list}
-                            />
-
-                        </div>
-
-
+                        </Reveal>
                     </div>
-
-                </Reveal>
-
-
+                </Container>
             </>
         );
     }

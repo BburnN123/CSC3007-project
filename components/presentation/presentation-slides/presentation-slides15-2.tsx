@@ -24,6 +24,10 @@ class PresentationSlide15 extends React.PureComponent {
             <>
 
                 <style jsx>{`
+                .txt-title{
+                    margin-top:50px;
+                    padding:20px;
+                }
 
                 .ctn-main{
                     background-image : url("${E_CARTOON.PURPLE_CIRCLE}");
@@ -35,19 +39,19 @@ class PresentationSlide15 extends React.PureComponent {
                     height:100vh;
 
                     padding : 30px
-                    
                 }
-            `}
+                
+                `}
                 </style>
 
                 <Container fluid>
+                   
                     <div className="ctn-main">
                         <Reveal>
-
                             <Row className="align-items-center justify-content-center" style={{
                                 marginBottom: 50
                             }} >
-                                <Col lg={11} sm={12}>
+                                <Col lg={11}>
 
                                     <Text
                                         color="white"
@@ -84,7 +88,6 @@ class PresentationSlide15 extends React.PureComponent {
                                     </Text>
                                     <br />
                                     <br />
-
                                     <Text
                                         color="white"
                                         fontweight="bold"
@@ -92,31 +95,23 @@ class PresentationSlide15 extends React.PureComponent {
                                         textAlign="right"
                                     >
                                         <u>
-                                            What
+                                            Idioms
                                         </u>
 
                                         <br />
-                                        Shows how much GHG each sector is producing over the year. A board will show the break down of the GHG.
-                                    </Text>
-                                    <br />
-                                    <Text
-                                        color="white"
-                                        fontweight="bold"
-                                        type="title"
-                                        textAlign="right"
-                                    >
-                                        <u>
-                                            Data
-                                        </u>
-
-                                        <br />
-                                        GHG Emission by Sector and Year
+                                        <ul>
+                                            <li>Force Diagram</li>
+                                            <li>Pie Chart</li>
+                                            <li>Statistic Table</li>
+                                        </ul>
                                     </Text>
 
                                 </Col>
                             </Row>
+
                         </Reveal>
                     </div>
+               
                 </Container>
             </>
         );

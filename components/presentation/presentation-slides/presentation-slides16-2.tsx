@@ -17,13 +17,17 @@ import { E_CARTOON } from "@base/utils/presentation-layout";
 
 /* DESIGN SYSTEM */
 
-class PresentationSlide15 extends React.PureComponent {
+class PresentationSlide16 extends React.PureComponent {
 
     render(): JSX.Element {
         return (
             <>
 
                 <style jsx>{`
+                .txt-title{
+                    margin-top:50px;
+                    padding:20px;
+                }
 
                 .ctn-main{
                     background-image : url("${E_CARTOON.PURPLE_CIRCLE}");
@@ -35,19 +39,17 @@ class PresentationSlide15 extends React.PureComponent {
                     height:100vh;
 
                     padding : 30px
-                    
                 }
-            `}
+                `}
                 </style>
 
                 <Container fluid>
                     <div className="ctn-main">
                         <Reveal>
-
                             <Row className="align-items-center justify-content-center" style={{
                                 marginBottom: 50
                             }} >
-                                <Col lg={11} sm={12}>
+                                <Col lg={11}>
 
                                     <Text
                                         color="white"
@@ -66,38 +68,23 @@ class PresentationSlide15 extends React.PureComponent {
                             }} >
                                 <Col lg={7}>
 
-                                    <Image src="/milestone1/image/proposal_force_diagram.png"
+                                    <Image src="/milestone1/image/proposal_chorelpth_map.png"
                                         width={800}
                                         height={600}
                                         alt="case study 1" />
 
 
                                 </Col>
-                                <Col lg={3}>
+                                <Col lg={4}>
                                     <Text
                                         color="white"
                                         fontweight="bold"
                                         type="heading"
                                         textAlign="right"
                                     >
-                                        From Case Study 1 and 2
+                                        From Case Study 2
                                     </Text>
                                     <br />
-                                    <br />
-
-                                    <Text
-                                        color="white"
-                                        fontweight="bold"
-                                        type="title"
-                                        textAlign="right"
-                                    >
-                                        <u>
-                                            What
-                                        </u>
-
-                                        <br />
-                                        Shows how much GHG each sector is producing over the year. A board will show the break down of the GHG.
-                                    </Text>
                                     <br />
                                     <Text
                                         color="white"
@@ -106,11 +93,18 @@ class PresentationSlide15 extends React.PureComponent {
                                         textAlign="right"
                                     >
                                         <u>
-                                            Data
+                                            Idioms
                                         </u>
 
                                         <br />
-                                        GHG Emission by Sector and Year
+                                        <ul>
+                                            <li>Choropleth Map</li>
+                                            <li>Temperature Color
+                                                <ul>
+                                                    <li>Ex. Blue to Red</li>
+                                                </ul>
+                                            </li>
+                                        </ul>
                                     </Text>
 
                                 </Col>
@@ -122,4 +116,4 @@ class PresentationSlide15 extends React.PureComponent {
         );
     }
 }
-export default PresentationSlide15;
+export default PresentationSlide16;

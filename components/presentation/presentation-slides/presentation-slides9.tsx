@@ -72,7 +72,7 @@ class PresentationSlide9 extends React.PureComponent {
 
                             <Text
                                 color="white"
-                                fontweight="bolder"
+                                fontweight="bold"
                                 type="sub-heading"
                                 textAlign="center"
                             >

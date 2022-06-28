@@ -59,9 +59,7 @@ class Text extends React.PureComponent<I_Props> {
         return (
             <>
                 <style jsx>{`
-                    .txt-content{
-                        height: 100%;
-                    }
+            
                 /* HEADER STYLE */
                 .xxl-heading{
                     font-size: 60px;

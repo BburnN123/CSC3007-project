@@ -1,14 +1,16 @@
 /* NODE MODULES */
 import React from "react";
-import Image from "next/image";
-
 
 /* COMPONENTS */
 import Reveal from "@base/design/reveal";
 import Text from "@base/design/text";
 
 /* UTILS */
-import { Container } from "react-bootstrap";
+import {
+    Container, Row, Col
+} from "react-bootstrap";
+import { E_CARTOON } from "@base/utils/presentation-layout";
+
 
 
 
@@ -22,39 +24,56 @@ class PresentationSlide5 extends React.PureComponent {
 
                 <style jsx>{`
                 
-                .ctn-main{
-                    margin-top:20px;
-                    display:flex;
-                    justify-content:center;
-                    align-items:center;
-                    padding:20px;
+                    .ctn-main{
+                        background-image : url(${E_CARTOON.GREEN_HEX});
+                        background-repeat: no-repeat;
+                        background-size: 150px;
+                        background-position: bottom right;
+                        
+                        width: 100%;
+                        height:100vh;
 
-                }`}
+                        padding : 30px
+                      
+                    }
+                
+                    .img-case-study{
+                        width: 100%;
+                        height: auto;
+                    }
+                `}
                 </style>
 
                 <Container fluid>
-                    <Reveal>
-                        <div className="ctn-main">
-                            <img src="https://farm1.staticflickr.com/457/31520587594_d1af8b11a0_o.jpg" width={1000}
-                                height={700}
-                                alt="case study 1" />
-                          
+                    <div className="ctn-main">
 
-                        </div>
+                        <Reveal>
+                            <Row className="align-items-center justify-content-center">
+                                <Col lg={6}>
 
-                        <Text
-                            color="white"
-                            fontweight="bolder"
-                            type="title"
-                            textAlign="center"
-                        >
-                            Source :
-                            <a href="https://www.grida.no/resources/5413">
-                                https://www.grida.no/resources/5413
+                                    <img className="img-case-study" src="https://farm1.staticflickr.com/457/31520587594_d1af8b11a0_o.jpg"
+                                        alt="case study 1" />
 
-                            </a>
-                        </Text>
-                    </Reveal>
+                                </Col>
+
+                                <Col lg={4}>
+                                    <Text
+                                        color="white"
+                                        fontweight="bold"
+                                        type="title"
+                                        textAlign="right"
+                                    >
+                                        Source
+                                        <br />
+                                        <a href="https://www.grida.no/resources/5413">
+                                            https://www.grida.no/resources/5413
+
+                                        </a>
+                                    </Text>
+                                </Col>
+                            </Row>
+                        </Reveal>
+                    </div>
                 </Container>
             </>
         );
