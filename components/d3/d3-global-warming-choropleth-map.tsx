@@ -29,7 +29,7 @@ interface I_Props {
 }
 
 
-class D3ChoroplethMap extends React.PureComponent<I_Props> {
+class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props> {
 
 
     async componentDidMount() {
@@ -246,4 +246,4 @@ class D3ChoroplethMap extends React.PureComponent<I_Props> {
 
 }
 
-export default D3ChoroplethMap;
+export default D3GlobalWarmingChoroplethMap;
