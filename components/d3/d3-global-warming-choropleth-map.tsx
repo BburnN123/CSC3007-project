@@ -1,7 +1,9 @@
 /* NODE MODULES */
 import React from "react";
 import * as d3 from "d3";
+import { legendColor } from "d3-svg-legend";
 import axios from "axios";
+import GlobalWarmingSlider from "../gloabl-warming/global-warming-slider";
 
 /* COMPONENTS */
 
@@ -13,6 +15,14 @@ type T_FeaturesMap = {
     geometry: { type: string, coordinates: any[] }
     id: string
     properties: { name: string }
+}
+
+type T_TempChange = {
+    [year: number]: {
+        [countries: string]: {
+            [month: number | string]: number
+        }
+    }
 }
 
 type T_Data = {
@@ -28,40 +38,89 @@ interface I_Props {
 
 }
 
+interface I_State {
+    color: any,
+    colorLegend: any,
+    colorFillLegend: { [key: number]: string }
+    geopath: any
+    year: number
+}
 
-class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props> {
 
+class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props, I_State> {
+
+    constructor(props: I_Props) {
+        super(props);
+        this.state = {
+            color:           d3.schemeBlues[9],
+            colorLegend:     d3.scaleSqrt([ 0.1, 0.8 ], [ "blue", "red" ]),
+            colorFillLegend: {},
+            geopath:         null,
+            year:            1996
+        };
+    }
 
     async componentDidMount() {
-        const promiseData = await axios.get("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson");
-        const data = promiseData.data as T_Data;
-
-        this.drawMap(data);
+        this.drawMap();
     }
 
     render(): JSX.Element {
         return (
             <>
-                <style jsx>{`
-                    .tooltip{
-                        position : absolute;
-                        background : rgb(0,0,0,0.6);
-                        color: #FFF;
-                        curosr:pointer
-                        width:20px;
-                        padding:20px;
-                        opacity:0;
+                <style jsx global>{`
+ 
+                    .selected {
+                       
+                        stroke-width: 2;
+                        stroke: black;
                     }
-                    
                  
+                    #countries {
+                        stroke-width: 0.5;
+                        stroke: antiquewhite;
+                        fill: #666;
+                    }
+
+                    #svg-map{
+                        position:absolute;
+                        left:0; 
+                        top:0;
+                        width:100%;
+                        height:100%
+                    }
+
+                    #ctn-map{
+                        position:relative;
+                        width:100%;
+                        height:650px;
+                    }
+
+
+            
                 `}</style>
+                <div className="ctn-slider">
+                    <GlobalWarmingSlider
+                        minYear={1996}
+                        maxYear={2021}
+                        handleOnSliderChange={this.handleOnSliderChange} />
+
+                </div>
                 <div id="ctn-map"></div>
+
+
+                {/* <svg id="svg-color-quant"></svg>
+                <div className="tooltip"></div> */}
+
+
+
             </>
         );
     }
 
-    drawMap = (data: T_Data) => {
+    drawMap = async () => {
 
+        const promiseData = await axios.get("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson");
+        const data = promiseData.data as T_Data;
 
         const { drawGraticules, enableRotation } = this.props;
         const ctnMap = d3.select("#ctn-map").select("svg");
@@ -79,13 +138,20 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props> {
 
         d3.select("#ctn-map").append("svg")
             .attr("viewBox", `0 0 ${width} ${height}`)
-            .attr("preserveAspectRatio", "xMidYMid meet");
+            .attr("preserveAspectRatio", "xMidYMid meet")
+            .attr("id", "svg-map");
+
 
         const projection = this.getProjection();
         const geopath = d3.geoPath().projection(projection); // Transform it to x y position
 
+        this.setState({
+            geopath
+        });
 
-        this.colourOcean(geopath);
+
+        // this.colourOcean(geopath);
+        this.setLegend();
         this.drawCountries(data, geopath);
 
         if (drawGraticules) {
@@ -98,13 +164,13 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props> {
     };
 
     colourOcean = (geopath: d3.GeoPath<any, d3.GeoPermissibleObjects>) => {
-        
+
         const svg = d3.select("#ctn-map").select("svg");
 
         // Def gradient
         const def = svg.append("defs")
             .append("linearGradient")
-            .attr("id", "oceanGradient")
+
             .attr("x1", "0%")
             .attr("y1", "0%")
             .attr("x2", "100%")
@@ -124,17 +190,14 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props> {
             .datum({ type: "Sphere" })
             .attr("id", "ocean")
             .attr("d", geopath as any)
-            .attr("fill", "url(#oceanGradient)");
-
-        // .attr("fill", "lightBlue");
+            .attr("fill", "url(#oceanGradient)")
+            .attr("fill", "lightBlue");
     };
 
     // GeoGraticule - Grid 
     drawGraticules = (geopath: d3.GeoPath<any, d3.GeoPermissibleObjects>): void => {
 
         const svg = d3.select("#ctn-map").select("svg");
-
-
         const graticule = d3.geoGraticule()
             .step([ 10, 10 ]);
 
@@ -151,15 +214,18 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props> {
     };
 
     // Counties
-    drawCountries = (
+    drawCountries = async (
         data: T_Data,
         geopath: d3.GeoPath<any, d3.GeoPermissibleObjects>
     ) => {
 
         const svg = d3.select("#ctn-map").select("svg");
 
+        const jsonData = await d3.json("/assets/temp_change.json") as T_TempChange;
+
         const def = svg.append("defs")
-            .append("linearGradient")
+
+            // .append("linearGradient")
             .attr("id", "earthGradient")
             .attr("x1", "0%")
             .attr("y1", "0%")
@@ -176,6 +242,12 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props> {
             .style("stop-color", "#B8E2A3")
             .style("stop-opacity", 1);
 
+
+        // Add Color Band
+
+
+        const { color, year } = this.state;
+
         // Draw the map
         svg.append("g")
             .attr("id", "countries")
@@ -183,12 +255,36 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props> {
             .data(data.features)
             .enter()
             .append("path")
+            .classed("countries-path", true)
             .attr("d", d => geopath(d as any))
+            .attr("fill", (d: any) => {
+
+                const country = d.properties.name;
+                let colorStyleFill = "#666";
+
+
+                if (!(country in jsonData[year])) {
+                    return colorStyleFill;
+                }
+
+                const avg_tempature = jsonData[year][country]["average"];
+
+
+                if (isNaN(avg_tempature)) {
+                    return colorStyleFill;
+                }
+
+
+                colorStyleFill = color(avg_tempature);
+
+
+
+                return colorStyleFill;
+            })
             .on("mouseover", (event, d) => {
 
                 d3.select(event.currentTarget)
                     .classed("selected", true);
-
             })
             .on("mouseout", (event, d) => {
                 d3.select(".tooltip")
@@ -196,9 +292,7 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props> {
 
                 d3.select(event.currentTarget)
                     .classed("selected", false);
-            }).attr("fill", "#42A341");
-
-
+            });
     };
 
     // Enable Rotation
@@ -240,6 +334,80 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props> {
         }
 
         return projection;
+
+    };
+
+    setLegend = async () => {
+
+        // const svg = d3.select("#svg-color-quant");
+
+        const svg = d3.select("#ctn-map").select("svg");
+
+        const colorScale = d3.scaleLinear()
+            .domain([ -0.5, 0.0, 0.5 ])
+            .range([ "#9db4FF", "#FFBB7B" ] as any);
+
+        const legend = legendColor()
+            .scale(colorScale);
+
+
+        svg.append("g")
+            .attr("class", "legendQuant")
+            .attr("transform", "translate(20,20)")
+            .on("click", (event, d) => {
+                console.log(event);
+            });
+
+
+        svg.select(".legendQuant")
+            .call(legend as any)
+        ;
+
+
+        /* SET LEGEND AND COLOR RANGE */
+        this.setState({
+            color: colorScale
+        });
+    };
+
+    reFilledColorMap = async () => {
+        const promiseData = await axios.get("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson");
+        const data = promiseData.data as T_Data;
+        const jsonData = await d3.json("/assets/temp_change.json") as T_TempChange;
+
+        const svg = d3.select("#ctn-map").select("svg");
+        const { color, geopath, year } = this.state;
+
+        svg.select("#countries")
+            .data(data.features)
+            .selectAll(".countries-path")
+            .attr("fill", (d: any) => {
+
+                const country = d.properties.name;
+                let colorStyleFill = "#666";
+
+                if (!(country in jsonData[year])) {
+                    return colorStyleFill;
+                }
+
+                const avg_tempature = jsonData[year][country]["average"];
+
+
+                if (isNaN(avg_tempature)) {
+                    return colorStyleFill;
+                }
+
+                colorStyleFill = color(avg_tempature);
+
+                return colorStyleFill;
+            });
+    };
+
+
+    handleOnSliderChange = async (year: number) => {
+        this.setState({
+            year
+        }, this.reFilledColorMap);
 
     };
 
