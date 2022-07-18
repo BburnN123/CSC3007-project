@@ -1,5 +1,5 @@
+import D3ForceNetWork from "@base/components/d3/d3-force-network";
 import React from "react";
-
 type MyProps = {
     // using `interface` is also ok
     message: string;
@@ -13,13 +13,23 @@ class NodePage extends React.Component<MyProps, MyState> {
         count: 0,
     };
     render() {
+        const globalEmissionData = require("globalemissiondataclean1990.json");
+        const links = require("linksglobalemission.json")
+        var globalEmissionArray = globalEmissionData
+        console.log(globalEmissionArray)
+
+
         return (
             <div>
-                {this.props.message} {this.state.count}
                 <h1>Greenhouse Gases House Emission By Sector</h1>
+                <D3ForceNetWork data_link={links} data_case={globalEmissionArray}></D3ForceNetWork>
+                {this.props.message} {this.state.count}
             </div>
+
         );
     }
+
 }
+
 
 export default NodePage
