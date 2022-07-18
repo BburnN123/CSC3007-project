@@ -16,10 +16,10 @@ class NodePage extends React.Component<MyProps, MyState> {
     render() {
         const globalEmissionData = require("globalemissiondataclean1990.json");
         const testData = require("public/assets/test.json");
-        console.log(testData)
+        // console.log(testData)
         const links = require("linksglobalemission.json")
         var globalEmissionArray = globalEmissionData
-        console.log(globalEmissionArray)
+        // console.log(globalEmissionArray)
 
 
         return (

@@ -1,7 +1,7 @@
 /* NODE MODULES */
 import React, { useState } from "react";
 import * as d3 from "d3";
-import { T_Case, T_Link } from "@base/pages/milestone2/force-diagram";
+import { T_Case, T_Link, T_YearCountrySector } from "@base/pages/milestone2/force-diagram";
 import Form from 'react-bootstrap/Form'
 import { timeThursdays } from "d3";
 /* COMPONENTS */
@@ -44,31 +44,36 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
     }
 
     async componentDidMount() {
-
         const year = 2019;
         const country = "Afghanistan";
         const jsonData = await d3.json("/assets/test.json");
         const data = jsonData[year][country] as string[]
+        const links: { source: string, target: string, source_value: number, target_value: number }[] = [];
         console.log(data)
-
-
         data.map((d, i) => {
-
             console.log(i)
             const source = d["sector"]
             const source_value = d["value"]
-
             const gases = d["gases"]
-            gases.map(g => {
+            gases.map((g: { [x: string]: any; }) => {
                 const target = g["name"]
                 const target_value = g["value"]
                 // console.log(target)
                 // console.log(target_value)
+                const objLink = {
+                    source: source,
+                    target: target,
+                    source_value: source_value,
+                    target_value: target_value
+                }
+                links.push(objLink)
 
-            })
-
+            }
+            )
 
         })
+        // console.log(links)
+        this.drawCanvasTest(data);
         this.drawCanvas();
     }
 
@@ -92,6 +97,31 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         //handle node change here
     }
 
+    drawCanvasTest = (input: string[]) => {
+        const { width, height, yearchosen } = this.state;
+        const svg = d3.select("#ctn-force-network").select("svg");
+        if (svg.size() > 0) {
+            return;
+        }
+        d3.select("#ctn-force-network").append("svg")
+            .attr("viewBox", `0 0 ${width} ${height}`)
+            .attr("preserveAspectRatio", "xMidYMid meet");
+        //Initialise the nodes 
+        const data: T_YearCountrySector[] & { x: number, y: number }[] = [];
+        console.log("in drawcanvas test")
+        console.log(input)
+        const node = this.addCircles(input);
+        const links = this.addLink();
+        const linkpath = this.addLinkPaths(links);
+        const simulation = this.addSimulation(node, links, linkpath, data);
+        this.addDragEvent(node, simulation);
+
+
+
+
+
+    }
+
     drawCanvas = () => {
         const { width, height, yearchosen } = this.state;
         const svg = d3.select("#ctn-force-network").select("svg");
@@ -108,7 +138,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         var jsonKey = "year" + yearchosen
         var data_case_json = data_case[jsonKey]
         console.log(data_case_json)
-        data_case_json.content.map(d => {
+        data_case_json.content.map((d: any) => {
             const obj = {
 
                 // To Start from the center
@@ -116,7 +146,6 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
                 x: width / 2,
                 y: height / 2
             };
-
             data.push(obj);
         });
 

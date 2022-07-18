@@ -23,6 +23,10 @@ export type T_Case = {
     content: Array<any>
 }
 
+export type T_YearCountrySector = {
+
+}
+
 interface I_Props {
     data_link: T_Link[]
     data_cases: T_Case[]
