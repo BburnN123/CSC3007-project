@@ -8,8 +8,8 @@ export type T_Link = {
     infector: number
     infectee: number
     date: string
-  }
-  
+}
+
 export type T_Case = {
     id: number
     age: number
@@ -20,13 +20,14 @@ export type T_Case = {
     date: string
     serology: string
     vaccinated: string
-  }
-  
-  interface I_Props {
+    content: Array<any>
+}
+
+interface I_Props {
     data_link: T_Link[]
     data_cases: T_Case[]
-  }
-  
+}
+
 class ForceDiagram extends React.PureComponent<I_Props>{
 
     render(): JSX.Element {
@@ -49,15 +50,15 @@ export const getStaticProps = async (context: NextPageContext) => {
     // // Fetch data from external API
     const case_response = await axios.get("https://chi-loong.github.io/CSC3007/assignments/cases-sample.json");
     const data_cases = case_response.data as T_Case[];
-  
+
     const link_response = await axios.get("https://chi-loong.github.io/CSC3007/assignments/links-sample.json");
     const data_link = link_response.data as T_Link[];
-  
+
     const props: I_Props = {
         data_link,
         data_cases
     };
-  
+
     // Pass data to the page via props
     return {
         props

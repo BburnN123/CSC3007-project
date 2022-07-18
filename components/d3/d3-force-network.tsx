@@ -1,8 +1,9 @@
 /* NODE MODULES */
-import React from "react";
+import React, { useState } from "react";
 import * as d3 from "d3";
 import { T_Case, T_Link } from "@base/pages/milestone2/force-diagram";
-
+import Form from 'react-bootstrap/Form'
+import { timeThursdays } from "d3";
 /* COMPONENTS */
 
 /* UTILS */
@@ -21,6 +22,7 @@ interface I_State {
     categoryType: T_Category
     colorScale: { [key: string | number]: string | boolean }
     tooltipValue: T_Case | Record<string, unknown>
+    yearchosen: number
 }
 
 
@@ -29,12 +31,14 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
     constructor(props: I_Props) {
         super(props);
         this.state = {
-            width:        1000,
-            height:       800,
+            width: 1000,
+            height: 800,
             categoryType: "gender",
-            colorScale:   { "female": "#FF99CC", "male": "#3944BC" },
+            colorScale: { "female": "#FF99CC", "male": "#3944BC" },
             tooltipValue: {
-            }
+            },
+
+            yearchosen: 1990
         };
 
     }
@@ -45,23 +49,34 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
     render(): JSX.Element {
         return (
-            <div id="ctn-force-network"></div>
+            <div>
+                <div id="ctn-force-network">
+                </div>
+                <Form.Label>Range</Form.Label>
+                <Form.Range min={1990} max={2018} onChange={event => this.handleChange(event)} />
+            </div>
         );
     }
 
+    handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { yearchosen } = this.state
+        //console.log(e.target.value)
+        this.setState({ yearchosen: e.target.value })
+        console.log("in handlechange function" + yearchosen)
+        //this.drawCanvas()
+        //handle node change here
+
+
+
+
+    }
+
     drawCanvas = () => {
-
-        const { width, height } = this.state;
-
+        const { width, height, yearchosen } = this.state;
         const svg = d3.select("#ctn-force-network").select("svg");
         if (svg.size() > 0) {
             return;
         }
-
-        if (svg.size() > 0) {
-            return;
-        }
-
         d3.select("#ctn-force-network").append("svg")
             .attr("viewBox", `0 0 ${width} ${height}`)
             .attr("preserveAspectRatio", "xMidYMid meet");
@@ -69,8 +84,10 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         /* Intialise the nodes */
         const data: T_Case[] & { x: number, y: number }[] = [];
         const { data_case } = this.props;
-
-        data_case.map(d => {
+        var jsonKey = "year" + yearchosen
+        var data_case_json = data_case[jsonKey]
+        console.log(data_case_json)
+        data_case_json.content.map(d => {
             const obj = {
 
                 // To Start from the center
@@ -131,13 +148,16 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         const svg = d3.select("#ctn-force-network").select("svg");
 
         // Create Circle
+        // Section to change radius of circle size
         const nodes = svg.append("g")
             .attr("id", "nodes")
             .selectAll("circle")
             .data(data)
             .enter()
             .append("circle")
-            .attr("r", 15)
+            .attr("r", function (d) {
+                return 15
+            })
             .style("fill", (d: any) => colorScale[d[categoryType]])
             .on("mouseover", (event, d) => {
 
@@ -186,7 +206,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         x: number;
         y: number;
     }, SVGGElement, unknown>,
-    simulation: d3.Simulation<d3.SimulationNodeDatum, undefined>
+        simulation: d3.Simulation<d3.SimulationNodeDatum, undefined>
     ) => {
         node.call(d3.drag()
             .on("start", (event, d) => this.dragstarted(event, d, simulation))
@@ -212,7 +232,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
             const obj = {
                 source: link.infector,
                 target: link.infectee,
-                date:   link.date
+                date: link.date
             };
 
             links.push(obj);
