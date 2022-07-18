@@ -134,23 +134,23 @@ class HomePage extends React.PureComponent<unknown, I_State> {
                         </div>
 
                     </Link>
+                    
+                    <Link href={{
+                        pathname: "/milestone2/global-warming",
+                    }}>
+                        <div className="btn-image"
+                            ref={this._ref2}
+                            onMouseEnter={() => this.showPreview("milestone2", this._ref2)}
+                            onMouseLeave={this.resetBox}
 
+                        >
+                            <Image src="/icon/btn_milestone2.png"
+                                width={300}
+                                height={100}
+                                alt="case study 1" />
+                        </div>
 
-                    <div className="btn-image"
-                        ref={this._ref2}
-                        onMouseEnter={() => this.showPreview("milestone2", this._ref2)}
-                        onMouseLeave={this.resetBox}
-                        style={{
-                            cursor: "not-allowed"
-                        }}
-                    >
-                        <Image src="/icon/btn_milestone2.png"
-                            width={300}
-                            height={100}
-                            alt="case study 1" />
-                    </div>
-
-
+                    </Link>
                 </div>
 
                 {this.state.showBox &&

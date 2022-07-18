@@ -1,0 +1,70 @@
+[
+    {
+        "label": "Transport",
+        "value": 16.2
+    },
+    {
+        "label": "Energy in buildings (elec and heat)",
+        "value": 17.5
+    },
+    {
+        "label": "Energy in industry",
+        "value": 24.2
+    },
+    {
+        "label": "Energy in Agri & Fishing",
+        "value": 1.7
+    },
+    {
+        "label": "Unallocated fuel combustion",
+        "value": 7.8
+    },
+    {
+        "label": "Fugitive emissions from energy",
+        "value": 5.8
+    },
+    {
+        "label": "Cement",
+        "value": 3
+    },
+    {
+        "label": "Chemical & petrochemical (industrial)",
+        "value": 2.2
+    },
+    {
+        "label": "Livestock & Manure",
+        "value": 5.8
+    },
+    {
+        "label": "Rice Cultivation",
+        "value": 1.3
+    },
+    {
+        "label": "Agricultural Soils",
+        "value": 4.1
+    },
+    {
+        "label": "Crop Burning",
+        "value": 3.5
+    },
+    {
+        "label": "Forest Land",
+        "value": 2.2
+    },
+    {
+        "label": "Cropland",
+        "value": 1.4
+    },
+    {
+        "label": "Grassland",
+        "value": 0.1
+    },
+    {
+        "label": "Landfills",
+        "value": 1.9
+    },
+    {
+        "label": "Wastewater",
+        "value": 1.3
+    }
+]
