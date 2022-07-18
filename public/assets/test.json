@@ -2,14 +2,17 @@
   "2019": {
     "Afghanistan": [
       {
+        "id": 1,
         "sector": "Agriculture",
         "value": 28.76,
         "gases": [
           {
+            "id": 2,
             "name": "CH4",
             "value": 16.37
           },
           {
+            "id": 3,
             "name": "N2O",
             "value": 4.63
           }
