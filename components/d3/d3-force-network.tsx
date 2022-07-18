@@ -1,7 +1,9 @@
 /* NODE MODULES */
 import React, { useState } from "react";
 import * as d3 from "d3";
-import Form from 'react-bootstrap/Form';
+import { T_Case, T_Link, T_YearCountrySector } from "@base/pages/milestone2/force-diagram";
+import Form from 'react-bootstrap/Form'
+import { timeThursdays } from "d3";
 /* COMPONENTS */
 
 /* UTILS */
@@ -61,7 +63,6 @@ class D3ForceNetWork extends React.PureComponent<unknown, I_State>{
     }
 
     async componentDidMount() {
-
         const year = 2019;
         const country = "Afghanistan";
 
@@ -102,12 +103,37 @@ class D3ForceNetWork extends React.PureComponent<unknown, I_State>{
         const { yearchosen } = this.state
         //console.log(e.target.value)
         // this.setState({ yearchosen: e.target.value })
-       
+
         //this.drawCanvas()
         //handle node change here
     }
 
-    drawCanvas = (data: T_Link[]) => {
+    drawCanvasTest = (input: string[]) => {
+        const { width, height, yearchosen } = this.state;
+        const svg = d3.select("#ctn-force-network").select("svg");
+        if (svg.size() > 0) {
+            return;
+        }
+        d3.select("#ctn-force-network").append("svg")
+            .attr("viewBox", `0 0 ${width} ${height}`)
+            .attr("preserveAspectRatio", "xMidYMid meet");
+        //Initialise the nodes 
+        const data: T_YearCountrySector[] & { x: number, y: number }[] = [];
+        console.log("in drawcanvas test")
+        console.log(input)
+        const node = this.addCircles(input);
+        const links = this.addLink();
+        const linkpath = this.addLinkPaths(links);
+        const simulation = this.addSimulation(node, links, linkpath, data);
+        this.addDragEvent(node, simulation);
+
+
+
+
+
+    }
+
+    drawCanvas = () => {
         const { width, height, yearchosen } = this.state;
         const svg = d3.select("#ctn-force-network").select("svg");
 
@@ -122,8 +148,12 @@ class D3ForceNetWork extends React.PureComponent<unknown, I_State>{
             .attr("preserveAspectRatio", "xMidYMid meet");
 
         /* Intialise the nodes */
-        data.map(d => {
-            console.log(d)
+        const data: T_Case[] & { x: number, y: number }[] = [];
+        const { data_case } = this.props;
+        var jsonKey = "year" + yearchosen
+        var data_case_json = data_case[jsonKey]
+        console.log(data_case_json)
+        data_case_json.content.map((d: any) => {
             const obj = {
 
                 // To Start from the center
@@ -131,8 +161,7 @@ class D3ForceNetWork extends React.PureComponent<unknown, I_State>{
                 x: width / 2,
                 y: height / 2
             };
-
-            dataArr.push(obj);
+            data.push(obj);
         });
 
         // Define the arrowhead marker variables
