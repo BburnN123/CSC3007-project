@@ -43,7 +43,7 @@ interface I_State {
 }
 
 
-class D3ForceNetWork extends React.PureComponent<unknown, I_State>{
+class D3ForceNetWorkHello extends React.PureComponent<unknown, I_State>{
 
     constructor(props: unknown) {
         super(props);
@@ -385,4 +385,4 @@ class D3ForceNetWork extends React.PureComponent<unknown, I_State>{
 
 }
 
-export default D3ForceNetWork;
+export default D3ForceNetWorkHello;
