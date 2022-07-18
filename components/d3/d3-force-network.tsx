@@ -44,6 +44,31 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
     }
 
     async componentDidMount() {
+
+        const year = 2019;
+        const country = "Afghanistan";
+        const jsonData = await d3.json("/assets/test.json");
+        const data = jsonData[year][country] as string[]
+        console.log(data)
+
+
+        data.map((d, i) => {
+
+            console.log(i)
+            const source = d["sector"]
+            const source_value = d["value"]
+
+            const gases = d["gases"]
+            gases.map(g => {
+                const target = g["name"]
+                const target_value = g["value"]
+                // console.log(target)
+                // console.log(target_value)
+
+            })
+
+
+        })
         this.drawCanvas();
     }
 
@@ -65,10 +90,6 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         console.log("in handlechange function" + yearchosen)
         //this.drawCanvas()
         //handle node change here
-
-
-
-
     }
 
     drawCanvas = () => {
