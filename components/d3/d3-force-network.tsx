@@ -1,9 +1,7 @@
 /* NODE MODULES */
 import React, { useState } from "react";
 import * as d3 from "d3";
-import { T_Case, T_Link } from "@base/pages/milestone2/force-diagram";
-import Form from 'react-bootstrap/Form'
-import { timeThursdays } from "d3";
+import Form from 'react-bootstrap/Form';
 /* COMPONENTS */
 
 /* UTILS */
@@ -11,10 +9,29 @@ import { timeThursdays } from "d3";
 /* TYPES */
 type T_Category = "gender" | "age" | "vaccinated"
 
-interface I_Props {
-    data_link: T_Link[]
-    data_case: T_Case[]
+type T_Gases_Emission = {
+    [year: number]: {
+        [country: string]: T_Sector[]
+    }
 }
+
+type T_Gases = {
+    name: string
+    value: string
+}
+
+type T_Sector = {
+    sector: string
+    value: number
+    gases: T_Gases[]
+}
+
+type T_Link = {
+    sector: string
+    gas: string
+    value: string;
+}
+
 
 interface I_State {
     width: number
@@ -26,9 +43,9 @@ interface I_State {
 }
 
 
-class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
+class D3ForceNetWork extends React.PureComponent<unknown, I_State>{
 
-    constructor(props: I_Props) {
+    constructor(props: unknown) {
         super(props);
         this.state = {
             width: 1000,
@@ -47,29 +64,27 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
         const year = 2019;
         const country = "Afghanistan";
-        const jsonData = await d3.json("/assets/test.json");
-        const data = jsonData[year][country] as string[]
-        console.log(data)
+
+        const jsonData = await d3.json("/assets/linksglobalemission.json") as T_Gases_Emission;
+        // const data = jsonData[year][country]
+
+        // const dataForceNetWork = data.map((d, i) => {
+        //     const sector = d["sector"]
 
 
-        data.map((d, i) => {
+        //     const gases = d["gases"].map((g, i) => {
+        //         return {
+        //             sector,
+        //             gas: g["name"],
+        //             value: g["value"]
+        //         }
+        //     })
 
-            console.log(i)
-            const source = d["sector"]
-            const source_value = d["value"]
+        //     return gases
+        // })
 
-            const gases = d["gases"]
-            gases.map(g => {
-                const target = g["name"]
-                const target_value = g["value"]
-                // console.log(target)
-                // console.log(target_value)
-
-            })
-
-
-        })
-        this.drawCanvas();
+        // const flattenData = dataForceNetWork.flat() as T_Link[];
+        this.drawCanvas(jsonData);
     }
 
     render(): JSX.Element {
@@ -86,29 +101,28 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
     handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { yearchosen } = this.state
         //console.log(e.target.value)
-        this.setState({ yearchosen: e.target.value })
-        console.log("in handlechange function" + yearchosen)
+        // this.setState({ yearchosen: e.target.value })
+       
         //this.drawCanvas()
         //handle node change here
     }
 
-    drawCanvas = () => {
+    drawCanvas = (data: T_Link[]) => {
         const { width, height, yearchosen } = this.state;
         const svg = d3.select("#ctn-force-network").select("svg");
+
         if (svg.size() > 0) {
             return;
         }
+
+        const dataArr: T_Link[] & { x: number, y: number }[] = []
+
         d3.select("#ctn-force-network").append("svg")
-            .attr("viewBox", `0 0 ${width} ${height}`)
+            .attr("viewBox", `0 0 ${width} ${height} `)
             .attr("preserveAspectRatio", "xMidYMid meet");
 
         /* Intialise the nodes */
-        const data: T_Case[] & { x: number, y: number }[] = [];
-        const { data_case } = this.props;
-        var jsonKey = "year" + yearchosen
-        var data_case_json = data_case[jsonKey]
-        console.log(data_case_json)
-        data_case_json.content.map(d => {
+        data.map(d => {
             const obj = {
 
                 // To Start from the center
@@ -117,7 +131,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
                 y: height / 2
             };
 
-            data.push(obj);
+            dataArr.push(obj);
         });
 
         // Define the arrowhead marker variables
@@ -131,21 +145,21 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
             .append("svg:path")
             .attr("d", "M0,-5L10,0L0,5");
 
-        this.buildNetWorkNode(data);
+        this.buildNetWorkNode(dataArr);
     };
 
-    buildNetWorkNode = (data: T_Case[] & { x: number, y: number }[]) => {
+    buildNetWorkNode = (data: T_Link[] & { x: number, y: number }[]) => {
 
         const { colorScale, categoryType } = this.state;
 
         const svg = d3.select("#ctn-force-network").select("svg");
 
         const node = this.addCircles(data);
-        const links = this.addLink();
+        const links = this.addLink(data);
         const linkpath = this.addLinkPaths(links);
-        const simulation = this.addSimulation(node, links, linkpath, data);
+        // const simulation = this.addSimulation(node, links, linkpath, data);
 
-        this.addDragEvent(node, simulation);
+        // this.addDragEvent(node, simulation);
 
 
 
@@ -159,7 +173,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
     };
 
 
-    addCircles = (data: T_Case[] & { x: number, y: number }[]): d3.Selection<SVGCircleElement, {
+    addCircles = (data: T_Link[] & { x: number, y: number }[]): d3.Selection<SVGCircleElement, {
         x: number;
         y: number;
     }, SVGGElement, unknown> => {
@@ -235,25 +249,24 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
             .on("end", (event, d) => this.dragended(event, d, simulation)) as any);
     };
 
-    addLink = (): {
-        source: number;
-        target: number;
-        date: string;
+    addLink = (data: T_Link[] & { x: number, y: number }[]): {
+        source: string;
+        target: string;
+        value: string;
     }[] => {
 
         /**
          * Source - The starting point of the node
          * Target - Link to who
          */
-        const { data_link } = this.props;
 
         /* Add Link to the Data */
-        const links: { source: number, target: number, date: string }[] = [];
-        data_link.map(link => {
+        const links: { source: string, target: string, value: string }[] = [];
+        data.map(link => {
             const obj = {
-                source: link.infector,
-                target: link.infectee,
-                date: link.date
+                source: link["sector"],
+                target: link["gas"],
+                value: link["value"]
             };
 
             links.push(obj);
@@ -265,13 +278,13 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
 
     addLinkPaths = (links: {
-        source: number;
-        target: number;
-        date: string;
+        source: string;
+        target: string;
+        value: string;
     }[]): d3.Selection<SVGPathElement, {
-        source: number;
-        target: number;
-        date: string;
+        source: string;
+        target: string;
+        value: string;
     }, SVGGElement, unknown> => {
 
         const svg = d3.select("#ctn-force-network").select("svg");
