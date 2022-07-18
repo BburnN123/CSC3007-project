@@ -5,7 +5,9 @@ import React from "react";
 import Text from "@base/design/text";
 import D3GlobalWarmingChoroplethMap from "@base/components/d3/d3-global-warming-choropleth-map";
 
+
 class GlobalWarming extends React.PureComponent {
+
     render(): JSX.Element {
         return (
             <>
@@ -15,15 +17,16 @@ class GlobalWarming extends React.PureComponent {
                         text-align:center;
                     }
                 `}</style>
-                
+
                 <div className="ctn-heading">
                     <Text
-                        type="xxl-heading"
-                        color="white"
+                        type="hero-heading"
+
                     >
                         CO<sub>2</sub> Emission
                     </Text>
                 </div>
+
 
                 <D3GlobalWarmingChoroplethMap
                     type="map"

@@ -63,7 +63,7 @@ class GlobalWarmingSlider extends React.PureComponent<I_Props, I_State> {
                     }
 
                     .fa-play-circle, .fa-stop-circle{
-                        font-size:48px;
+                        font-size:40px;
                         color: #F44336;
                         cursor:pointer;
                     }
@@ -73,7 +73,7 @@ class GlobalWarmingSlider extends React.PureComponent<I_Props, I_State> {
                 <div className="ctn-slider">
                     <div className="ctn-txt-heading">
                         <Text fontweight="bold"
-                            type="hero-heading">
+                            type="heading">
                             {this.state.value}
                         </Text>
 

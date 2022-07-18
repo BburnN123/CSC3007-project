@@ -3,7 +3,12 @@ import React from "react";
 import * as d3 from "d3";
 import { legendColor } from "d3-svg-legend";
 import axios from "axios";
-import GlobalWarmingSlider from "../gloabl-warming/global-warming-slider";
+import GlobalWarmingSlider from "@base/components/gloabl-warming/global-warming-slider";
+import {
+    Container, Row, Col
+} from "react-bootstrap";
+import GlobalWarmingToolTip from "@base/components/gloabl-warming/global-warming-tooltip";
+
 
 /* COMPONENTS */
 
@@ -44,6 +49,7 @@ interface I_State {
     colorFillLegend: { [key: number]: string }
     geopath: any
     year: number
+    tooltipCountry: string
 }
 
 
@@ -56,7 +62,8 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props, I_State>
             colorLegend:     d3.scaleSqrt([ 0.1, 0.8 ], [ "blue", "red" ]),
             colorFillLegend: {},
             geopath:         null,
-            year:            1996
+            year:            1996,
+            tooltipCountry:  "China"
         };
     }
 
@@ -68,18 +75,19 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props, I_State>
         return (
             <>
                 <style jsx global>{`
- 
-                    .selected {
-                       
-                        stroke-width: 2;
-                        stroke: black;
-                    }
-                 
                     #countries {
                         stroke-width: 0.5;
                         stroke: antiquewhite;
                         fill: #666;
+                    }       
+
+                    .selected {
+                        stroke-width: 2;
+                        stroke: black;
+                        cursor:pointer;
                     }
+                `}</style>
+                <style jsx>{`
 
                     #svg-map{
                         position:absolute;
@@ -91,27 +99,31 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props, I_State>
 
                     #ctn-map{
                         position:relative;
-                        width:100%;
-                        height:650px;
+                        width:800px;
+                        height:500px;
+                      
                     }
-
-
-            
                 `}</style>
                 <div className="ctn-slider">
                     <GlobalWarmingSlider
                         minYear={1996}
-                        maxYear={2021}
+                        maxYear={2018}
                         handleOnSliderChange={this.handleOnSliderChange} />
-
                 </div>
-                <div id="ctn-map"></div>
+                <Container fluid>
+                    <Row>
+                        <Col md="auto">
+                            <div id="ctn-map"></div>
+                        </Col>
+                        <Col>
+                            <GlobalWarmingToolTip
+                                year={this.state.year}
+                                country={this.state.tooltipCountry} />
+                        </Col>
+                    </Row>
 
 
-                {/* <svg id="svg-color-quant"></svg>
-                <div className="tooltip"></div> */}
-
-
+                </Container>
 
             </>
         );
@@ -242,10 +254,6 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props, I_State>
             .style("stop-color", "#B8E2A3")
             .style("stop-opacity", 1);
 
-
-        // Add Color Band
-
-
         const { color, year } = this.state;
 
         // Draw the map
@@ -274,10 +282,7 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props, I_State>
                     return colorStyleFill;
                 }
 
-
                 colorStyleFill = color(avg_tempature);
-
-
 
                 return colorStyleFill;
             })
@@ -285,13 +290,34 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props, I_State>
 
                 d3.select(event.currentTarget)
                     .classed("selected", true);
+
+                d3.select("#tooltip");
+
+
+                // .style("left", (event.pageX + 10) + "px")
+                // .style("top", (event.pageY + 10) + "px");
+
+                // Display the tooltips
+                // d3.select("#tooltip")
+                //     .transition()
+                //     .duration(200)
+                //     .style("opacity", 1)
+                //     .text(d.properties.name);
             })
             .on("mouseout", (event, d) => {
-                d3.select(".tooltip")
-                    .text("");
+
+                // d3.select(".tooltip")
+                //     .text("");
 
                 d3.select(event.currentTarget)
                     .classed("selected", false);
+            })
+            .on("click", (event, d) => {
+
+                this.setState({
+                    tooltipCountry: d.properties.name
+                });
+
             });
     };
 

@@ -25,7 +25,7 @@ class AppShellMain extends React.PureComponent<I_Props> {
                     .ctn-body{
                         width:100%;
                         height: 100vh;
-                        background-image: url(${E_Layout.PLAINLAYOUT});
+                        // background-image: url(${E_Layout.PLAINLAYOUT});
                         background-repeat: no-repeat;
                         background-size: cover;
    
@@ -33,8 +33,7 @@ class AppShellMain extends React.PureComponent<I_Props> {
                    
                 `}</style>
 
-
-
+           
                 <div className="ctn-body">
                  
                     {this.props.children}
