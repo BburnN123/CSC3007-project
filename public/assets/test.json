@@ -72,12 +72,12 @@
           {
             "id": 2,
             "name": "CH4",
-            "value": 16.37
+            "value": 20
           },
           {
             "id": 3,
             "name": "N2O",
-            "value": 4.63
+            "value": 2
           }
         ]
       },
