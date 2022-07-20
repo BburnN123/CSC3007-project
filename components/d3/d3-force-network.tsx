@@ -108,35 +108,9 @@ class D3ForceNetWork extends React.PureComponent<unknown, I_State>{
         //handle node change here
     }
 
-    drawCanvasTest = (input: string[]) => {
+    drawCanvas = (data: T_Link[]) => {
         const { width, height, yearchosen } = this.state;
         const svg = d3.select("#ctn-force-network").select("svg");
-        if (svg.size() > 0) {
-            return;
-        }
-        d3.select("#ctn-force-network").append("svg")
-            .attr("viewBox", `0 0 ${width} ${height}`)
-            .attr("preserveAspectRatio", "xMidYMid meet");
-        //Initialise the nodes 
-        const data: T_YearCountrySector[] & { x: number, y: number }[] = [];
-        console.log("in drawcanvas test")
-        console.log(input)
-        const node = this.addCircles(input);
-        const links = this.addLink();
-        const linkpath = this.addLinkPaths(links);
-        const simulation = this.addSimulation(node, links, linkpath, data);
-        this.addDragEvent(node, simulation);
-
-
-
-
-
-    }
-
-    drawCanvas = () => {
-        const { width, height, yearchosen } = this.state;
-        const svg = d3.select("#ctn-force-network").select("svg");
-
         if (svg.size() > 0) {
             return;
         }
@@ -148,12 +122,12 @@ class D3ForceNetWork extends React.PureComponent<unknown, I_State>{
             .attr("preserveAspectRatio", "xMidYMid meet");
 
         /* Intialise the nodes */
-        const data: T_Case[] & { x: number, y: number }[] = [];
-        const { data_case } = this.props;
-        var jsonKey = "year" + yearchosen
-        var data_case_json = data_case[jsonKey]
-        console.log(data_case_json)
-        data_case_json.content.map((d: any) => {
+        //const data: T_Case[] & { x: number, y: number }[] = [];
+        //const { data_case } = this.props;
+        // var jsonKey = "year" + yearchosen
+        // var data_case_json = data_case[jsonKey]
+        // console.log(data_case_json)
+        data.map((d: any) => {
             const obj = {
 
                 // To Start from the center
@@ -161,7 +135,7 @@ class D3ForceNetWork extends React.PureComponent<unknown, I_State>{
                 x: width / 2,
                 y: height / 2
             };
-            data.push(obj);
+            dataArr.push(obj);
         });
 
         // Define the arrowhead marker variables
@@ -183,13 +157,14 @@ class D3ForceNetWork extends React.PureComponent<unknown, I_State>{
         const { colorScale, categoryType } = this.state;
 
         const svg = d3.select("#ctn-force-network").select("svg");
-
+        console.log("in builtnetowrknode");
+        console.log(data)
         const node = this.addCircles(data);
         const links = this.addLink(data);
         const linkpath = this.addLinkPaths(links);
-        // const simulation = this.addSimulation(node, links, linkpath, data);
+        const simulation = this.addSimulation(node, links, linkpath, data);
 
-        // this.addDragEvent(node, simulation);
+        this.addDragEvent(node, simulation);
 
 
 
@@ -301,8 +276,6 @@ class D3ForceNetWork extends React.PureComponent<unknown, I_State>{
 
             links.push(obj);
         });
-
-
         return links;
     };
 

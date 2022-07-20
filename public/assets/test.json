@@ -61,5 +61,68 @@
         ]
       }
     ]
+  },
+  "2020": {
+    "Afghanistan": [
+      {
+        "id": 1,
+        "sector": "Agriculture",
+        "value": 28.76,
+        "gases": [
+          {
+            "id": 2,
+            "name": "CH4",
+            "value": 16.37
+          },
+          {
+            "id": 3,
+            "name": "N2O",
+            "value": 4.63
+          }
+        ]
+      },
+      {
+        "sector": "Building",
+        "value": 0.05,
+        "gases": [
+          {
+            "name": "CH4",
+            "value": 16.37
+          },
+          {
+            "name": "N2O",
+            "value": 4.63
+          }
+        ]
+      },
+      {
+        "sector": "Bunker Fuels",
+        "value": 0.04,
+        "gases": [
+          {
+            "name": "CH4",
+            "value": 16.37
+          },
+          {
+            "name": "N2O",
+            "value": 4.63
+          }
+        ]
+      },
+      {
+        "sector": "Electricity/Heat",
+        "value": 0.12,
+        "gases": [
+          {
+            "name": "CH4",
+            "value": 16.37
+          },
+          {
+            "name": "N2O",
+            "value": 4.63
+          }
+        ]
+      }
+    ]
   }
 }
