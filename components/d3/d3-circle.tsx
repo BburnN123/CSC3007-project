@@ -339,8 +339,8 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
             }) // 100 is where the first dot appears. 25 is the distance between dots
             .attr("width", size)
             .attr("height", size)
-            .style("fill", function (d, i) {
-                return color(i);
+            .style("fill", (d, i): any => {
+                return color(i as any);
             });
 
         // Add one dot in the legend for each name.

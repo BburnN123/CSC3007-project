@@ -1,50 +1,94 @@
 /* NODE MODULES */
-import React, { useState } from "react";
+import React from "react";
 import * as d3 from "d3";
-import { T_Case, T_Link } from "@base/pages/milestone2/force-diagram";
-import Form from 'react-bootstrap/Form'
-import { timeThursdays } from "d3";
+
 /* COMPONENTS */
 
 /* UTILS */
 
 /* TYPES */
-type T_Category = "gender" | "age" | "vaccinated"
 
-interface I_Props {
-    data_link: T_Link[]
-    data_case: T_Case[]
+type T_Gases_Emission = {
+    [year: number]: {
+        [country: string]: T_Sector[]
+    }
+}
+
+type T_Node = {
+    id: number
+    name: string
+    value: number
+}
+
+type T_Sector = T_Node & {
+    gases: T_Node[]
+}
+
+type T_Gases_Link = {
+    [year: number]: {
+        [country: string]: T_Link[]
+    }
+}
+
+type T_Link = {
+    sector: number
+    gas: number
+    value: number;
 }
 
 interface I_State {
     width: number
     height: number
-    categoryType: T_Category
     colorScale: { [key: string | number]: string | boolean }
-    tooltipValue: T_Case | Record<string, unknown>
-    yearchosen: number
+    tooltipValue: T_Node | Record<string, unknown>
 }
 
+class D3ForceNetWork extends React.PureComponent<unknown, I_State>{
 
-class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
-
-    constructor(props: I_Props) {
+    constructor(props: unknown) {
         super(props);
         this.state = {
-            width: 1000,
-            height: 800,
-            categoryType: "gender",
-            colorScale: { "female": "#FF99CC", "male": "#3944BC" },
+            width:        1000,
+            height:       800,
+            colorScale:   { "female": "#FF99CC", "male": "#3944BC" },
             tooltipValue: {
             },
-
-            yearchosen: 1990
         };
 
     }
 
     async componentDidMount() {
-        this.drawCanvas();
+
+        const year = 2019;
+        const country = "Afghanistan";
+
+        const networkData = await d3.json("assets/network_data.json") as T_Gases_Emission;
+        const data = networkData[year][country];
+
+        const dataForceNetWork = data.map((d, i) => {
+
+            const gases = d["gases"].map((g, i) => {
+                return {
+                    id:    g["id"],
+                    name:  g["name"],
+                    value: g["value"],
+                    type:  "gases"
+                };
+            });
+
+            gases.push({
+                id:    d["id"],
+                name:  d["name"],
+                value: d["value"],
+                type:  "sector"
+            });
+
+            return gases;
+
+        });
+
+        const flattenData = dataForceNetWork.flat();
+        await this.drawCanvas(flattenData);
     }
 
     render(): JSX.Element {
@@ -52,42 +96,34 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
             <div>
                 <div id="ctn-force-network">
                 </div>
-                <Form.Label>Range</Form.Label>
-                <Form.Range min={1990} max={2018} onChange={event => this.handleChange(event)} />
             </div>
         );
     }
 
-    handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { yearchosen } = this.state
-        //console.log(e.target.value)
-        this.setState({ yearchosen: e.target.value })
-        console.log("in handlechange function" + yearchosen)
-        //this.drawCanvas()
-        //handle node change here
 
+    drawCanvas = async (dataForceNetWork: {
+        id: number;
+        name: string;
+        value: number;
+        type: string;
+    }[]) => {
+        const width = 1200,
+            height = 600;
 
-
-
-    }
-
-    drawCanvas = () => {
-        const { width, height, yearchosen } = this.state;
         const svg = d3.select("#ctn-force-network").select("svg");
         if (svg.size() > 0) {
             return;
         }
+
         d3.select("#ctn-force-network").append("svg")
             .attr("viewBox", `0 0 ${width} ${height}`)
             .attr("preserveAspectRatio", "xMidYMid meet");
 
+
+
         /* Intialise the nodes */
-        const data: T_Case[] & { x: number, y: number }[] = [];
-        const { data_case } = this.props;
-        var jsonKey = "year" + yearchosen
-        var data_case_json = data_case[jsonKey]
-        console.log(data_case_json)
-        data_case_json.content.map(d => {
+        const data: T_Node[] & { x: number, y: number }[] = [];
+        dataForceNetWork.map(d => {
             const obj = {
 
                 // To Start from the center
@@ -98,6 +134,8 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
             data.push(obj);
         });
+
+        console.log(data);
 
         // Define the arrowhead marker variables
         svg.append("svg:defs").append("svg:marker")
@@ -110,40 +148,31 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
             .append("svg:path")
             .attr("d", "M0,-5L10,0L0,5");
 
-        this.buildNetWorkNode(data);
+        await this.buildNetWorkNode(data);
     };
 
-    buildNetWorkNode = (data: T_Case[] & { x: number, y: number }[]) => {
+    buildNetWorkNode = async (data: T_Node[] & { x: number, y: number }[]) => {
 
-        const { colorScale, categoryType } = this.state;
+        const { colorScale } = this.state;
 
-        const svg = d3.select("#ctn-force-network").select("svg");
 
         const node = this.addCircles(data);
-        const links = this.addLink();
+        const links = await this.addLink();
         const linkpath = this.addLinkPaths(links);
+
         const simulation = this.addSimulation(node, links, linkpath, data);
+        console.log(data);
 
         this.addDragEvent(node, simulation);
 
-
-
-
-        svg.select("#nodes")
-            .selectAll("circle")
-            .style("fill", (d: any) => {
-
-                return colorScale[d[categoryType]];
-            });
     };
 
 
-    addCircles = (data: T_Case[] & { x: number, y: number }[]): d3.Selection<SVGCircleElement, {
+    addCircles = (data: T_Node[] & { x: number, y: number }[]): d3.Selection<SVGCircleElement, {
         x: number;
         y: number;
     }, SVGGElement, unknown> => {
 
-        const { colorScale, categoryType } = this.state;
 
         const svg = d3.select("#ctn-force-network").select("svg");
 
@@ -156,9 +185,8 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
             .enter()
             .append("circle")
             .attr("r", function (d) {
-                return 15
+                return 15;
             })
-            .style("fill", (d: any) => colorScale[d[categoryType]])
             .on("mouseover", (event, d) => {
 
                 d3.select(event.currentTarget)
@@ -206,7 +234,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         x: number;
         y: number;
     }, SVGGElement, unknown>,
-        simulation: d3.Simulation<d3.SimulationNodeDatum, undefined>
+    simulation: d3.Simulation<d3.SimulationNodeDatum, undefined>
     ) => {
         node.call(d3.drag()
             .on("start", (event, d) => this.dragstarted(event, d, simulation))
@@ -214,30 +242,30 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
             .on("end", (event, d) => this.dragended(event, d, simulation)) as any);
     };
 
-    addLink = (): {
+    addLink = async (): Promise<{
         source: number;
         target: number;
-        date: string;
-    }[] => {
+    }[]> => {
 
-        /**
-         * Source - The starting point of the node
-         * Target - Link to who
-         */
-        const { data_link } = this.props;
+        const year = 2019;
+        const country = "Afghanistan";
+
+        const data_link = await d3.json("assets/network_link.json") as T_Gases_Link;
+        const data = data_link[year][country] as T_Link[];
+
 
         /* Add Link to the Data */
-        const links: { source: number, target: number, date: string }[] = [];
-        data_link.map(link => {
+        const links: { source: number, target: number }[] = [];
+        data.map(link => {
+
             const obj = {
-                source: link.infector,
-                target: link.infectee,
-                date: link.date
+                source: link.sector,
+                target: link.gas
             };
+
 
             links.push(obj);
         });
-
 
         return links;
     };
@@ -246,11 +274,9 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
     addLinkPaths = (links: {
         source: number;
         target: number;
-        date: string;
     }[]): d3.Selection<SVGPathElement, {
         source: number;
         target: number;
-        date: string;
     }, SVGGElement, unknown> => {
 
         const svg = d3.select("#ctn-force-network").select("svg");
@@ -277,15 +303,15 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         links: {
             source: number;
             target: number;
-            date: string;
         }[],
         linkpath: d3.Selection<SVGPathElement, {
             source: number;
             target: number;
-            date: string;
         }, SVGGElement, unknown>,
         data: any
     ) => {
+
+        console.log(links);
 
 
         const { width, height } = this.state;

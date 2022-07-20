@@ -1,29 +1,44 @@
 import D3ForceNetWork from "@base/components/d3/d3-force-network";
 import React from "react";
-type MyProps = {
-    // using `interface` is also ok
-    message: string;
-};
-type MyState = {
-    count: number; // like this
-};
-class NodePage extends React.Component<MyProps, MyState> {
-    state: MyState = {
-        // optional second annotation for better type inference
-        count: 0,
-    };
-    render() {
-        const globalEmissionData = require("globalemissiondataclean1990.json");
-        const links = require("linksglobalemission.json")
-        var globalEmissionArray = globalEmissionData
-        console.log(globalEmissionArray)
+import axios from "axios";
+
+export type T_Link = {
+    infector: number
+    infectee: number
+    date: string
+  }
+  
+export type T_Case = {
+    id: number
+    age: number
+    gender: string
+    nationality: string
+    occupation: string
+    organization: string
+    date: string
+    serology: string
+    vaccinated: string
+  }
+
+  
+interface I_Props {
+    data_link: T_Link[]
+    data_cases: T_Case[]
+  }
+  
+class NodePage extends React.PureComponent<I_Props> {
+
+    render(): JSX.Element {
+  
+        const { data_link, data_cases } = this.props;
 
 
         return (
             <div>
                 <h1>Greenhouse Gases House Emission By Sector</h1>
-                <D3ForceNetWork data_link={links} data_case={globalEmissionArray}></D3ForceNetWork>
-                {this.props.message} {this.state.count}
+                <D3ForceNetWork 
+                />
+
             </div>
 
         );
@@ -32,4 +47,4 @@ class NodePage extends React.Component<MyProps, MyState> {
 }
 
 
-export default NodePage
+export default NodePage;
