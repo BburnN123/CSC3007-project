@@ -1,5 +1,44 @@
 [
- 
+  {
+    "infector": 199001,
+    "infectee": 199012,
+    "year": 1990
+  },
+  {
+    "infector": 199002,
+    "infectee": 199012,
+    "year": 1990
+  },
+  {
+    "infector": 199005,
+    "infectee": 199013,
+    "year": 1990
+  },
+  {
+    "infector": 199006,
+    "infectee": 199013,
+    "year": 1990
+  },
+  {
+    "infector": 199007,
+    "infectee": 199013,
+    "year": 1990
+  },
+  {
+    "infector": 199008,
+    "infectee": 199013,
+    "year": 1990
+  },
+  {
+    "infector": 199009,
+    "infectee": 199013,
+    "year": 1990
+  },
+  {
+    "infector": 199010,
+    "infectee": 199013,
+    "year": 1990
+  },
   {
     "infector": 199011,
     "infectee": 199013,
