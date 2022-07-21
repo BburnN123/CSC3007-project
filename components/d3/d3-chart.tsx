@@ -1,7 +1,8 @@
 /* NODE MODULES */
 import React from "react";
 import * as d3 from "d3";
-import axios from "axios";
+import { Container } from "react-bootstrap";
+
 
 type T_Gases_Emission = {
     [year: number]: {
@@ -14,16 +15,16 @@ type T_Gases = {
 }
 
 type T_Sector = {
-    sector: string
+    name: string
     value: number
     gases: T_Gases[]
 }
 type I_State = {
     width: number
     height: number
+    color: any
     colorScale: { [key: string | number]: string | boolean }
     yearchosen: number
-    country: string
     sector: string
 }
 
@@ -31,48 +32,52 @@ interface I_Props {
     country: string
 }
 
-class D3Chart extends React.PureComponent<I_Props> {
-    state: I_State = {
-        // optional second annotation for better type inference
-        yearchosen: 2019,
-        country: "Afghanistan",
-        width: 0,
-        height: 0,
-        colorScale: {},
-        sector: "Total excluding LUCF"
-    };
-    async componentDidMount() {
-        const sectorForCountryOverTheYears = []
-        const yearchosen = this.state.yearchosen;
-        const country = this.state.country;
-        const jsonData = await d3.json("/assets/historical_emission.json") as T_Gases_Emission;
-        // const testHistoricalJsonData = await d3.json("/assets/historical_emission.json") as T_Gases_Emission;
-        const data = jsonData[yearchosen][country]
-        //Adding year to the json object, array includes all the years for that country and its specfic sector
-        for (var key in jsonData) {
-            if (jsonData.hasOwnProperty(key)) {
-                var tempObj = jsonData[key][country]
-                for (var i = 0; i < tempObj.length; i++) {
-                    tempObj[i]["year"] = key
-                    var arrayGas = tempObj[i]["gases"]
-                    for (var j = 0; j < arrayGas.length; j++) {
-                        arrayGas[j]["year"] = key
-                    }
-                    var currentObj = tempObj[i]
-                    if (currentObj.name == this.state.sector) {
-                        sectorForCountryOverTheYears.push(currentObj)
-                    }
-                }
-            }
-        }
-        // console.log(sectorForCountryOverTheYears)
-        this.drawLineChart(sectorForCountryOverTheYears)
+class D3Chart extends React.PureComponent<I_Props, I_State> {
+
+    constructor(props: I_Props) {
+        super(props);
+
+        this.state = {
+            // optional second annotation for better type inference
+            color: d3.scaleOrdinal()
+                .range(['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf', '#999999']),
+            yearchosen: 2019,
+            width: 1000,
+            height: 800,
+            colorScale: {},
+            sector: "Waste"
+        };
     }
+    async componentDidMount() {
+        const data = await this.getData()
+        this.drawLineChart(data)
+    }
+
     render(): JSX.Element {
+        const ddlOptions = ["Total including LUCF",
+            "Total excluding LUCF",
+            "Energy",
+            "Electricity/Heat",
+            "Transportation",
+            "Manufacturing/Construction",
+            "Agriculture",
+            "Fugitive Emissions",
+            "Building",
+            "Industrial Processes",
+            "Land-Use Change and Forestry",
+            "Waste",
+            "Bunker Fuels",
+            "Other Fuel Combustion"]
 
         return (
-
-            <div id="my_dataviz" >
+            <>
+                <style jsx global>{`
+                    
+                    .line-path{
+                        fill:none;
+                        stroke-width : 8px;
+                    }
+                `}</style>
                 <style jsx>{`
                     .tooltip{
                         position: absolute;
@@ -80,106 +85,316 @@ class D3Chart extends React.PureComponent<I_Props> {
                         width: 60px;
                         height: 50px;
                         padding: 2px;
-                        font: 12px sans-serif;
-                        background: lightsteelblue;
-                        border: 0px;
+                        background: rgba(0,0,0,0.8);
+                        color: #FFFFFF;
                         border-radius: 8px;
                         pointer-events: none;
+                        opacity : 0;
                     }
-                    
-                 
+
+                    #ddl-sector{
+                        margin-bottom:20px;
+                    }
+
+
+                    #svg-line{
+                        position:absolute;
+                        left:0; 
+                        top:0;
+                        width:100%;
+                        height:100%
+                    }
+
+                    #ctn-line{
+                        position:relative;
+                        width:60%;
+                        height:500px;
+                    }
+
                 `}</style>
-            </div>
+
+                <Container>
+                    <select
+                        value={this.state.sector}
+                        id="ddl-sector"
+                        onChange={this.handleOnChangeDDL}
+                    >
+                        {ddlOptions.map(ddl => (
+                            <option key={ddl} value={ddl}>{ddl}</option>
+                        ))}
+
+                    </select>
+
+                    <div id="ctn-line" ></div>
+                    <div className="tooltip">doog</div>
+                </Container>
+            </>
         );
     }
-    drawLineChart = (data: []) => {
-        const { country, sector } = this.state;
+
+    getYear = async (): Promise<string[]> => {
+
+        const jsonData = await d3.json("/assets/historical_emission.json") as T_Gases_Emission;
+        const years = Object.keys(jsonData);
+
+        return years;
+    }
+
+    getData = async (): Promise<(T_Sector & { year: string })[]> => {
+
+        const jsonData = await d3.json("/assets/historical_emission.json") as T_Gases_Emission;
+
+        const years = Object.keys(jsonData);
+        const data: (T_Sector & { year: string })[] = [];
+
+        years.map(year => {
+            // Change to integer year
+            const parseYear = parseInt(year);
+            const country = this.props.country;
+
+            jsonData[parseYear][country].map(sector => {
+
+                if (sector["name"] != this.state.sector) {
+                    return;
+                }
+
+                const gases = sector["gases"].map(gas => {
+                    return {
+                        ...gas,
+                        year
+                    }
+                });
+                data.push({
+                    ...sector,
+                    gases,
+                    year
+                })
+            });
+        });
+
+        return data;
+    }
+
+    drawLineChart = (data: (T_Sector & { year: string })[]) => {
+
+        const lineChartSVG = d3.select("#ctn-line").select("#svg-line")
+
+        // List of groups (here I have one group per column)
+
         //Need to select dont append and do the check to prevent the react from rendering the linechart twice 
-        const lineChart = d3.select("#my_dataviz").select("svg")
-        var div = d3.select("body").append("div")
-            .attr("class", "tooltip")
-            .style("opacity", 0);
-        if (lineChart.size() > 0) {
+        if (lineChartSVG.size() > 0) {
             return;
         }
 
-        const margin = { top: 10, right: 30, bottom: 30, left: 60 },
-            width = 800 - margin.left - margin.right,
-            height = 1000 - margin.top - margin.bottom;
+        const { width: ctnWidth, height: ctnHeight } = this.state
+
+        // const margin = { top: 30, right: 30, bottom: 70, left: 60 };
+        const margin = { top: 70, right: 30, bottom: 70, left: 60 };
+        const height = ctnHeight - margin.top - margin.bottom;
+
 
         // append the svg object to the body of the page
-        const svg = d3.select("#my_dataviz")
-            .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
+        const svg = d3.select("#ctn-line").append("svg")
+            .attr("id", "svg-line")
+            .attr("viewBox", `0 0 ${ctnWidth} ${ctnHeight}`)
+            .attr("preserveAspectRatio", "xMidYMid meet")
             .append("g")
-            .attr("transform", `translate(${margin.left},${margin.top})`);
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")")
 
-        // group the data: I want to draw one line per group
         const arrayGas = data.map((d) => {
             return d["gases"]
         })
+
         const flatArrayGas = arrayGas.flat();
-        const groupDataByGas = d3.group(flatArrayGas, d => d.name); // nest function allows to group the calculation per level of a factor
-        // Add X axis --> it is a date format
-        const x = d3.scaleLinear()
-            .domain(d3.extent(data, function (d) { return d.year; }))
-            .range([0, width]);
-        svg.append("g")
-            .attr("transform", `translate(0, ${height})`)
-            //change tick for the number of years in the x axis
-            .call(d3.axisBottom(x).ticks(20));
+        const groupDataByGas = d3.group(flatArrayGas, d => d["name"]); // nest function allows to group the calculation per level of a factor
 
-        // Add Y axis
-        const y = d3.scaleLinear()
-            .domain([0, d3.max(flatArrayGas, function (d) { return d.value; })])
+        // Create the X axis
+        svg
+            .append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .attr("id", "x-axis");
+
+        // Create the Y axis       
+        svg.append("g")
+            .attr("id", "y-axis")
+
+
+        this.updateLineGraph();
+
+        this.addLegend(groupDataByGas);
+    }
+
+    updateLineGraph = async () => {
+
+        const { color, height: ctnHeight, width: ctnWidth } = this.state
+
+        // const margin = { top: 30, right: 30, bottom: 70, left: 60 };
+        const margin = { top: 70, right: 30, bottom: 70, left: 60 };
+        const width = ctnWidth - margin.left - margin.right;
+        const height = ctnHeight - margin.top - margin.bottom;
+
+
+        const svg = d3.select("#ctn-line").select("#svg-line");
+
+        const data = await this.getData();
+        const arrayGas = data.map((d) => {
+            return d["gases"]
+        })
+
+        const flatArrayGas = arrayGas.flat();
+        const groupDataByGas = d3.group(flatArrayGas, d => d["name"]); // nest function allows to group the calculation per level of a factor
+
+        /* X Axis */
+
+        const years = await this.getYear();
+
+        var x = d3.scaleTime()
+            .domain(d3.extent(years, d => d3.timeParse("%Y")(d)) as any)
+            .range([0, width])
+
+        const xAxis = d3.select("#x-axis") as any
+
+        xAxis.transition()
+            .duration(1000)
+            .call(d3.axisBottom(x))
+            .selectAll("text")
+            .style("text-anchor", "end")
+            .attr("dx", "-8px")
+            .attr("dy", "15px")
+            .attr("transform", "rotate(-45)")
+
+        /* Y AXIS */
+
+        var y = d3.scaleLinear()
+            .domain([0, d3.max(flatArrayGas, d => parseInt(d["value"])) as number])
+            .clamp(true)
             .range([height, 0]);
-        svg.append("g")
-            .call(d3.axisLeft(y));
 
-        // color palette
-        const color = d3.scaleOrdinal()
-            .range(['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf', '#999999'])
-        console.log("flatarrayGas below")
-        console.log(flatArrayGas)
-        // Draw the line
-        svg.selectAll(".line")
-            .data(groupDataByGas)
-            .join("path")
-            .attr("fill", "none")
-            .attr("stroke", function (d) { return color(d[0]) })
-            .attr("stroke-width", 8)
-            .attr("d", function (d) {
-                return d3.line()
-                    .x(function (d) { return x(d.year); })
-                    .y(function (d) { return y(+d.value); })
-                    (d[1])
-            })
+        const yAxis = d3.select("#y-axis") as any
+
+        yAxis.transition().duration(1000).call(d3.axisLeft(y));
+
+        const line = svg.selectAll("path.line-path")
+            .data(groupDataByGas);
+
+        line
+            .enter()
+            .append("path")
+            .attr("class", "line-path")
             .on('mouseover', function (event, d) {
 
+                /* Line Graph */
                 d3.select(this).transition()
-                    .duration('50')
+                    .duration(50)
                     .attr('opacity', '.5');
-                //Makes the new div appear on hover:
-                div.transition()
+
+                /* Makes the new div appear on hover */
+                d3.select(".tooltip").transition()
                     .duration(50)
                     .style("opacity", 1);
-                let tipString = d[0]
-                div.html(tipString)
+
+                let tipString = d[0];
+                d3.select(".tooltip").html(tipString)
                     .style("left", (event.pageX + 10) + "px")
                     .style("top", (event.pageY - 15) + "px");
             })
             .on('mouseout', function (d, i) {
 
-                d3.select(this).transition()
-                    .duration('50')
+                d3.select(this)
+                    .transition()
+                    .duration(50)
                     .attr('opacity', '1');
+
                 //Makes the new div disappear:
-                div.transition()
-                    .duration('50')
+                d3.select(".tooltip")
+                    .transition()
+                    .duration(50)
                     .style("opacity", 0);
-            });
+            })
+            .merge(line as any)
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")")
+            .transition() // Apply the changes
+            .duration(1000)
+            .attr("fill", "none")
+            .attr("stroke", (d) => { return color(d[0]) as any })
+            .attr("d", (d) => {
+
+                return d3.line()
+                    .x(function (d: any) { return x(d3.timeParse("%Y")(d["year"]) as any); })
+                    .y(function (d: any) { return y(+d["value"]); })
+                    (d[1] as any)
+            })
+
+        line
+            .exit()
+            .remove()
+
     }
+
+    addLegend = (
+        groupDataByGas: d3.InternMap<string, T_Gases[]>
+    ) => {
+
+        const { color } = this.state
+
+        const svg = d3.select("#ctn-line").select("#svg-line")
+            .append("g")
+            .attr("class", "legend")
+
+        // Add the Legend
+        // Add one dot in the legend for each name.
+
+        svg.selectAll("mydots")
+            .data(groupDataByGas.keys())
+            .enter()
+            .append("circle")
+            .attr("cx", (d, i) => {
+                return this.handleLegendXAxis();
+            })
+            .attr("cy", (d, i) => {
+                return this.handleLegendYAxis()
+
+            }) // 100 is where the first dot appears. 25 is the distance between dots
+            .attr("r", 5)
+            .style("fill", (d) => { return color(d) })
+
+        // Add one dot in the legend for each name.
+        var tempvar = 0;
+        svg.selectAll("mylabels")
+            .data(groupDataByGas.keys())
+            .enter()
+            .append("text")
+            .attr("x", (d, i) => {
+                return this.handleLegendXAxis() + 10;
+            }) // Distance from dot
+            .attr("y", (d, i) => {
+                return this.handleLegendYAxis() + 1
+            }) // 100 is where the first dot appears. 25 is the distance between dots
+            .style("fill", (d) => { return color(d) })
+            .text((d) => d)
+            .attr("text-anchor", "left")
+            .style("alignment-baseline", "middle")
+            .style("font-size", "10px");
+    }
+
+    handleLegendXAxis = () => {
+        return 100;
+    }
+    handleLegendYAxis = () => {
+        return 200;
+    }
+
+    handleOnChangeDDL: React.ChangeEventHandler<HTMLSelectElement> = (e): void => {
+        // console.log(selectedGroup)
+        const selectedValue = e.target.value;
+
+        this.setState({
+            sector: selectedValue
+        }, this.updateLineGraph);
+    }
+
 
 }
 
