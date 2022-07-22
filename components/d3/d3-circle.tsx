@@ -1,23 +1,13 @@
 import React from "react";
 import * as d3 from "d3";
-import {
-    Col, Container, Row
-} from "react-bootstrap";
+import { Container } from "react-bootstrap";
+import { T_Gases_Emission, T_Sector } from "@base/components/d3/d3-force-network";
 
-
-
-type T_Emission_Overview = {
-    [year: number]: {
-        [country: string]: {
-            label: string,
-            value: string
-        }[]
-    }
-}
 
 interface I_Props {
     year: number
     country: string
+    gasemissiondata: T_Gases_Emission
 }
 
 interface I_State {
@@ -107,9 +97,6 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
 
                 </Container>
 
-
-
-
             </>
         );
     }
@@ -118,20 +105,22 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
         label: string,
         value: string
     }[] | null> => {
-        const jsonData = await d3.json("/assets/ghg_emission_country.json") as T_Emission_Overview;
-        const countryData = jsonData[this.props.year][this.props.country];
+
+        const { gasemissiondata } = this.props;
+        const countryData = gasemissiondata[this.props.year][this.props.country];
 
         if (countryData === undefined) {
             return null;
         }
-        const maxValue = countryData.reduce((previousValue, currentValue) =>
-            previousValue + parseInt(currentValue["value"]), 0
+
+        const maxValue = countryData.reduce((previousValue: number, currentValue: T_Sector) =>
+            previousValue + currentValue["value"], 0
         );
 
         const data = countryData.map(d => {
-            const percentage = (parseInt(d["value"]) / maxValue) * 100;
+            const percentage = (d["value"] / maxValue) * 100;
             return {
-                label: d["label"],
+                label: d["name"],
                 value: percentage.toFixed(1)
             };
         });
@@ -397,66 +386,9 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
             .attr("fill", (d, i) => color(i.toString()) as string)
             .attr("d", arc as any);
 
-
-        // const label = svg.selectAll("tspan.lblTxt")
-        //     .data(pie as any);
-
-        // const text = svg.selectAll("text.labels")
-        //     .data(pie as any);
-
-        // text
-        //     .enter()
-        //     .append("svg:text")
-        //     .merge(text)
-        //     .attr("class", "labels") //add a label to each slice
-        //     .attr("fill", "grey")
-        //     .attr("transform", function (d: any) {
-        //         const c = arc.centroid(d),
-        //             xp = c[0],
-        //             yp = c[1],
-
-        //             // pythagorean theorem for hypotenuse
-        //             hp = Math.sqrt(xp * xp + yp * yp);
-        //         return "translate(" + (xp / hp * labelr) + "," +
-        //             (yp / hp * labelr) + ")";
-        //     })
-        //     .attr("text-anchor", "middle");
-
-        // label
-        //     .enter()
-        //     .append("svg:text")
-        //     .attr("class", "labels") //add a label to each slice
-        //     .attr("fill", "grey")
-        //     .attr("transform", function (d: any) {
-        //         const c = arc.centroid(d),
-        //             xp = c[0],
-        //             yp = c[1],
-
-        //             // pythagorean theorem for hypotenuse
-        //             hp = Math.sqrt(xp * xp + yp * yp);
-        //         return "translate(" + (xp / hp * labelr) + "," +
-        //             (yp / hp * labelr) + ")";
-        //     })
-        //     .attr("text-anchor", "middle")
-        //     .merge(label)
-        //     .text(function (d, i) {
-        //         return `${data[i].value}%`;
-        //     })
-        //     .attr("x", "0")
-        //     .attr("dy", "1.2em");
-
-
         arcs
             .exit()
             .remove();
-
-        // label
-        //     .exit()
-        //     .remove();
-
-        // text
-        //     .exit()
-        //     .remove();
 
     };
 }

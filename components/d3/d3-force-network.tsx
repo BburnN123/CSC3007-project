@@ -8,7 +8,7 @@ import * as d3 from "d3";
 
 /* TYPES */
 
-type T_Gases_Emission = {
+export type T_Gases_Emission = {
     [year: number]: {
         [country: string]: T_Sector[]
     }
@@ -20,11 +20,11 @@ type T_Node = {
     value: number
 }
 
-type T_Sector = T_Node & {
+export type T_Sector = T_Node & {
     gases: T_Node[]
 }
 
-type T_Gases_Link = {
+export type T_Gases_Link = {
     [year: number]: {
         [country: string]: T_Link[]
     }
@@ -38,14 +38,17 @@ type T_Link = {
 
 interface I_Props {
     country: string,
-    year: number
+    year: number,
+    netforcedata: T_Gases_Emission
+    netforcelink: T_Gases_Link
 }
 
 interface I_State {
     width: number
     height: number
     tooltipValue: T_Node | Record<string, unknown>,
-    color: any
+    gasColorScale: Record<string, unknown>
+    sectorColorScale: Record<string, unknown>
 }
 
 class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
@@ -53,58 +56,79 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
     constructor(props: I_Props) {
         super(props);
         this.state = {
-            width: 1000,
-            height: 800,
-            color: d3.schemeBlues[9],
-            tooltipValue: {
+            width:            1000,
+            height:           800,
+            gasColorScale:    {},
+            sectorColorScale: {},
+            tooltipValue:     {
             },
         };
 
     }
 
     async componentDidMount() {
-
+        await this.createColorScale();
         const data = await this.getNodeData();
+
         await this.drawCanvas(data);
     }
 
     render(): JSX.Element {
         return (
-            <div>
+
+            <>
+                <style jsx>{`     
+                          #svg-force-network, #svg-legend {
+                            position:absolute;  
+                            left:0; 
+                            top:0;
+                            width:100%;
+                            height:100%
+                        }
+        
+                        #ctn-force-network, #legend-circle{
+                            position:relative;
+                            width:${this.state.width}px;
+                            height:${this.state.height}px;
+                            border : 1px solid black;
+                          
+                        }
+                        `}</style>
+
                 <div id="ctn-force-network">
                 </div>
-            </div>
+            </>
         );
     }
 
     getNodeData = async () => {
         const { year, country } = this.props;
 
-        const networkData = await d3.json("assets/network_data.json") as T_Gases_Emission;
+        const networkData = this.props.netforcedata;
         const data = networkData[year][country];
 
         const dataForceNetWork = data.map((d, i) => {
 
             // Convert to percentage
-            const total_ghg = d["value"]
+            const total_ghg = d["value"];
 
             const gases = d["gases"].map((g, i) => {
 
                 /* Count how much percentage it hold */
-                const percentage = (g["value"] / total_ghg) * 100
+                const percentage = (g["value"] / total_ghg) * 100;
                 return {
-                    id: g["id"],
-                    name: g["name"],
+                    id:    g["id"],
+                    name:  g["name"],
                     value: percentage,
-                    type: "gases"
+                    type:  "gases"
                 };
             });
 
             gases.push({
-                id: d["id"],
-                name: d["name"],
+                id:    d["id"],
+                name:  d["name"],
                 value: 100,
-                type: "sector"
+                type:  "sector"
             });
 
             return gases;
@@ -113,16 +137,15 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
         const flattenData = dataForceNetWork.flat();
         return flattenData;
-    }
+    };
 
     getLinkData = async (): Promise<T_Link[]> => {
 
-        const { year, country } = this.props;
-        const data_link = await d3.json("assets/network_link.json") as T_Gases_Link;
-        const data = data_link[year][country] as T_Link[];
+        const { year, country, netforcelink } = this.props;
+        const data = netforcelink[year][country] as T_Link[];
 
         return data;
-    }
+    };
 
 
     drawCanvas = async (dataForceNetWork: {
@@ -131,23 +154,24 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         value: number;
         type: string;
     }[]) => {
-        const width = 1200,
-            height = 600;
+
+        const { width, height } = this.state;
 
         const svg = d3.select("#ctn-force-network").select("svg");
         if (svg.size() > 0) {
             return;
         }
 
-        let zoom = d3.zoom()
-            .scaleExtent([1, 3])
-            .translateExtent([[0, 0], [width, height]])
-            .on('zoom', (e) => {
-                d3.selectAll('svg g')
-                    .attr('transform', e.transform);
+        const zoom = d3.zoom()
+            .scaleExtent([ 1, 3 ])
+            .translateExtent([ [ 0, 0 ], [ width, height ] ])
+            .on("zoom", (e) => {
+                d3.selectAll("#svg-network-force g")
+                    .attr("transform", e.transform);
             });
 
         d3.select("#ctn-force-network").append("svg")
+            .attr("id", "svg-network-force")
             .attr("viewBox", `0 0 ${width} ${height} `)
             .attr("preserveAspectRatio", "xMidYMid meet")
             .call(zoom as any);
@@ -196,8 +220,8 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         y: number;
     }), SVGGElement, unknown> => {
 
-
-        const svg = d3.select("#ctn-force-network").select("svg");
+        const { gasColorScale } = this.state;
+        const svg = d3.select("#ctn-force-network").select("#svg-network-force");
 
         // Create Circle
         // Section to change radius of circle size
@@ -206,10 +230,13 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
             .selectAll("circle")
             .data(data)
             .enter()
-            .append("circle")
+            .append("circle");
 
 
-        nodes.style("fill", "white")
+        nodes
+            .style("fill", (d) => {
+                return gasColorScale[d["name"]] as any;
+            })
             .style("stroke", "black")
             .attr("r", (d) => {
 
@@ -264,7 +291,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         x: number;
         y: number;
     }), SVGGElement, unknown>,
-        simulation: d3.Simulation<d3.SimulationNodeDatum, undefined>
+    simulation: d3.Simulation<d3.SimulationNodeDatum, undefined>
     ) => {
         node.call(d3.drag()
             .on("start", (event, d) => this.dragstarted(event, d, simulation))
@@ -304,7 +331,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         target: number;
     }, SVGGElement, unknown> => {
 
-        const svg = d3.select("#ctn-force-network").select("svg");
+        const svg = d3.select("#ctn-force-network").select("#svg-network-force");
 
         /* Add Link to the Data */
         const linkPath = svg.append("g")
@@ -325,7 +352,9 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
             .attr("dx", 1)
             .attr("dy", ".35em")
             .attr("text-anchor", "middle")
-            .text(function (d) { return "my label" });
+            .text(function (d) {
+                return "my label";
+            });
 
         return linkPath;
     };
@@ -347,8 +376,6 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
     ) => {
 
         const { width, height } = this.state;
-
-        const svg = d3.select("#ctn-force-network").select("svg");
 
         const simulation = d3.forceSimulation()
             .nodes(data)
@@ -408,6 +435,45 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         d.fy = null;
     };
 
+
+    createColorScale = async () => {
+        const gasType = [ "All GHG", "CO2", "CH4", "N2O", "F-Gas" ];
+        const sectorType = [ "Total including LUCF",
+            "Total excluding LUCF",
+            "Energy",
+            "Electricity/Heat",
+            "Transportation",
+            "Manufacturing/Construction",
+            "Agriculture",
+            "Fugitive Emissions",
+            "Building",
+            "Industrial Processes",
+            "Land-Use Change and Forestry",
+            "Waste",
+            "Bunker Fuels",
+            "Other Fuel Combustion"
+        ];
+        const color = d3.scaleOrdinal()
+            .range(d3.schemeRdBu[11]);
+
+        const gasColorScale: { [key: string]: string | boolean } = {};
+        const sectorColorScale: { [key: string]: string | boolean } = {};
+
+        gasType.map((key, index) => {
+            gasColorScale[key] = color(index.toString()) as string;
+        });
+        sectorType.map((key, index) => {
+            sectorColorScale[key] = color(index.toString()) as string;
+        });
+
+
+        console.log(gasColorScale);
+
+        this.setState({
+            gasColorScale,
+            sectorColorScale
+        });
+    };
 
 }
 
