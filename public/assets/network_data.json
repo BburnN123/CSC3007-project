@@ -21,7 +21,7 @@
             {
                 "id": 2,
                 "name": "Building",
-                "value": 0.05,
+                "value": 28.76,
                 "gases": [
                     {
                         "id": 21,
@@ -38,7 +38,7 @@
             {
                 "id": 3,
                 "name": "Bunker Fuels",
-                "value": 0.04,
+                "value": 28.76,
                 "gases": [
                     {
                         "id": 31,
@@ -55,7 +55,7 @@
             {
                 "id": 4,
                 "name": "Electricity/Heat",
-                "value": 0.12,
+                "value": 28.76,
                 "gases": [
                     {
                         "id": 41,
