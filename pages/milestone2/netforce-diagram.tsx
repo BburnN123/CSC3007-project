@@ -163,8 +163,9 @@ export const getStaticProps = async (context: NextPageContext) => {
 
     // // Fetch data from external API
 
-    const location = "http://localhost:3000/";
+    // const location = "http://localhost:3000/";
 
+    const location = "https://bburnn123.github.io/CSC3007-project/";
 
     const netforcedata = await d3.json(`${location}/assets/historical_emission.json`) as T_Gases_Emission;
 
