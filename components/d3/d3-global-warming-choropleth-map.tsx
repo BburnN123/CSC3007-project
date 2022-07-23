@@ -318,10 +318,11 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props, I_State>
                     pathname: "./netforce-diagram",
                     query:    {
 
-                        // country: d["properties"]["name"]
-                        // year:    this.state.year
-                        country: "Afghanistan",
-                        year:    2019
+                        country: d["properties"]["name"],
+                        year:    this.state.year
+
+                        // country: "Afghanistan",
+                        // year: 2019
 
                     },
 
