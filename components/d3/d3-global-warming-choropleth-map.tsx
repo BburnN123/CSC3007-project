@@ -5,9 +5,8 @@ import * as d3 from "d3";
 import { legendColor } from "d3-svg-legend";
 import axios from "axios";
 import GlobalWarmingSlider from "@base/components/gloabl-warming/global-warming-slider";
-import {
-    Container, Row, Col
-} from "react-bootstrap";
+import { Container } from "react-bootstrap";
+import { NextRouter, withRouter } from "next/router";
 
 
 /* COMPONENTS */
@@ -40,6 +39,7 @@ interface I_Props {
     enableRotation?: boolean
     drawGraticules?: boolean
     size?: { width: number, height: number }
+    router: NextRouter
 
 }
 
@@ -314,8 +314,20 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props, I_State>
             })
             .on("click", (event, d) => {
 
+                this.props.router.push({
+                    pathname: "./netforce-diagram",
+                    query:    {
+
+                        // country: d["properties"]["name"]
+                        // year:    this.state.year
+                        country: "Afghanistan",
+                        year:    2019
+
+                    },
+
+                });
                 this.setState({
-                    tooltipCountry: d.properties.name
+                    tooltipCountry: d["properties"]["name"]
                 });
 
             });
@@ -364,8 +376,6 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props, I_State>
     };
 
     setLegend = async () => {
-
-        // const svg = d3.select("#svg-color-quant");
 
         const svg = d3.select("#ctn-map").select("svg");
 
@@ -447,4 +457,4 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props, I_State>
 
 }
 
-export default D3GlobalWarmingChoroplethMap;
+export default withRouter(D3GlobalWarmingChoroplethMap);

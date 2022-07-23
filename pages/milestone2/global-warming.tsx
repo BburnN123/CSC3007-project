@@ -34,7 +34,7 @@ class GlobalWarming extends React.PureComponent {
                     size={{ width: 1000, height: 500 }}
                 />
 
-                <D3HorizontalBarChart country={"Afghanistan"} />
+             
             </>
         );
     }

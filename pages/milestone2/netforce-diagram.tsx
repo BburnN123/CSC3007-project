@@ -135,10 +135,10 @@ class NodePage extends React.PureComponent<I_Props, I_State> {
         const year = params.get("year");
 
         const yearQuery = parseInt(year as string);
+
         this.setState({
             country,
-
-            // year: yearQuery
+            year: yearQuery
         });
     };
 
@@ -171,7 +171,6 @@ export const getStaticProps = async (context: NextPageContext) => {
     // Pass data to the page via props
     return {
         props: {
-
             netforcedata,
 
         }

@@ -31,6 +31,17 @@ class NetForceDiagramToolTips extends React.PureComponent<I_Props, I_State> {
         };
     }
 
+    componentDidMount() {
+
+        const params = (new URL(window.location.href)).searchParams;
+        const year = params.get("year");
+
+        const yearQuery = parseInt(year as string);
+
+        this.setState({
+            year: yearQuery
+        });
+    }
 
     render(): JSX.Element {
 
