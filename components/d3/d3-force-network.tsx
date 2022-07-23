@@ -41,27 +41,38 @@ interface I_Props {
     year: number,
     netforcedata: T_Gases_Emission
     netforcelink: T_Gases_Link
+    selectedNetForce: string
 }
 
 interface I_State {
     width: number
     height: number
     tooltipValue: T_Node | Record<string, unknown>,
-    gasColorScale: Record<string, unknown>
-    sectorColorScale: Record<string, unknown>
+    gasColorScale: Record<string, unknown>,
+    sectorColorScale: Record<string, unknown>,
+    sectorColor: any
+    selectedNetForce: string
 }
+
 
 class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
     constructor(props: I_Props) {
         super(props);
         this.state = {
-            width:            1000,
-            height:           800,
-            gasColorScale:    {},
+            width:         600,
+            height:        700,
+            gasColorScale: {
+                "CO2":   "#F1FAEE",
+                "CH4":   "#A8DADC",
+                "N2O":   "#457B9D",
+                "F-Gas": "#1D3557"
+            },
+            sectorColor:      d3.schemeRdBu[9],
             sectorColorScale: {},
             tooltipValue:     {
             },
+            selectedNetForce: ""
         };
 
     }
@@ -73,13 +84,43 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         await this.drawCanvas(data);
     }
 
+    async componentDidUpdate() {
+        if (this.props.selectedNetForce !== this.state.selectedNetForce) {
+
+            this.setState({
+                selectedNetForce: this.props.selectedNetForce
+            });
+
+            if (this.props.selectedNetForce.trim() === "") {
+                d3.selectAll("circle")
+                    .classed("fade-inactive", false);
+                return;
+            }
+
+            let name = this.props.selectedNetForce;
+            name = name.replace(/[^a-zA-Z]+/g, "-").toLowerCase();
+
+            d3.selectAll(`circle:not(.${name})`)
+                .classed("fade-inactive", true);
+
+            d3.selectAll(`circle.${name}`)
+                .classed("fade-active", true);
+
+        }
+    }
+
     render(): JSX.Element {
+
         return (
 
             <>
+                <style global jsx>{`
+                   
+                `}</style>
+
                 <style jsx>{`     
                           #svg-force-network, #svg-legend {
-                            position:absolute;  
+                            position:relative;  
                             left:0; 
                             top:0;
                             width:100%;
@@ -93,6 +134,15 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
                             border : 1px solid black;
                           
                         }
+                        .fade-inactive {
+                            z-index:-1;
+                            opacity : 0.2;
+                        }
+                        .fade-active {
+                            stroke-width: 4px;
+                           
+                        }
+
                         `}</style>
 
                 <div id="ctn-force-network">
@@ -117,18 +167,22 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
                 /* Count how much percentage it hold */
                 const percentage = (g["value"] / total_ghg) * 100;
                 return {
-                    id:    g["id"],
-                    name:  g["name"],
-                    value: percentage,
-                    type:  "gases"
+                    id:     g["id"],
+                    name:   g["name"],
+                    value:  percentage,
+                    type:   "gases",
+                    sector: d["name"]
+
                 };
             });
 
             gases.push({
-                id:    d["id"],
-                name:  d["name"],
-                value: 100,
-                type:  "sector"
+                id:     d["id"],
+                name:   d["name"],
+                value:  100,
+                type:   "sector",
+                sector: d["name"]
+
             });
 
             return gases;
@@ -164,7 +218,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
         const zoom = d3.zoom()
             .scaleExtent([ 1, 3 ])
-            .translateExtent([ [ 0, 0 ], [ width, height ] ])
+            .translateExtent([ [ 0, 0 ], [ width + 500, height + 500 ] ])
             .on("zoom", (e) => {
                 d3.selectAll("#svg-network-force g")
                     .attr("transform", e.transform);
@@ -172,7 +226,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
         d3.select("#ctn-force-network").append("svg")
             .attr("id", "svg-network-force")
-            .attr("viewBox", `0 0 ${width} ${height} `)
+            .attr("viewBox", `0 0 ${width + 500} ${height + 500} `)
             .attr("preserveAspectRatio", "xMidYMid meet")
             .call(zoom as any);
 
@@ -220,7 +274,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         y: number;
     }), SVGGElement, unknown> => {
 
-        const { gasColorScale } = this.state;
+        const { gasColorScale, sectorColorScale } = this.state;
         const svg = d3.select("#ctn-force-network").select("#svg-network-force");
 
         // Create Circle
@@ -234,8 +288,19 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
 
         nodes
-            .style("fill", (d) => {
-                return gasColorScale[d["name"]] as any;
+            .style("fill", (d: any) => {
+                if (d["type"] === "sector") {
+                    return sectorColorScale[d["name"]] as any;
+                }
+
+                return gasColorScale[d["name"]];
+            })
+            .attr("class", (d: any) => {
+
+                let name = d["sector"];
+                name = name.replaceAll(/[^a-zA-Z]+/g, "-");
+
+                return `${name.toLowerCase()}`;
             })
             .style("stroke", "black")
             .attr("r", (d) => {
@@ -245,6 +310,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
                 return d["value"] / 2;
             })
             .on("mouseover", (event, d) => {
+
 
                 d3.select(event.currentTarget)
                     .attr("stroke", "black")
@@ -264,11 +330,12 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
                 d3.select(event.currentTarget)
                     .attr("stroke", "none");
 
-                // Hide the tooltips
-                d3.select("#tooltip")
-                    .transition()
-                    .duration(200)
-                    .style("opacity", 0);
+
+                // // Hide the tooltips
+                // d3.select("#tooltip")
+                //     .transition()
+                //     .duration(200)
+                //     .style("opacity", 0);
 
                 setTimeout(() => {
                     this.setState({
@@ -278,6 +345,8 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
             })
             .on("mousemove", function (event, d) {
+
+                console.log;
 
                 d3.select("#tooltip")
                     .style("left", (event.pageX + 10) + "px")
@@ -381,11 +450,11 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
             .nodes(data)
 
             // .force("x", d3.forceX().strength(0.1).x(d => xPosition(d.class)))
-            .force("x", d3.forceX().strength(0.5).x(width / 2))
-            .force("y", d3.forceY().strength(0.1).y(height / 2))
+            .force("x", d3.forceX().strength(0.5).x(width + 100 / 2))
+            .force("y", d3.forceY().strength(0.1).y(height + 100 / 2))
             .force("link", d3.forceLink(links).id((d: any) => d.id).distance(50).strength(0.5))
             .force("charge", d3.forceManyBody().strength(-30))
-            .force("collide", d3.forceCollide().strength(0.1).radius(40))
+            .force("collide", d3.forceCollide().strength(0.2).radius(80))
             .on("tick", () => {
                 node
                     .attr("cx", d => d.x)
@@ -437,7 +506,6 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
 
     createColorScale = async () => {
-        const gasType = [ "All GHG", "CO2", "CH4", "N2O", "F-Gas" ];
         const sectorType = [ "Total including LUCF",
             "Total excluding LUCF",
             "Energy",
@@ -452,28 +520,22 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
             "Waste",
             "Bunker Fuels",
             "Other Fuel Combustion"
-        ];
+        ].sort();
+
+        const sectorColorScale: { [key: string]: string } = {};
+
         const color = d3.scaleOrdinal()
-            .range(d3.schemeRdBu[11]);
+            .range(this.state.sectorColor);
 
-        const gasColorScale: { [key: string]: string | boolean } = {};
-        const sectorColorScale: { [key: string]: string | boolean } = {};
-
-        gasType.map((key, index) => {
-            gasColorScale[key] = color(index.toString()) as string;
-        });
         sectorType.map((key, index) => {
             sectorColorScale[key] = color(index.toString()) as string;
         });
 
-
-        console.log(gasColorScale);
-
         this.setState({
-            gasColorScale,
             sectorColorScale
         });
     };
+
 
 }
 

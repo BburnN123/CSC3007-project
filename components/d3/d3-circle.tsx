@@ -2,15 +2,19 @@ import React from "react";
 import * as d3 from "d3";
 import { Container } from "react-bootstrap";
 import { T_Gases_Emission, T_Sector } from "@base/components/d3/d3-force-network";
+import { legendColor } from "d3-svg-legend";
 
 
 interface I_Props {
     year: number
     country: string
     gasemissiondata: T_Gases_Emission
+    onHoverArc: (label: string) => void
 }
 
 interface I_State {
+    width: number,
+    height: number,
     year: number
     country: string
     color: readonly string[]
@@ -20,9 +24,11 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
     constructor(props: I_Props) {
         super(props);
         this.state = {
+            width:   300,
+            height:  300,
             year:    0,
             country: "",
-            color:   d3.schemeRdBu[11]
+            color:   d3.schemeRdBu[9]
         };
     }
 
@@ -54,6 +60,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
     }
 
     render(): JSX.Element {
+        const { width, height } = this.state;
         return (
             <>
                 <style jsx>{`
@@ -69,18 +76,18 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
 
                    
                 #svg-piechart, #svg-legend {
-                    position:absolute;
+                    position:relative;
                     left:0; 
                     top:0;
                     width:100%;
                     height:100%
                 }
 
-                #ctn-piechart, #legend-circle{
+                #ctn-piechart{
                     position:relative;
-                    width:800px;
-                    height:500px;
-                  
+                    width:${width}px;
+                    height:${height}px;
+                    margin:auto;
                 }
                 `}</style>
                 <Container>
@@ -90,7 +97,9 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
 
                     <div id="ctn-piechart">
                         <svg id="svg-piechart"></svg>
-                        <div id="legend-circle"></div>
+                        <div id="legend-circle">
+                            <svg id="svg-legend"></svg>
+                        </div>
 
                     </div>
 
@@ -142,11 +151,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
 
     createCircle = async () => {
 
-        const ctnCircle = d3.select("#ctn-piechart").select("svg");
-
-        const width = 800;
-        const height = 600; //this is the double because are showing just the half of the pie
-
+        const { width, height } = this.state;
         const data = await this.getData();
         if (data === null) {
             return;
@@ -158,6 +163,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
             .attr("preserveAspectRatio", "xMidYMid meet")
             .append("svg:g") //make a group to hold our pie chart
             .attr("transform", "translate(" + (width / 2) + "," + (height / 2) + ")")//move the center of the pie chart from 0, 0 to radius, radius
+
             .attr("id", "first-g");
 
         this.createArc(data);
@@ -205,6 +211,10 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
                     .duration(200)
                     .style("opacity", 1)
                     .text(d.data["label"]);
+
+                this.props.onHoverArc(d.data["label"]);
+
+
             })
             .on("mouseout", (event, d) => {
 
@@ -213,6 +223,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
 
                 d3.select(event.currentTarget)
                     .classed("selected", false);
+                this.props.onHoverArc("");
             })
             .enter()//associate the generated pie data (an array of arcs, each having startAngle, endAngle and value properties)
             .append("svg:g")
@@ -288,64 +299,27 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
         label: string;
         value: string;
     }[]) => {
-        const ctnCircle = d3.select("#legend-circle").select("svg").attr("id", "svg-legend");
 
-        const width = 1000;
-        const height = 300; //this is the double because are showing just the half of the pie
+        const labels = data.map((d) => d["label"]);
+        const svg = d3.select("#legend-circle").select("#svg-legend");
 
-        if (ctnCircle.size() > 0 || data === null) {
-            return;
-        }
-
-        console.log(ctnCircle);
-
-
-        //array of colors for the pie (in the same order as the dataset)
-        const color = d3.scaleOrdinal()
+        const colorScale = d3
+            .scaleOrdinal()
+            .domain(labels)
             .range(this.state.color);
 
-        const svg = d3.select("#legend-circle")
-            .append("svg") //create the SVG element inside the <body>
-            .attr("viewBox", `0 0 ${width} ${height}`)
-            .attr("preserveAspectRatio", "xMidYMid meet")
+        const legend = legendColor()
+            .title("Sector Type")
+            .scale(colorScale);
 
-            .attr("id", "svg-legend");
+        svg.append("g")
+            .attr("id", "legend-circle")
+            .attr("transform", "translate(30,30)");
 
-        const legend = svg.selectAll("g.legend") //this selects all <g> elements with class slice (there aren't any yet)
-            .data(data)
-            .enter()//associate the generated pie data (an array of arcs, each having startAngle, endAngle and value properties)
-            .append("svg:g")
-            .attr("class", "legend")
-            .attr("transform", "translate(500,0)");
+        svg.select("#legend-circle")
+            .call(legend as any);
 
-        // Add one dot in the legend for each name.
-        const size = 20;
-        legend
-            .append("rect")
-            .attr("x", 100)
-            .attr("y", function (d, i) {
-                return 100 + i * (size + 5);
-            }) // 100 is where the first dot appears. 25 is the distance between dots
-            .attr("width", size)
-            .attr("height", size)
-            .style("fill", (d, i): any => {
-                return color(i as any);
-            });
 
-        // Add one dot in the legend for each name.
-        legend
-            .append("text")
-            .attr("x", 100 + size * 1.2)
-            .attr("y", function (d, i) {
-                return 100 + i * (size + 5) + (size / 2);
-            }) // 100 is where the first dot appears. 25 is the distance between dots
-
-            .text(function (d) {
-
-                return d["label"];
-            })
-            .attr("text-anchor", "left")
-            .style("alignment-baseline", "middle");
     };
 
     reBuildCircle = async () => {
@@ -359,7 +333,6 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
         const width = 1000;
         const height = 300; //this is the double because are showing just the half of the pie
         const radius = Math.min(width, height) / 2;
-        const labelr = radius + 30; // radius for label anchor
 
         const color = d3.scaleOrdinal()
             .range(this.state.color);
