@@ -4,6 +4,7 @@ import React from "react";
 /* COMPONENTS */
 import Text from "@base/design/text";
 import D3GlobalWarmingChoroplethMap from "@base/components/d3/d3-global-warming-choropleth-map";
+import D3HorizontalBarChart from "@base/components/d3/d3-horizontal-barchart";
 
 
 class GlobalWarming extends React.PureComponent {
@@ -32,6 +33,8 @@ class GlobalWarming extends React.PureComponent {
                     type="map"
                     size={{ width: 1000, height: 500 }}
                 />
+
+                <D3HorizontalBarChart country={"Afghanistan"} />
             </>
         );
     }

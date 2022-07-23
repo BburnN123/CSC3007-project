@@ -328,7 +328,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
         const zoom = d3.zoom()
             .scaleExtent([ 1, 10 ])
-            .translateExtent([ [ 0, 0 ], [ width, height ] ])
+            .translateExtent([ [ 0, 0 ], [ width + 500, height ] ])
             .on("zoom", (e) => {
                 d3.selectAll("#svg-network-force g")
                     .attr("transform", e.transform);
@@ -341,7 +341,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
         const svg = d3.select("#ctn-force-network").append("svg")
             .attr("id", "svg-network-force")
-            .attr("viewBox", `0 0 ${width} ${height} `)
+            .attr("viewBox", `500 0 ${width} ${height} `)
 
         // .attr("preserveAspectRatio", "xMidYMid meet")
 
