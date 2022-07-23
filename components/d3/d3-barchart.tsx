@@ -74,13 +74,24 @@ class D3BarChart extends React.PureComponent<I_Props, I_State>{
                         height:300px
                     }
                   
+                    #barchart-tooltip{
+                        position: absolute;
+                        left:0; 
+                        top:0;
+                        background : rgba(0,0,0,0.4);
+                        color: #FFFFFF;
+                        width : 200px;
+                        text-align : center;
+                   }
+
                     `}</style>
 
                 <Text >
-                
+
                     {this.props.sector}
                 </Text>
                 <div id="ctn-barchart"></div>
+           
 
             </>
         );
@@ -138,7 +149,7 @@ class D3BarChart extends React.PureComponent<I_Props, I_State>{
         const x = d3.scaleLinear()
             .domain([ 0, d3.max(xLabel) ] as any)
             .range([ 0, width ]);
-            
+
 
         const xAxis = d3.select("#x-axis") as any;
 
@@ -170,8 +181,10 @@ class D3BarChart extends React.PureComponent<I_Props, I_State>{
         const rect = svg.selectAll("rect")
             .data(data);
 
-        rect.enter()
+        rect
+            .enter()
             .append("rect")
+            .attr("class", "rect")
             .merge(rect as any)
             .attr("x", x(0))
             .attr("y", (d) => {
@@ -184,6 +197,7 @@ class D3BarChart extends React.PureComponent<I_Props, I_State>{
                 return gasColorScale[d["name"]];
             })
             .attr("height", y.bandwidth())
+            
             .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
         rect

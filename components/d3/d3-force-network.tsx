@@ -72,7 +72,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
                 "N2O":   "#457B9D",
                 "F-Gas": "#1D3557"
             },
-            sectorColor:      d3.schemePurples[9],
+            sectorColor:      d3.schemeGreys[9],
             sectorColorScale: {},
             tooltipValue:     {
             },

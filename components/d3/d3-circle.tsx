@@ -18,6 +18,7 @@ interface I_State {
     height: number,
     year: number
     country: string
+    colorScale: { [key: string]: string },
     color: readonly string[]
     excludeSector: string[]
 }
@@ -30,6 +31,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
             height:        400,
             year:          0,
             country:       "",
+            colorScale:    {},
             color:         d3.schemeGreys[9],
             excludeSector: [ "Total including LUCF", "Total excluding LUCF" ]
 
@@ -42,6 +44,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
             country: this.props.country
         });
 
+        this.createColorScale();
         await this.createCircle();
     }
 
@@ -70,6 +73,10 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
                 <style jsx global>{`
                     .slice.selected{
                         stroke-width:2px;
+                        stroke:black;
+                    }
+                    .slice{
+                        stroke-width:1px;
                         stroke:black;
                     }
                 `}</style>
@@ -221,9 +228,8 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
         const radius = Math.min(width, height) / 2;
         const labelr = radius + 30; // radius for label anchor
 
-        //array of colors for the pie (in the same order as the dataset)
-        const color = d3.scaleOrdinal()
-            .range(this.state.color);
+
+        const { colorScale } = this.state;
 
         const svg = d3.select("#ctn-piechart")
             .select("#first-g")
@@ -256,12 +262,13 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
                 d3.selectAll(".slice:not(.selected)")
                     .classed("fade-inactive", true);
 
+
                 // Display the tooltips
                 d3.select("#circle-tooltip")
                     .transition()
                     .duration(200)
                     .style("opacity", 1)
-                    .text(d["data"]["label"]);
+                    .text(d["data"]["label"] + " " +d["data"]["value"] + "MtCO");
 
 
                 // this.props.onHoverArc(d.data["label"]);
@@ -292,8 +299,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
         arcs.append("svg:path")
             .attr("class", "arcs")
             .attr("cursor", "pointer")
-            .attr("fill", (d, i) => color(i.toString()) as string
-            ) //set the color for each slice to be chosen from the color function defined above
+            .attr("fill", (d: any) => colorScale[d["data"]["label"]] as string) //set the color for each slice to be chosen from the color function defined above
             .attr("d", arc as any);
 
         // /* Create Class */
@@ -312,7 +318,6 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
                     (yp / hp * labelr) + ")";
             })
             .attr("text-anchor", "middle"); //center the text on it's origin
-
 
         label
             .append("tspan")
@@ -368,6 +373,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
         const color = d3.scaleOrdinal()
             .range(this.state.color);
 
+
         /* Get the SVG */
         const svg = d3.select("#ctn-piechart")
             .select("#first-g")
@@ -382,10 +388,13 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
         const arcs = svg.selectAll("path")
             .data(pie as any);
 
-        arcs.enter()
+        arcs
+            .enter()
             .append("svg:path")
             .attr("class", "arcs")
             .merge(arcs)
+            .transition()
+            .duration(700)
             .attr("fill", (d, i) => color(i.toString()) as string)
             .attr("d", arc as any);
 
@@ -449,6 +458,37 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
             .remove();
 
 
+    };
+
+    createColorScale = async () => {
+
+        const sectorType = [
+            "Energy",
+            "Electricity/Heat",
+            "Transportation",
+            "Manufacturing/Construction",
+            "Agriculture",
+            "Fugitive Emissions",
+            "Building",
+            "Industrial Processes",
+            "Land-Use Change and Forestry",
+            "Waste",
+            "Bunker Fuels",
+            "Other Fuel Combustion"
+        ].sort();
+
+        const colorScale: { [key: string]: string } = {};
+
+        const color = d3.scaleOrdinal()
+            .range(this.state.color);
+
+        sectorType.map((key, index) => {
+            colorScale[key] = color(index.toString()) as string;
+        });
+
+        this.setState({
+            colorScale
+        });
     };
 }
 

@@ -166,7 +166,7 @@ export const getStaticProps = async (context: NextPageContext) => {
     const location = "http://localhost:3000/";
 
 
-    const netforcedata = await d3.json(`${location}/assets/network_data.json`) as T_Gases_Emission;
+    const netforcedata = await d3.json(`${location}/assets/historical_emission.json`) as T_Gases_Emission;
 
     // Pass data to the page via props
     return {
