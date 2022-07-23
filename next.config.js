@@ -1,15 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  //     images:          {
-  //         domains: [ "farm1.staticflickr.com" ],
+    reactStrictMode: true,
 
-  //         loader: "akamai",
-  //         path:   "/CSC3007-project"
-  //     },
+    images: {
+        domains: [ "farm1.staticflickr.com" ],
 
-  //     basePath:    "/CSC3007-project",
-  //     assetPrefix: "/CSC3007-project",
+        loader: "akamai",
+        path:   "/CSC3007-project"
+    },
+
+    basePath:    "/CSC3007-project",
+    assetPrefix: "/CSC3007-project",
 };
 
 module.exports = nextConfig;
