@@ -1,3 +1,4 @@
+// https://d3-legend.susielu.com/
 /* NODE MODULES */
 import React from "react";
 import * as d3 from "d3";
@@ -7,7 +8,6 @@ import GlobalWarmingSlider from "@base/components/gloabl-warming/global-warming-
 import {
     Container, Row, Col
 } from "react-bootstrap";
-import GlobalWarmingToolTip from "@base/components/gloabl-warming/global-warming-tooltip";
 
 
 /* COMPONENTS */
@@ -99,11 +99,23 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props, I_State>
 
                     #ctn-map{
                         position:relative;
-                        width:800px;
+                        width:1000px;
                         height:500px;
+                        margin:auto;
+                      
+                    }
+
+                    #tooltip{
+                        position: absolute;
+                        opacity : 0;
+                        background : rgba(0,0,0,0.4);
+                        color: #FFFFFF;
+                        width : 100px;
+                        text-align : center;
                       
                     }
                 `}</style>
+
                 <div className="ctn-slider">
                     <GlobalWarmingSlider
                         minYear={1996}
@@ -111,18 +123,8 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props, I_State>
                         handleOnSliderChange={this.handleOnSliderChange} />
                 </div>
                 <Container fluid>
-                    <Row>
-                        <Col md="auto">
-                            <div id="ctn-map"></div>
-                        </Col>
-                        <Col>
-                            <GlobalWarmingToolTip
-                                year={this.state.year}
-                                country={this.state.tooltipCountry} />
-                        </Col>
-                    </Row>
-
-
+                    <div id="ctn-map"></div>
+                    <div id="tooltip"></div>
                 </Container>
 
             </>
@@ -291,18 +293,16 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props, I_State>
                 d3.select(event.currentTarget)
                     .classed("selected", true);
 
-                d3.select("#tooltip");
-
-
-                // .style("left", (event.pageX + 10) + "px")
-                // .style("top", (event.pageY + 10) + "px");
+                d3.select("#tooltip")
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY + 10) + "px");
 
                 // Display the tooltips
-                // d3.select("#tooltip")
-                //     .transition()
-                //     .duration(200)
-                //     .style("opacity", 1)
-                //     .text(d.properties.name);
+                d3.select("#tooltip")
+                    .transition()
+                    .duration(200)
+                    .style("opacity", 1)
+                    .text(d.properties.name);
             })
             .on("mouseout", (event, d) => {
 
@@ -369,17 +369,24 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props, I_State>
 
         const svg = d3.select("#ctn-map").select("svg");
 
-        const colorScale = d3.scaleLinear()
-            .domain([ -0.5, 0.0, 0.5 ])
-            .range([ "#9db4FF", "#FFBB7B" ] as any);
+        let temp = -0.25;
+        const colorScale = d3.scaleSequentialQuantile(d3.range(6).map((i) => {
+            temp = temp + 0.25;
+            return temp;
+        }), d3.interpolateReds);
+
 
         const legend = legendColor()
+            .shapeWidth(30)
+            .cells(6)
+            .orient("horizontal")
+            .labelFormat(d3.format(".2f"))
+            .title("Tempature ℃")
             .scale(colorScale);
-
 
         svg.append("g")
             .attr("class", "legendQuant")
-            .attr("transform", "translate(20,20)")
+            .attr("transform", "translate(30,300)")
             .on("click", (event, d) => {
                 console.log(event);
             });
