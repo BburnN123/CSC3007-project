@@ -47,11 +47,9 @@ class NodePage extends React.PureComponent<I_Props, I_State> {
 
     render(): JSX.Element {
 
-        const { netforcedata, netforcelink } = this.props;
+        const { netforcedata } = this.props;
         const { country, year, selectedDataInfo } = this.state;
         const yearList = Object.keys(netforcedata);
-
-
 
         return (
             <div>
@@ -82,6 +80,7 @@ class NodePage extends React.PureComponent<I_Props, I_State> {
 
                 <div className="ctn-body">
                     <Container fluid>
+
                         <NetForceDiagramToolTips
                             yearList={yearList}
                             year={year}
@@ -103,6 +102,8 @@ class NodePage extends React.PureComponent<I_Props, I_State> {
 
 
                     </Container>
+
+
                 </div >
             </div>
 
@@ -131,7 +132,6 @@ class NodePage extends React.PureComponent<I_Props, I_State> {
 
     getArcInformation = (data: T_Sector[]) => {
 
-        console.log(data);
         this.setState({
             selectedDataInfo: data
         });
@@ -153,7 +153,7 @@ export const getStaticProps = async (context: NextPageContext) => {
 
     const location = "http://localhost:3000/";
 
-  
+
     const netforcedata = await d3.json(`${location}/assets/network_data.json`) as T_Gases_Emission;
 
     // Pass data to the page via props

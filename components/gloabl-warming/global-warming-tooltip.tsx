@@ -30,12 +30,6 @@ class GlobalWarmingToolTip extends React.PureComponent<I_Props> {
                         {this.props.country}
                     </Text>
 
-                    {
-                        this.props.country && (<D3Circle
-                            year={this.props.year}
-                            country={this.props.country}
-                        />)
-                    }
 
 
                 </div>

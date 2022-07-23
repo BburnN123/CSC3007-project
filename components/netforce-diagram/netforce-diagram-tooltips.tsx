@@ -5,6 +5,7 @@ import { T_Gases_Emission, T_Sector } from "../d3/d3-force-network";
 import {
     Button, Col, Row
 } from "react-bootstrap";
+import D3BarChart from "../d3/d3-barchart";
 
 interface I_Props {
     netforcedata: T_Gases_Emission
@@ -32,6 +33,7 @@ class NetForceDiagramToolTips extends React.PureComponent<I_Props, I_State> {
 
     render(): JSX.Element {
 
+        const data = this.props.selectedDataInfo;
         return (
             <>
                 <style jsx>{`
@@ -53,7 +55,7 @@ class NetForceDiagramToolTips extends React.PureComponent<I_Props, I_State> {
                     }
 
                     .ddl-year{
-                        margin-left:10px;
+                  
                     }
                 `}</style>
                 <div className="ctn-tooltips">
@@ -90,73 +92,24 @@ class NetForceDiagramToolTips extends React.PureComponent<I_Props, I_State> {
                                 </select>
                             </Col>
                             <Col md={{ span: 4, offset: 4 }}>
-                                <Button onClick={this.handleButtonOnClick}>
-                                    Reset
-                                </Button>
+                                <div style={{
+                                    textAlign: "right"
+                                }}>
+                                    <Button onClick={this.handleButtonOnClick}>
+                                        Reset
+                                    </Button>
+                                </div>
                             </Col>
                         </Row>
+                        {
+                            data.length > 0 &&
+                            <D3BarChart
+                                year={this.props.year}
+                                sector={data[0]["name"]}
+                                data={data[0]["gases"]} />
+                        }
 
 
-
-
-                        <Text
-                            type="body"
-                            fontweight="bold"
-                            textAlign="left">
-                            Gas
-                        </Text>
-
-
-                        <Text
-                            type="body"
-                            fontweight="bold"
-                            textAlign="center">
-                            Gases
-                        </Text>
-
-                        <Text
-                            type="body"
-                            fontweight="bold"
-                            textAlign="center">
-                            asd
-                        </Text>
-
-
-
-                        {/* {selectedDataInfo.length > 0 && selectedDataInfo.map(d => {
-
-                        return (
-                            <>
-                                <Text
-                                    type="body"
-                                    fontweight="bold"
-                                    textAlign="center">
-                                    {d["name"]}
-                                </Text>
-
-                                <Row>
-                                    <Col>
-                                        <Text
-                                            type="body"
-                                            fontweight="bold"
-                                            textAlign="center">
-                                            {d["name"]}
-                                        </Text>
-                                    </Col>
-                                    <Col>
-                                        <Text
-                                            type="body"
-                                            fontweight="bold"
-                                            textAlign="center">
-                                            {d["name"]}
-                                        </Text>
-                                    </Col>
-                                </Row>
-
-
-                            </>
-                        );
-                    })} */}
                     </div>
 
                 </div>

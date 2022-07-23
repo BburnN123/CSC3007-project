@@ -32,8 +32,6 @@ class GlobalWarming extends React.PureComponent {
                     type="map"
                     size={{ width: 1000, height: 500 }}
                 />
-
-
             </>
         );
     }

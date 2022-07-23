@@ -25,10 +25,10 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
         super(props);
         this.state = {
             width:   400,
-            height:  300,
+            height:  400,
             year:    0,
             country: "",
-            color:   d3.schemeRdBu[9]
+            color:   d3.schemePurples[9]
         };
     }
 
@@ -94,7 +94,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
                 #ctn-piechart{
                     position:relative;
                     width:100%;
-                    height:200px;
+                    height:300px;
                     margin:auto;
                 }
                 `}</style>
@@ -246,7 +246,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
             .append("svg:text")
             .attr("class", "labels") //add a label to each slice
             .attr("fill", "grey")
-            .attr("transform", function (d: any) {
+            .attr("transform", (d: any) => {
                 const c = arc.centroid(d),
                     xp = c[0],
                     yp = c[1],
@@ -301,12 +301,14 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
 
         const data = await this.getData();
 
+
         if (data === null) {
             return;
         }
         const width = 1000;
         const height = 300; //this is the double because are showing just the half of the pie
         const radius = Math.min(width, height) / 2;
+        const labelr = radius + 30; // radius for label anchor
 
         const color = d3.scaleOrdinal()
             .range(this.state.color);
@@ -325,7 +327,6 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
         const arcs = svg.selectAll("path")
             .data(pie as any);
 
-
         arcs.enter()
             .append("svg:path")
             .attr("class", "arcs")
@@ -333,9 +334,65 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
             .attr("fill", (d, i) => color(i.toString()) as string)
             .attr("d", arc as any);
 
+        const label = svg.selectAll("tspan.lblTxt")
+            .data(pie as any);
+
+        const text = svg.selectAll("text.labels")
+            .data(pie as any);
+
+        text
+            .enter()
+            .append("svg:text")
+            .merge(text)
+            .attr("class", "labels") //add a label to each slice
+            .attr("fill", "grey")
+            .attr("transform", function (d: any) {
+                const c = arc.centroid(d),
+                    xp = c[0],
+                    yp = c[1],
+
+                    // pythagorean theorem for hypotenuse
+                    hp = Math.sqrt(xp * xp + yp * yp);
+                return "translate(" + (xp / hp * labelr) + "," +
+                    (yp / hp * labelr) + ")";
+            })
+            .attr("text-anchor", "middle");
+
+        label
+            .enter()
+            .append("svg:text")
+            .attr("class", "labels") //add a label to each slice
+            .attr("fill", "grey")
+            .attr("transform", function (d: any) {
+                const c = arc.centroid(d),
+                    xp = c[0],
+                    yp = c[1],
+
+                    // pythagorean theorem for hypotenuse
+                    hp = Math.sqrt(xp * xp + yp * yp);
+                return "translate(" + (xp / hp * labelr) + "," +
+                    (yp / hp * labelr) + ")";
+            })
+            .attr("text-anchor", "middle")
+            .merge(label)
+            .text(function (d, i) {
+                return `${data[i].value}%`;
+            })
+            .attr("x", "0")
+            .attr("dy", "1.2em");
+
         arcs
             .exit()
             .remove();
+
+        label
+            .exit()
+            .remove();
+
+        text
+            .exit()
+            .remove();
+
 
     };
 }

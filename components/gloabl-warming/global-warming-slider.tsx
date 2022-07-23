@@ -150,9 +150,11 @@ class GlobalWarmingSlider extends React.PureComponent<I_Props, I_State> {
                 value: lblYear
             }, () => this.props.handleOnSliderChange(lblYear));
 
+         
             if (i === totalLength || !this.state.playActive) {
                 this.setState({
-                    value: this.props.minYear
+                    value:      this.props.minYear,
+                    playActive: false
                 }, () => this.props.handleOnSliderChange(this.props.minYear));
                 return;
             }
