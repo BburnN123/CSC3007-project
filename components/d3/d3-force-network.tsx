@@ -40,6 +40,7 @@ interface I_Props {
     year: number,
     netforcedata: T_Gases_Emission
     selectedNetForce: string
+    hoverNetForce: string
     getArcInformation: (data: T_Sector[]) => void
 }
 
@@ -51,7 +52,9 @@ interface I_State {
     sectorColorScale: Record<string, unknown>,
     sectorColor: any
     selectedNetForce: string,
+    hoverNetForce: string
     year: number
+    excludeSector: string[]
 }
 
 
@@ -73,6 +76,8 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
             sectorColorScale: {},
             tooltipValue:     {
             },
+            excludeSector:    [ "Total including LUCF", "Total excluding LUCF" ],
+            hoverNetForce:    "",
             selectedNetForce: ""
         };
 
@@ -85,21 +90,39 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
     }
 
     async componentDidUpdate() {
-        if (this.props.selectedNetForce !== this.state.selectedNetForce) {
+        if (this.props.hoverNetForce !== this.state.hoverNetForce) {
 
-
-            const { selectedNetForce } = this.props;
+            const { hoverNetForce } = this.props;
             this.setState({
-                selectedNetForce
+                hoverNetForce
             });
 
             this.handleOnHoverArc();
 
         }
 
+        if (this.props.selectedNetForce !== this.state.selectedNetForce) {
+
+            const { selectedNetForce } = this.props;
+            this.setState({
+                selectedNetForce
+            });
+
+            if (this.props.selectedNetForce.trim() === "") {
+                d3.selectAll("circle")
+                    .classed("fade-inactive", false)
+                    .classed("fade-active", false);
+            }
+
+
+            this.handleOnSubmitArcInformation();
+
+        }
+
         if (this.props.year !== this.state.year) {
             this.setState({ year: this.props.year });
             const data = await this.getNodeData();
+
             this.updateNetWorkNode(data);
         }
     }
@@ -110,14 +133,14 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
             <>
                 <style global jsx>{`
-                     .fade-inactive {
+                     .fade-inactive  {
                         z-index:-1;
                         opacity : 0.2;
                     }
                     .fade-active {
                         stroke-width: 4px;
-                       
                     }
+
                 `}</style>
 
                 <style jsx>{`     
@@ -130,37 +153,73 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
                         }
         
                         #ctn-force-network, #legend-circle{
+                          
                             position: relative;
                             border : 1px solid black;
                             height:800px;
-                            width: 1000px;
+                            width: 950px;
+                            margin:auto;
                             border: 1px solid black;
-                            overflow: auto;
-                            position: relative;
                           
                         }
+
+                        #force-network-tooltip{
+                            position: absolute;
+                            margin:auto;
+                            
+                            background : rgba(0,0,0,0.4);
+                        
+                            color: #FFFFFF;
+                            width : 300px;
+                            text-align : center;
+                       }
                     
                         `}</style>
 
                 <div id="ctn-force-network">
                 </div>
+
+                {/* <div id="force-network-tooltip">asd</div> */}
             </>
         );
     }
 
+    handleOnSubmitArcInformation = () => {
+        const { year, } = this.state;
+        const { country, selectedNetForce } = this.props;
+
+
+        const networkData = this.props.netforcedata;
+        const data = networkData[year][country];
+        const dataInfo = data.filter(d => selectedNetForce === d["name"]);
+
+        this.props.getArcInformation(dataInfo);
+
+
+    };
+
     handleOnHoverArc = () => {
 
-        const { year, selectedNetForce } = this.state;
-        const { country } = this.props;
+
         d3.selectAll("circle")
             .classed("fade-inactive", false)
             .classed("fade-active", false);
 
-        if (this.props.selectedNetForce.trim() === "") {
+        if (this.props.hoverNetForce.trim() === "") {
+
+            if (this.state.selectedNetForce) {
+                const selectedName = this.state.selectedNetForce.replace(/[^a-zA-Z]+/g, "-").toLowerCase();
+                d3.selectAll(`circle:not(.${selectedName})`)
+                    .classed("fade-inactive", true);
+
+                d3.selectAll(`circle.${selectedName}`)
+                    .classed("fade-active", true);
+            }
+
             return;
         }
 
-        let name = this.props.selectedNetForce;
+        let name = this.props.hoverNetForce;
         name = name.replace(/[^a-zA-Z]+/g, "-").toLowerCase();
 
         d3.selectAll(`circle:not(.${name})`)
@@ -170,10 +229,6 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
             .classed("fade-active", true);
 
 
-        const networkData = this.props.netforcedata;
-        const data = networkData[year][country];
-        const dataInfo = data.filter(d => selectedNetForce === d["name"]);
-        this.props.getArcInformation(dataInfo);
     };
 
     getNodeData = async () => {
@@ -182,26 +237,40 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         const networkData = this.props.netforcedata;
         const data = networkData[year][country];
 
-        const dataForceNetWork = data.map((d) => {
+
+
+
+        const dataForceNetWork: {
+            id: number,
+            name: string,
+            value: number,
+            type: string,
+            sector: string
+        }[] = [];
+        data.map((d) => {
+
+            if (this.state.excludeSector.includes(d["name"])) {
+                return;
+            }
 
             // Convert to percentage
             const total_ghg = d["value"];
 
-            const gases = d["gases"].map((g, i) => {
+            d["gases"].map((g, i) => {
 
                 /* Count how much percentage it hold */
                 const percentage = (g["value"] / total_ghg) * 100;
-                return {
+                dataForceNetWork.push({
                     id:     g["id"],
                     name:   g["name"],
                     value:  percentage,
                     type:   "gases",
                     sector: d["name"]
 
-                };
+                });
             });
 
-            gases.push({
+            dataForceNetWork.push({
                 id:     d["id"],
                 name:   d["name"],
                 value:  100,
@@ -209,12 +278,13 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
                 sector: d["name"],
             });
 
-            return gases;
 
         });
 
-        const flattenData = dataForceNetWork.flat();
-        return flattenData;
+        // const flattenData = dataForceNetWork.flat();
+
+
+        return dataForceNetWork;
     };
 
     getLinkData = async (): Promise<T_Link[]> => {
@@ -224,6 +294,11 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         const linkData: T_Link[] = [];
 
         netforcedata[year][country].map(d => {
+
+            if (this.state.excludeSector.includes(d["name"])) {
+                return;
+            }
+
             d["gases"].map(g => {
                 linkData.push({
                     "sector": d["id"],
@@ -252,7 +327,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         }
 
         const zoom = d3.zoom()
-            .scaleExtent([ 1, 3 ])
+            .scaleExtent([ 1, 10 ])
             .translateExtent([ [ 0, 0 ], [ width, height ] ])
             .on("zoom", (e) => {
                 d3.selectAll("#svg-network-force g")
@@ -295,7 +370,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         // Define the arrowhead marker variables
         svg.append("svg:defs").append("svg:marker")
             .attr("id", "arrow")
-            .attr("viewBox", "0 -5 10 10")
+            .attr("viewBox", "0 -5 10 30")
             .attr("refX", 22)
             .attr("refY", 0)
             .attr("markerWidth", 13)
@@ -379,6 +454,9 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
                 })
                 .attr("class", (d: any) => {
 
+                    if (d === undefined) {
+                        return null;
+                    }
                     let name = d["sector"];
                     name = name.replaceAll(/[^a-zA-Z]+/g, "-");
 
@@ -399,28 +477,32 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
                         .attr("stroke-width", 2);
 
                     // Display the tooltips
-                    d3.select("#tooltip")
+                    d3.select("#force-network-tooltip")
                         .transition()
                         .duration(200)
                         .style("opacity", 1);
 
-                    this.setState({
-                        tooltipValue: d
-                    });
+
+
+                    // d3.select("#force-network-tooltip")
+                    //     .style("left", (event.pageX - 200) + "px")
+                    //     .style("top", (event.pageY - 150) + "px");
+
+                    // this.setState({
+                    //     tooltipValue: d
+                    // });
+
                 })
                 .on("mouseout", (event, i) => {
                     d3.select(event.currentTarget)
                         .attr("stroke", "none");
 
-                })
-                .on("mousemove", function (event, d) {
+                    // d3.select("#force-network-tooltip")
+                    //     .transition()
+                    //     .duration(200)
+                    //     .style("opacity", 0);
 
-                    d3.select("#tooltip")
-                        .style("left", (event.pageX + 10) + "px")
-                        .style("top", (event.pageY + 10) + "px");
-                })
-
-            ;
+                });
 
         circle
             .exit()
@@ -568,7 +650,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
 
         // Restart the whole simulation again
-        d3.select("#tooltip")
+        d3.select("#force-network-tooltip")
             .classed("opacity-remove", true);
 
         if (!event.active) simulation.alphaTarget(0.3).restart();
@@ -584,7 +666,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
     };
 
     dragended = (event: any, d: any, simulation: d3.Simulation<d3.SimulationNodeDatum, undefined>) => {
-        d3.select("#tooltip")
+        d3.select("#force-network-tooltip")
             .classed("opacity-remove", false);
 
         if (!event.active) simulation.alphaTarget(0);
@@ -594,8 +676,8 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
 
     createColorScale = async () => {
-        const sectorType = [ "Total including LUCF",
-            "Total excluding LUCF",
+
+        const sectorType = [
             "Energy",
             "Electricity/Heat",
             "Transportation",

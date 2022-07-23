@@ -10,6 +10,7 @@ interface I_Props {
     country: string
     gasemissiondata: T_Gases_Emission
     onHoverArc: (label: string) => void
+    onSelectedArc: (label: string) => void
 }
 
 interface I_State {
@@ -18,17 +19,20 @@ interface I_State {
     year: number
     country: string
     color: readonly string[]
+    excludeSector: string[]
 }
 class D3Circle extends React.PureComponent<I_Props, I_State> {
 
     constructor(props: I_Props) {
         super(props);
         this.state = {
-            width:   400,
-            height:  400,
-            year:    0,
-            country: "",
-            color:   d3.schemePurples[9]
+            width:         400,
+            height:        400,
+            year:          0,
+            country:       "",
+            color:         d3.schemeGreys[9],
+            excludeSector: [ "Total including LUCF", "Total excluding LUCF" ]
+
         };
     }
 
@@ -60,18 +64,39 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
     }
 
     render(): JSX.Element {
-        const { width, height } = this.state;
+
         return (
             <>
+                <style jsx global>{`
+                    .slice.selected{
+                        stroke-width:2px;
+                        stroke:black;
+                    }
+                `}</style>
                 <style jsx>{`
-                   #tooltip-circle{
-                    position: relative;
+                //    #tooltip-circle{
+                //     position: relative;
              
-                    background : rgba(0,0,0,0.4);
+                //     background : rgba(0,0,0,0.4);
                  
-                    color: #FFFFFF;
-                    width : 200px;
-                    text-align : center;
+                //     color: #FFFFFF;
+                //     width : 200px;
+                //     text-align : center;
+                //    }
+
+                   #circle-tooltip{
+                        position: relative;
+                        margin:auto;
+                        
+                        background : rgba(0,0,0,0.4);
+                    
+                        color: #FFFFFF;
+                        width : 300px;
+                        text-align : center;
+                   }
+
+                   .ctn-tooltip{
+                        margin : 20px 0px;
                    }
 
                    
@@ -97,17 +122,22 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
                     height:300px;
                     margin:auto;
                 }
+
                 `}</style>
                 <Container>
 
                     <div id="ctn-piechart">
                         <svg id="svg-piechart"></svg>
-                        {/* <div id="legend-circle">
-                            <svg id="svg-legend"></svg>
-                        </div> */}
+
 
                     </div>
+                    <div className="ctn-tooltip">
 
+                        <div id="circle-tooltip">
+                            Please click and hover on the slices
+
+                        </div>
+                    </div>
                 </Container>
 
             </>
@@ -130,15 +160,20 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
             previousValue + currentValue["value"], 0
         );
 
-        const data = countryData.map(d => {
+        const dataValue: { label: string, value: string }[] = [];
+        countryData.map(d => {
+            if (this.state.excludeSector.includes(d["name"])) {
+                return;
+            }
+
             const percentage = (d["value"] / maxValue) * 100;
-            return {
+            dataValue.push({
                 label: d["name"],
                 value: percentage.toFixed(1)
-            };
+            });
         });
 
-        return data;
+        return dataValue;
     };
 
     getPie = () => {
@@ -204,8 +239,13 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
             .data(pie as any)
             .on("click", (event, d: any) => {
 
-                this.props.onHoverArc(d.data["label"]);
+                d3.select(event.currentTarget)
+                    .classed("selected", true);
 
+                d3.selectAll(".slice:not(.selected)")
+                    .classed("fade-inactive", true);
+
+                this.props.onSelectedArc(d.data["label"]);
             })
             .on("mouseover", (event, d: any) => {
 
@@ -216,11 +256,20 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
                 d3.selectAll(".slice:not(.selected)")
                     .classed("fade-inactive", true);
 
+                // Display the tooltips
+                d3.select("#circle-tooltip")
+                    .transition()
+                    .duration(200)
+                    .style("opacity", 1)
+                    .text(d["data"]["label"]);
+
+
                 // this.props.onHoverArc(d.data["label"]);
+                this.props.onHoverArc(d.data["label"]);
 
 
             })
-            .on("mouseout", (event, d) => {
+            .on("mouseout", (event, d: any) => {
 
                 d3.select(event.currentTarget)
                     .classed("selected", false);
@@ -228,7 +277,13 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
                 d3.selectAll(".slice")
                     .classed("fade-inactive", false);
 
-                // this.props.onHoverArc("");
+                d3.select("#circle-tooltip")
+                    .transition()
+                    .duration(200)
+                    .style("opacity", 1)
+                    .text("Please hover and click on the slices");
+
+                this.props.onHoverArc("");
             })
             .enter()//associate the generated pie data (an array of arcs, each having startAngle, endAngle and value properties)
             .append("svg:g")

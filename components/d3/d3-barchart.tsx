@@ -23,7 +23,7 @@ class D3BarChart extends React.PureComponent<I_Props, I_State>{
     constructor(props: I_Props) {
         super(props);
         this.state = {
-            width:         900,
+            width:         1000,
             height:        700,
             gasColorScale: {
                 "CO2":   "#F1FAEE",
@@ -55,6 +55,7 @@ class D3BarChart extends React.PureComponent<I_Props, I_State>{
     }
 
     render(): JSX.Element {
+
         return (
             <>
                 <style jsx>{`
@@ -69,13 +70,14 @@ class D3BarChart extends React.PureComponent<I_Props, I_State>{
                         position:absolute;
                         left:0; 
                         top:0;
-                        width:100%;
-                        height:100%
+                        width:500px;
+                        height:300px
                     }
                   
                     `}</style>
 
                 <Text >
+                
                     {this.props.sector}
                 </Text>
                 <div id="ctn-barchart"></div>

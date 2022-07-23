@@ -15,6 +15,7 @@ interface I_Props {
     yearList: string[]
     year: number
     onHoverArc: (key: string) => void
+    onSelectedArc: (key: string) => void
     handleOnChangeDDL: (year: number) => void
 }
 
@@ -34,29 +35,45 @@ class NetForceDiagramToolTips extends React.PureComponent<I_Props, I_State> {
     render(): JSX.Element {
 
         const data = this.props.selectedDataInfo;
+
         return (
             <>
                 <style jsx>{`
                     .ctn-tooltips{
                         border : 1px solid #000000;
-                        position:absolute;
                         top :0;
                         right:0;
                         z-index:20;
                         margin-right:10px;
                         background:#eee;
                         height:100%;
-                        width :30%;
+                        width :320px;
                         padding:20px;
+                        position:absolute
                     }
 
                     .txt-header{
                         margin-bottom:30px;
                     }
 
-                    .ddl-year{
-                  
-                    }
+              
+                   #circle-tooltip{
+                        position: relative;
+                        margin:auto;
+                        
+                        background : rgba(0,0,0,0.4);
+                    
+                        color: #FFFFFF;
+                        width : 300px;
+                        text-align : center;
+                   }
+
+                    @media screen and (min-width: 1240px) {            
+                        .ctn-tooltips{
+                            right:200px;
+                            width :400px;
+                        }
+                    } 
                 `}</style>
                 <div className="ctn-tooltips">
 
@@ -75,6 +92,7 @@ class NetForceDiagramToolTips extends React.PureComponent<I_Props, I_State> {
                         year={this.state.year}
                         gasemissiondata={this.props.netforcedata}
                         onHoverArc={this.props.onHoverArc}
+                        onSelectedArc={this.props.onSelectedArc}
                     />
 
                     <div className="txt-body">
@@ -119,6 +137,7 @@ class NetForceDiagramToolTips extends React.PureComponent<I_Props, I_State> {
     }
     handleButtonOnClick = () => {
         this.props.onHoverArc("");
+        this.props.onSelectedArc("");
     };
 
     handleDDLOnChange: React.ChangeEventHandler<HTMLSelectElement> = (e) => {

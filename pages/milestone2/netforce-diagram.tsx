@@ -20,6 +20,7 @@ interface I_State {
     netforcedata: T_Gases_Emission
     netforcelink: T_Gases_Link
     selectedNetForce: string,
+    hoverNetForce: string,
     country: string,
     selectedDataInfo: T_Sector[]
     year: number
@@ -33,6 +34,7 @@ class NodePage extends React.PureComponent<I_Props, I_State> {
             netforcedata:     {},
             netforcelink:     {},
             selectedNetForce: "",
+            hoverNetForce:    "",
             selectedDataInfo: [],
             country:          "Afghanistan",
             year:             2019
@@ -67,6 +69,8 @@ class NodePage extends React.PureComponent<I_Props, I_State> {
                        margin-bottom:20px;
                     }
 
+
+
                 `}</style>
 
                 <div className="ctn-heading">
@@ -81,6 +85,16 @@ class NodePage extends React.PureComponent<I_Props, I_State> {
                 <div className="ctn-body">
                     <Container fluid>
 
+
+                        <D3ForceNetWork
+                            country={country}
+                            year={year}
+                            netforcedata={netforcedata}
+                            selectedNetForce={this.state.selectedNetForce}
+                            hoverNetForce={this.state.hoverNetForce}
+                            getArcInformation={this.getArcInformation}
+                        />
+
                         <NetForceDiagramToolTips
                             yearList={yearList}
                             year={year}
@@ -88,17 +102,8 @@ class NodePage extends React.PureComponent<I_Props, I_State> {
                             selectedDataInfo={selectedDataInfo}
                             netforcedata={this.props.netforcedata}
                             onHoverArc={this.onHoverArc}
+                            onSelectedArc={this.onSelectedArc}
                             country={country} />
-
-
-                        <D3ForceNetWork
-                            country={country}
-                            year={year}
-
-                            netforcedata={netforcedata}
-                            selectedNetForce={this.state.selectedNetForce}
-                            getArcInformation={this.getArcInformation}
-                        />
 
 
                     </Container>
@@ -110,11 +115,18 @@ class NodePage extends React.PureComponent<I_Props, I_State> {
         );
     }
 
-    onHoverArc = (selectedNetForce: string) => {
+    onHoverArc = (hoverNetForce: string) => {
+        this.setState({
+            hoverNetForce
+        });
+    };
+
+    onSelectedArc = (selectedNetForce: string) => {
         this.setState({
             selectedNetForce
         });
     };
+
 
     getUrlQurey = async () => {
 
