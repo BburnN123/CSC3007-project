@@ -235,7 +235,7 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props, I_State>
 
         const svg = d3.select("#ctn-map").select("svg");
 
-        const jsonData = await d3.json("/assets/temp_change.json") as T_TempChange;
+        const jsonData = await d3.json("./assets/temp_change.json") as T_TempChange;
 
         const def = svg.append("defs")
 
@@ -417,7 +417,7 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props, I_State>
     reFilledColorMap = async () => {
         const promiseData = await axios.get("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson");
         const data = promiseData.data as T_Data;
-        const jsonData = await d3.json("/assets/temp_change.json") as T_TempChange;
+        const jsonData = await d3.json("./assets/temp_change.json") as T_TempChange;
 
         const svg = d3.select("#ctn-map").select("svg");
         const { color, geopath, year } = this.state;
