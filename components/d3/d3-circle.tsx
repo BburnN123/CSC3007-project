@@ -256,6 +256,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
             .on("mouseover", (event, d: any) => {
 
 
+                console.log(d);
                 d3.select(event.currentTarget)
                     .classed("selected", true);
 
