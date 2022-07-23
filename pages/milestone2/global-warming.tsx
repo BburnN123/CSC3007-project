@@ -34,7 +34,23 @@ class GlobalWarming extends React.PureComponent {
                     size={{ width: 1000, height: 500 }}
                 />
 
-             
+                <div style={{
+                    width:   800,
+                    margin:  "auto",
+                    padding: 30
+
+                }}>
+                    <Text
+                        type="sub-title"
+                        textAlign="center">
+
+                        Reducing your carbon footprint is important because it
+                        mitigates the effects of global climate change, improves public health,
+                        boosts the global economy, and maintains biodiversity. When we cut carbon emissions we help ensure cleaner air,
+                        water, and food for our generation and for generations yet to come.</Text>
+
+                </div>
+
             </>
         );
     }

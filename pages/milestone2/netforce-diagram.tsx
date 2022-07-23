@@ -165,9 +165,10 @@ export const getStaticProps = async (context: NextPageContext) => {
 
     // const location = "http://localhost:3000/";
 
-    const location = "https://bburnn123.github.io/CSC3007-project/";
+    const location = "${location}/assets/historical_emission.json";
+    const url = "https://raw.githubusercontent.com/BburnN123/CSC3007-project/main/public/assets/historical_emission.json?token=GHSAT0AAAAAABUD5H3Q4MFBHI53MBN4GVKCYW4OY6A";
 
-    const netforcedata = await d3.json(`${location}/assets/historical_emission.json`) as T_Gases_Emission;
+    const netforcedata = await d3.json(url) as T_Gases_Emission;
 
     // Pass data to the page via props
     return {
