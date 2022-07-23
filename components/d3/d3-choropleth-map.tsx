@@ -24,6 +24,7 @@ interface I_Props {
     type: "globe" | "map"
     enableRotation?: boolean
     drawGraticules?: boolean
+    size?: { width: number, height: number }
 
 }
 
@@ -68,8 +69,16 @@ class D3ChoroplethMap extends React.PureComponent<I_Props> {
             return;
         }
 
+        let width = 800;
+        let height = 500;
+        if (this.props.size) {
+            width = this.props.size.width;
+            height = this.props.size.height;
+        }
+
+
         d3.select("#ctn-map").append("svg")
-            .attr("viewBox", "0 0 800 500")
+            .attr("viewBox", `0 0 ${width} ${height}`)
             .attr("preserveAspectRatio", "xMidYMid meet");
 
         const projection = this.getProjection();
@@ -89,6 +98,7 @@ class D3ChoroplethMap extends React.PureComponent<I_Props> {
     };
 
     colourOcean = (geopath: d3.GeoPath<any, d3.GeoPermissibleObjects>) => {
+        
         const svg = d3.select("#ctn-map").select("svg");
 
         // Def gradient
