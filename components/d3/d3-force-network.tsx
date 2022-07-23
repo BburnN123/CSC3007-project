@@ -7,7 +7,6 @@ import * as d3 from "d3";
 /* UTILS */
 
 /* TYPES */
-
 export type T_Gases_Emission = {
     [year: number]: {
         [country: string]: T_Sector[]
@@ -40,8 +39,8 @@ interface I_Props {
     country: string,
     year: number,
     netforcedata: T_Gases_Emission
-    netforcelink: T_Gases_Link
     selectedNetForce: string
+    getArcInformation: (data: T_Sector[]) => void
 }
 
 interface I_State {
@@ -51,7 +50,8 @@ interface I_State {
     gasColorScale: Record<string, unknown>,
     sectorColorScale: Record<string, unknown>,
     sectorColor: any
-    selectedNetForce: string
+    selectedNetForce: string,
+    year: number
 }
 
 
@@ -60,8 +60,9 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
     constructor(props: I_Props) {
         super(props);
         this.state = {
-            width:         600,
-            height:        700,
+            width:         2000,
+            height:        800,
+            year:          this.props.year,
             gasColorScale: {
                 "CO2":   "#F1FAEE",
                 "CH4":   "#A8DADC",
@@ -80,32 +81,26 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
     async componentDidMount() {
         await this.createColorScale();
         const data = await this.getNodeData();
-
         await this.drawCanvas(data);
     }
 
     async componentDidUpdate() {
         if (this.props.selectedNetForce !== this.state.selectedNetForce) {
 
+
+            const { selectedNetForce } = this.props;
             this.setState({
-                selectedNetForce: this.props.selectedNetForce
+                selectedNetForce
             });
 
-            if (this.props.selectedNetForce.trim() === "") {
-                d3.selectAll("circle")
-                    .classed("fade-inactive", false);
-                return;
-            }
+            this.handleOnHoverArc();
 
-            let name = this.props.selectedNetForce;
-            name = name.replace(/[^a-zA-Z]+/g, "-").toLowerCase();
+        }
 
-            d3.selectAll(`circle:not(.${name})`)
-                .classed("fade-inactive", true);
-
-            d3.selectAll(`circle.${name}`)
-                .classed("fade-active", true);
-
+        if (this.props.year !== this.state.year) {
+            this.setState({ year: this.props.year });
+            const data = await this.getNodeData();
+            this.updateNetWorkNode(data);
         }
     }
 
@@ -115,7 +110,14 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
             <>
                 <style global jsx>{`
-                   
+                     .fade-inactive {
+                        z-index:-1;
+                        opacity : 0.2;
+                    }
+                    .fade-active {
+                        stroke-width: 4px;
+                       
+                    }
                 `}</style>
 
                 <style jsx>{`     
@@ -129,20 +131,12 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         
                         #ctn-force-network, #legend-circle{
                             position:relative;
-                            width:${this.state.width}px;
-                            height:${this.state.height}px;
+                            width:100%;
+                            height:800px;
                             border : 1px solid black;
                           
                         }
-                        .fade-inactive {
-                            z-index:-1;
-                            opacity : 0.2;
-                        }
-                        .fade-active {
-                            stroke-width: 4px;
-                           
-                        }
-
+                    
                         `}</style>
 
                 <div id="ctn-force-network">
@@ -151,13 +145,41 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         );
     }
 
+    handleOnHoverArc = () => {
+
+        const { year, selectedNetForce } = this.state;
+        const { country } = this.props;
+        d3.selectAll("circle")
+            .classed("fade-inactive", false)
+            .classed("fade-active", false);
+
+        if (this.props.selectedNetForce.trim() === "") {
+            return;
+        }
+
+        let name = this.props.selectedNetForce;
+        name = name.replace(/[^a-zA-Z]+/g, "-").toLowerCase();
+
+        d3.selectAll(`circle:not(.${name})`)
+            .classed("fade-inactive", true);
+
+        d3.selectAll(`circle.${name}`)
+            .classed("fade-active", true);
+
+
+        const networkData = this.props.netforcedata;
+        const data = networkData[year][country];
+        const dataInfo = data.filter(d => selectedNetForce === d["name"]);
+        this.props.getArcInformation(dataInfo);
+    };
+
     getNodeData = async () => {
         const { year, country } = this.props;
 
         const networkData = this.props.netforcedata;
         const data = networkData[year][country];
 
-        const dataForceNetWork = data.map((d, i) => {
+        const dataForceNetWork = data.map((d) => {
 
             // Convert to percentage
             const total_ghg = d["value"];
@@ -181,8 +203,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
                 name:   d["name"],
                 value:  100,
                 type:   "sector",
-                sector: d["name"]
-
+                sector: d["name"],
             });
 
             return gases;
@@ -195,10 +216,21 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
     getLinkData = async (): Promise<T_Link[]> => {
 
-        const { year, country, netforcelink } = this.props;
-        const data = netforcelink[year][country] as T_Link[];
+        const { year, country, netforcedata } = this.props;
 
-        return data;
+        const linkData: T_Link[] = [];
+
+        netforcedata[year][country].map(d => {
+            const gas = d["gases"].map(g => {
+                linkData.push({
+                    "sector": d["id"],
+                    "gas":    g["id"],
+                    "value":  d["value"]
+                });
+            });
+        });
+
+        return linkData;
     };
 
 
@@ -218,7 +250,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
         const zoom = d3.zoom()
             .scaleExtent([ 1, 3 ])
-            .translateExtent([ [ 0, 0 ], [ width + 500, height + 500 ] ])
+            .translateExtent([ [ 0, 0 ], [ width + 0, height + 0 ] ])
             .on("zoom", (e) => {
                 d3.selectAll("#svg-network-force g")
                     .attr("transform", e.transform);
@@ -226,7 +258,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
         d3.select("#ctn-force-network").append("svg")
             .attr("id", "svg-network-force")
-            .attr("viewBox", `0 0 ${width + 500} ${height + 500} `)
+            .attr("viewBox", `0 0 ${width + 0} ${height + 0} `)
             .attr("preserveAspectRatio", "xMidYMid meet")
             .call(zoom as any);
 
@@ -244,16 +276,22 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
             data.push(obj);
         });
 
+        d3.select("#svg-network-force").append("g")
+            .attr("id", "nodes");
+
+        d3.select("#svg-network-force").append("g")
+            .attr("id", "links");
+
         // Define the arrowhead marker variables
-        svg.append("svg:defs").append("svg:marker")
-            .attr("id", "arrow")
-            .attr("viewBox", "0 -5 10 10")
-            .attr("refX", 22)
-            .attr("markerWidth", 10)
-            .attr("markerHeight", 10)
-            .attr("orient", "auto")
-            .append("svg:path")
-            .attr("d", "M0,-5L10,0L0,5");
+        // svg.append("svg:defs").append("svg:marker")
+        //     .attr("id", "arrow")
+        //     .attr("viewBox", "0 -5 10 10")
+        //     .attr("refX", 22)
+        //     .attr("markerWidth", 10)
+        //     .attr("markerHeight", 10)
+        //     .attr("orient", "auto")
+        //     .append("svg:path")
+        //     .attr("d", "M0,-5L10,0L0,5");
 
         await this.buildNetWorkNode(data);
     };
@@ -269,103 +307,127 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
     };
 
-    addCircles = (data: (T_Node & { x: number, y: number })[]): d3.Selection<SVGCircleElement, (T_Node & {
+    updateNetWorkNode = async (dataForceNetWork: {
+        id: number;
+        name: string;
+        value: number;
+        type: string;
+    }[]) => {
+
+        const { width, height } = this.state;
+
+        /* Intialise the nodes */
+        const data: (T_Node & { x: number, y: number })[] = [];
+        dataForceNetWork.map(d => {
+            const obj = {
+
+                // To Start from the center
+                ...d,
+                x: width / 2,
+                y: height / 2
+            };
+
+            data.push(obj);
+        });
+
+        const node = this.addCircles(data);
+        const links = await this.addLink();
+        const linkpath = this.addLinkPaths(links);
+        const simulation = this.addSimulation(node, links, linkpath, data);
+
+
+        this.addDragEvent(node, simulation);
+
+    };
+
+    addCircles = (data: (T_Node & { x: number, y: number })[]): d3.Selection<SVGCircleElement, T_Node & {
         x: number;
         y: number;
-    }), SVGGElement, unknown> => {
+    }, d3.BaseType, unknown> => {
 
         const { gasColorScale, sectorColorScale } = this.state;
-        const svg = d3.select("#ctn-force-network").select("#svg-network-force");
+        const svg = d3.select("#nodes");
 
         // Create Circle
         // Section to change radius of circle size
-        const nodes = svg.append("g")
-            .attr("id", "nodes")
+        const circle = svg
             .selectAll("circle")
-            .data(data)
-            .enter()
-            .append("circle");
+            .data(data);
+
+        const nodes =
+            circle.enter()
+                .append("circle")
+                .merge(circle as any)
+                .style("fill", (d: any) => {
+                    if (d["type"] === "sector") {
+                        return sectorColorScale[d["name"]] as any;
+                    }
+
+                    return gasColorScale[d["name"]];
+                })
+                .attr("class", (d: any) => {
+
+                    let name = d["sector"];
+                    name = name.replaceAll(/[^a-zA-Z]+/g, "-");
+
+                    return `${name.toLowerCase()}`;
+                })
+                .style("stroke", "black")
+                .attr("r", (d) => {
 
 
-        nodes
-            .style("fill", (d: any) => {
-                if (d["type"] === "sector") {
-                    return sectorColorScale[d["name"]] as any;
-                }
-
-                return gasColorScale[d["name"]];
-            })
-            .attr("class", (d: any) => {
-
-                let name = d["sector"];
-                name = name.replaceAll(/[^a-zA-Z]+/g, "-");
-
-                return `${name.toLowerCase()}`;
-            })
-            .style("stroke", "black")
-            .attr("r", (d) => {
+                    // Add the size here
+                    return d["value"] / 2;
+                })
+                .on("mouseover", (event, d) => {
 
 
-                // Add the size here
-                return d["value"] / 2;
-            })
-            .on("mouseover", (event, d) => {
+                    d3.select(event.currentTarget)
+                        .attr("stroke", "black")
+                        .attr("stroke-width", 2);
 
+                    // Display the tooltips
+                    d3.select("#tooltip")
+                        .transition()
+                        .duration(200)
+                        .style("opacity", 1);
 
-                d3.select(event.currentTarget)
-                    .attr("stroke", "black")
-                    .attr("stroke-width", 2);
-
-                // Display the tooltips
-                d3.select("#tooltip")
-                    .transition()
-                    .duration(200)
-                    .style("opacity", 1);
-
-                this.setState({
-                    tooltipValue: d
-                });
-            })
-            .on("mouseout", (event, i) => {
-                d3.select(event.currentTarget)
-                    .attr("stroke", "none");
-
-
-                // // Hide the tooltips
-                // d3.select("#tooltip")
-                //     .transition()
-                //     .duration(200)
-                //     .style("opacity", 0);
-
-                setTimeout(() => {
                     this.setState({
-                        tooltipValue: {}
+                        tooltipValue: d
                     });
-                }, 100);
+                })
+                .on("mouseout", (event, i) => {
+                    d3.select(event.currentTarget)
+                        .attr("stroke", "none");
 
-            })
-            .on("mousemove", function (event, d) {
+                })
+                .on("mousemove", function (event, d) {
 
-                console.log;
+                    d3.select("#tooltip")
+                        .style("left", (event.pageX + 10) + "px")
+                        .style("top", (event.pageY + 10) + "px");
+                });
 
-                d3.select("#tooltip")
-                    .style("left", (event.pageX + 10) + "px")
-                    .style("top", (event.pageY + 10) + "px");
-            });
+        circle
+            .exit()
+            .remove();
 
         return nodes;
     };
 
-    addDragEvent = (node: d3.Selection<SVGCircleElement, (T_Node & {
+    addDragEvent = (node: d3.Selection<SVGCircleElement, T_Node & {
         x: number;
         y: number;
-    }), SVGGElement, unknown>,
+    }, d3.BaseType, unknown>,
     simulation: d3.Simulation<d3.SimulationNodeDatum, undefined>
     ) => {
         node.call(d3.drag()
             .on("start", (event, d) => this.dragstarted(event, d, simulation))
             .on("drag", (event, d) => this.dragged(event, d, simulation))
             .on("end", (event, d) => this.dragended(event, d, simulation)) as any);
+
+
+
     };
 
     addLink = async (): Promise<{
@@ -398,41 +460,46 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
     }[]): d3.Selection<SVGPathElement, {
         source: number;
         target: number;
-    }, SVGGElement, unknown> => {
+    }, d3.BaseType, unknown> => {
 
-        const svg = d3.select("#ctn-force-network").select("#svg-network-force");
+        const svg = d3.select("#links");
 
         /* Add Link to the Data */
-        const linkPath = svg.append("g")
-            .attr("id", "links")
+        const linePath = svg
             .selectAll("path")
-            .data(links)
+            .data(links);
+
+        const linkPath = linePath
             .enter()
             .append("path")
+            .merge(linePath as any)
             .attr("marker-end", (_) => "url(#arrow)")
             .attr("fill", "none")
             .attr("stroke", "black");
 
 
 
-        linkPath.append("g").attr("class", "linklabelholder")
-            .append("text")
-            .attr("class", "linklabel")
-            .attr("dx", 1)
-            .attr("dy", ".35em")
-            .attr("text-anchor", "middle")
-            .text(function (d) {
-                return "my label";
-            });
+        // linkPath.append("g").attr("class", "linklabelholder")
+        //     .append("text")
+        //     .attr("class", "linklabel")
+        //     .attr("dx", 1)
+        //     .attr("dy", ".35em")
+        //     .attr("text-anchor", "middle")
+        //     .text(function (d) {
+        //         return "my label";
+        //     });
+        linkPath
+            .exit()
+            .remove();
 
         return linkPath;
     };
 
     addSimulation = (
-        node: d3.Selection<SVGCircleElement, (T_Node & {
+        node: d3.Selection<SVGCircleElement, T_Node & {
             x: number;
             y: number;
-        }), SVGGElement, unknown>,
+        }, d3.BaseType, unknown>,
         links: {
             source: number;
             target: number;
@@ -440,7 +507,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         linkpath: d3.Selection<SVGPathElement, {
             source: number;
             target: number;
-        }, SVGGElement, unknown>,
+        }, d3.BaseType, unknown>,
         data: any
     ) => {
 
@@ -450,10 +517,12 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
             .nodes(data)
 
             // .force("x", d3.forceX().strength(0.1).x(d => xPosition(d.class)))
-            .force("x", d3.forceX().strength(0.5).x(width + 100 / 2))
-            .force("y", d3.forceY().strength(0.1).y(height + 100 / 2))
-            .force("link", d3.forceLink(links).id((d: any) => d.id).distance(50).strength(0.5))
-            .force("charge", d3.forceManyBody().strength(-30))
+            .force("x", d3.forceX().strength(0.5).x(width / 2))
+            .force("y", d3.forceY().strength(0.1).y(height / 2))
+            .force("link", d3.forceLink(links).id((d: any) => d.id).distance(30).strength(0.5))
+
+            .force("charge", d3.forceManyBody())
+            .force("center", d3.forceCenter(width / 2, height / 2))
             .force("collide", d3.forceCollide().strength(0.2).radius(80))
             .on("tick", () => {
                 node
@@ -472,6 +541,13 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
                     });
 
             });
+
+        simulation
+            .alpha(0.5)
+            .alphaTarget(0.3)
+            .restart();
+
+
 
         return simulation;
     };

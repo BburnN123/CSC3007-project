@@ -14,5 +14,21 @@
         "gas": 22
       }
     ]
+  },
+  "2018": {
+    "Afghanistan": [
+      {
+        "sector": "ABC",
+        "gas": 12
+      },
+      {
+        "sector": 2,
+        "gas": 21
+      },
+      {
+        "sector": 2,
+        "gas": 22
+      }
+    ]
   }
 }

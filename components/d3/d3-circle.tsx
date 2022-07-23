@@ -24,7 +24,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
     constructor(props: I_Props) {
         super(props);
         this.state = {
-            width:   300,
+            width:   400,
             height:  300,
             year:    0,
             country: "",
@@ -75,7 +75,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
                    }
 
                    
-                #svg-piechart, #svg-legend {
+                #svg-piechart,  #svg-legend {
                     position:relative;
                     left:0; 
                     top:0;
@@ -83,26 +83,30 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
                     height:100%
                 }
 
+                #svg-legend{
+                    position:absolute;
+                    // left:350px; 
+                    top:0;
+                    width:100%;
+                    height:100%
+                }
+
                 #ctn-piechart{
                     position:relative;
-                    width:${width}px;
-                    height:${height}px;
+                    width:100%;
+                    height:200px;
                     margin:auto;
                 }
                 `}</style>
                 <Container>
-                    <div id="tooltip-circle"></div>
-
-
 
                     <div id="ctn-piechart">
                         <svg id="svg-piechart"></svg>
-                        <div id="legend-circle">
+                        {/* <div id="legend-circle">
                             <svg id="svg-legend"></svg>
-                        </div>
+                        </div> */}
 
                     </div>
-
 
                 </Container>
 
@@ -171,8 +175,6 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
 
     };
 
-
-
     createArc = (data: {
         label: string;
         value: string;
@@ -200,30 +202,33 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
 
         const arcs = svg.selectAll("g.slice") //this selects all <g> elements with class slice (there aren't any yet)
             .data(pie as any)
+            .on("click", (event, d: any) => {
+
+                this.props.onHoverArc(d.data["label"]);
+
+            })
             .on("mouseover", (event, d: any) => {
+
 
                 d3.select(event.currentTarget)
                     .classed("selected", true);
 
+                d3.selectAll(".slice:not(.selected)")
+                    .classed("fade-inactive", true);
 
-                d3.select("#tooltip-circle")
-                    .transition()
-                    .duration(200)
-                    .style("opacity", 1)
-                    .text(d.data["label"]);
-
-                this.props.onHoverArc(d.data["label"]);
+                // this.props.onHoverArc(d.data["label"]);
 
 
             })
             .on("mouseout", (event, d) => {
 
-                // d3.select(".tooltip")
-                //     .text("");
-
                 d3.select(event.currentTarget)
                     .classed("selected", false);
-                this.props.onHoverArc("");
+
+                d3.selectAll(".slice")
+                    .classed("fade-inactive", false);
+
+                // this.props.onHoverArc("");
             })
             .enter()//associate the generated pie data (an array of arcs, each having startAngle, endAngle and value properties)
             .append("svg:g")
@@ -231,41 +236,10 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
 
         arcs.append("svg:path")
             .attr("class", "arcs")
+            .attr("cursor", "pointer")
             .attr("fill", (d, i) => color(i.toString()) as string
             ) //set the color for each slice to be chosen from the color function defined above
             .attr("d", arc as any);
-
-
-
-
-        // arcs
-        //     .enter()
-        //     .append("text")
-        //     .attr("text-anchor", "middle")
-
-        //     /*
-        //     .attr("x", function(d) {
-        //       var a = d.startAngle + (d.endAngle - d.startAngle) / 2 - Math.PI / 2;
-        //       d.cx = Math.cos(a) * (radius - 75);
-        //       return d.x = Math.cos(a) * (radius - 20);
-        //     })
-        //     .attr("y", function(d) {
-        //       var a = d.startAngle + (d.endAngle - d.startAngle) / 2 - Math.PI / 2;
-        //       d.cy = Math.sin(a) * (radius - 75);
-        //       return d.y = Math.sin(a) * (radius - 20);
-        //     })
-        //     */
-        //     .attr("transform", function (d) {
-
-        //         // const pos = arc.centroid(d);
-        //         // pos[0] = radius * 0.95 * (midAngle(pie) < Math.PI ? 1 : -1);
-
-        //         return "translate(" + pos + ")";
-        //     })
-        //     .text(function (d, i) {
-        //         return `${data[i].value}%`;
-        //     });
-
 
         // /* Create Class */
         const label = arcs

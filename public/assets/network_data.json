@@ -3,7 +3,7 @@
         "Afghanistan": [
             {
                 "id": "ABC",
-                "name" :"Agriculture",
+                "name": "Agriculture",
                 "value": 28.76,
                 "gases": [
                     {
@@ -61,6 +61,78 @@
                         "id": 41,
                         "name": "CH4",
                         "value": 16.37
+                    },
+                    {
+                        "id": 42,
+                        "name": "N2O",
+                        "value": 4.63
+                    }
+                ]
+            }
+        ]
+    },
+    "2018": {
+        "Afghanistan": [
+            {
+                "id": "ABC",
+                "name": "Agriculture",
+                "value": 128.76,
+                "gases": [
+                    {
+                        "id": 12,
+                        "name": "CH4",
+                        "value": 16.37
+                    },
+                    {
+                        "id": 13,
+                        "name": "N2O",
+                        "value": 4.63
+                    }
+                ]
+            },
+            {
+                "id": 2,
+                "name": "Building",
+                "value": 128.76,
+                "gases": [
+                    {
+                        "id": 21,
+                        "name": "CH4",
+                        "value": 16.37
+                    },
+                    {
+                        "id": 22,
+                        "name": "N2O",
+                        "value": 4.63
+                    }
+                ]
+            },
+            {
+                "id": 3,
+                "name": "Bunker Fuels",
+                "value": 218.76,
+                "gases": [
+                    {
+                        "id": 31,
+                        "name": "CH4",
+                        "value": 16.37
+                    },
+                    {
+                        "id": 32,
+                        "name": "N2O",
+                        "value": 4.63
+                    }
+                ]
+            },
+            {
+                "id": 4,
+                "name": "Electricity/Heat",
+                "value": 28.76,
+                "gases": [
+                    {
+                        "id": 41,
+                        "name": "CH4",
+                        "value": 116.37
                     },
                     {
                         "id": 42,
