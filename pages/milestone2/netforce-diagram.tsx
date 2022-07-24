@@ -41,7 +41,7 @@ class NodePage extends React.PureComponent<I_Props, I_State> {
 
     async componentDidMount() {
 
-        const netforcedata = await d3.json("../../assets/historical_emission.json") as T_Gases_Emission;
+        const netforcedata = await d3.json("/../assets/historical_emission.json") as T_Gases_Emission;
         this.setState({
             netforcedata
         });
