@@ -130,13 +130,13 @@ class NetForceDiagramToolTips extends React.PureComponent<I_Props, I_State> {
                                 </div>
                             </Col>
                         </Row>
-                        {
+                        {/* {
                             data.length > 0 &&
                             <D3BarChart
                                 year={this.props.year}
                                 sector={data[0]["name"]}
                                 data={data[0]["gases"]} />
-                        }
+                        } */}
 
 
                     </div>

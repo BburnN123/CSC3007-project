@@ -250,11 +250,12 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
 
 
                 console.log("hello");
+
                 d3.select(event.currentTarget)
                     .classed("selected", true);
 
-                d3.selectAll(".slice:not(.selected)")
-                    .classed("fade-inactive", true);
+                // d3.selectAll(".slice:not(.selected)")
+                //     .classed("fade-inactive", true);
 
 
                 // Display the tooltips
@@ -264,7 +265,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
                     .style("opacity", 1)
                     .text(d["data"]["label"] + " " + d["data"]["value"] + "MtCO");
 
-                this.props.onHoverArc(d.data["label"]);
+                // this.props.onHoverArc(d.data["label"]);
 
                 // this.props.onHoverArc(d.data["label"]);
 
@@ -295,8 +296,8 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
 
                 console.log("YES");
 
-                this.props.onHoverArc(d.data["label"]);
-                this.props.onSelectedArc(d.data["label"]);
+                // this.props.onHoverArc(d.data["label"]);
+                // this.props.onSelectedArc(d.data["label"]);
             });
 
         arcs.append("svg:path")
