@@ -1,6 +1,7 @@
 /* NODE MODULES */
 import React from "react";
 import * as d3 from "d3";
+import axios from "axios";
 
 /* COMPONENTS */
 
@@ -38,7 +39,7 @@ type T_Link = {
 interface I_Props {
     country: string,
     year: number,
-    netforcedata: T_Gases_Emission
+    netforcedata: T_Sector[]
     selectedNetForce: string
     hoverNetForce: string
     getArcInformation: (data: T_Sector[]) => void
@@ -55,6 +56,7 @@ interface I_State {
     hoverNetForce: string
     year: number
     excludeSector: string[]
+    dataSet: Record<string, unknown>[]
 }
 
 
@@ -78,54 +80,61 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
             },
             excludeSector:    [ "Total including LUCF", "Total excluding LUCF" ],
             hoverNetForce:    "",
-            selectedNetForce: ""
+            selectedNetForce: "",
+            dataSet:          []
         };
 
     }
 
     async componentDidMount() {
+
+
         await this.createColorScale();
+
         const data = await this.getNodeData();
         await this.drawCanvas(data);
     }
 
-    async componentDidUpdate() {
-        if (this.props.hoverNetForce !== this.state.hoverNetForce) {
+    // async componentDidUpdate() {
 
-            const { hoverNetForce } = this.props;
-            this.setState({
-                hoverNetForce
-            });
+    //     if (this.props.hoverNetForce !== this.state.hoverNetForce) {
 
-            this.handleOnHoverArc();
+    //         const { hoverNetForce } = this.props;
+    //         this.setState({
+    //             hoverNetForce
+    //         });
 
-        }
+    //         this.handleOnHoverArc();
 
-        if (this.props.selectedNetForce !== this.state.selectedNetForce) {
-
-            const { selectedNetForce } = this.props;
-            this.setState({
-                selectedNetForce
-            });
-
-            if (this.props.selectedNetForce.trim() === "") {
-                d3.selectAll("circle")
-                    .classed("fade-inactive", false)
-                    .classed("fade-active", false);
-            }
+    //     }
 
 
-            this.handleOnSubmitArcInformation();
+    //     if (this.props.selectedNetForce !== this.state.selectedNetForce) {
 
-        }
+    //         const { selectedNetForce } = this.props;
+    //         this.setState({
+    //             selectedNetForce
+    //         });
 
-        if (this.props.year !== this.state.year) {
-            this.setState({ year: this.props.year });
-            const data = await this.getNodeData();
+    //         if (this.props.selectedNetForce.trim() === "") {
+    //             d3.selectAll("circle")
+    //                 .classed("fade-inactive", false)
+    //                 .classed("fade-active", false);
+    //         }
 
-            this.updateNetWorkNode(data);
-        }
-    }
+
+    //         this.handleOnSubmitArcInformation();
+
+    //     }
+
+    //     if (this.props.year !== this.state.year) {
+    //         this.setState({ year: this.props.year });
+    //         const data = await this.getNodeData();
+
+    //         this.updateNetWorkNode(data);
+    //     }
+    // }
+
 
     render(): JSX.Element {
 
@@ -185,16 +194,10 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
     }
 
     handleOnSubmitArcInformation = () => {
-        const { year, } = this.state;
-        const { country, selectedNetForce } = this.props;
 
-
-        const networkData = this.props.netforcedata;
-        const data = networkData[year][country];
-        const dataInfo = data.filter(d => selectedNetForce === d["name"]);
-
+        const { selectedNetForce, netforcedata } = this.props;
+        const dataInfo = netforcedata.filter(d => selectedNetForce === d["name"]);
         this.props.getArcInformation(dataInfo);
-
 
     };
 
@@ -233,13 +236,6 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
     getNodeData = async () => {
         const { year, country } = this.props;
-
-        const networkData = this.props.netforcedata;
-        const data = networkData[year][country];
-
-
-
-
         const dataForceNetWork: {
             id: number,
             name: string,
@@ -247,7 +243,9 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
             type: string,
             sector: string
         }[] = [];
-        data.map((d) => {
+
+
+        this.props.netforcedata.map((d) => {
 
             if (this.state.excludeSector.includes(d["name"])) {
                 return;
@@ -281,19 +279,17 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
 
         });
 
-        // const flattenData = dataForceNetWork.flat();
-
-
         return dataForceNetWork;
     };
 
     getLinkData = async (): Promise<T_Link[]> => {
 
-        const { year, country, netforcedata } = this.props;
+        const { netforcedata } = this.props;
+
 
         const linkData: T_Link[] = [];
 
-        netforcedata[year][country].map(d => {
+        netforcedata.map(d => {
 
             if (this.state.excludeSector.includes(d["name"])) {
                 return;
@@ -483,24 +479,10 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
                         .style("opacity", 1);
 
 
-
-                    // d3.select("#force-network-tooltip")
-                    //     .style("left", (event.pageX - 200) + "px")
-                    //     .style("top", (event.pageY - 150) + "px");
-
-                    // this.setState({
-                    //     tooltipValue: d
-                    // });
-
                 })
                 .on("mouseout", (event, i) => {
                     d3.select(event.currentTarget)
                         .attr("stroke", "none");
-
-                    // d3.select("#force-network-tooltip")
-                    //     .transition()
-                    //     .duration(200)
-                    //     .style("opacity", 0);
 
                 });
 
@@ -574,16 +556,6 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
             .attr("stroke", "black");
 
 
-
-        // linkPath.append("g").attr("class", "linklabelholder")
-        //     .append("text")
-        //     .attr("class", "linklabel")
-        //     .attr("dx", 1)
-        //     .attr("dy", ".35em")
-        //     .attr("text-anchor", "middle")
-        //     .text(function (d) {
-        //         return "my label";
-        //     });
         linePath
             .exit()
             .remove();
@@ -705,7 +677,6 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
             sectorColorScale
         });
     };
-
 
 }
 

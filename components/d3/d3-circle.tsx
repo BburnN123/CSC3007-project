@@ -8,7 +8,7 @@ import { legendColor } from "d3-svg-legend";
 interface I_Props {
     year: number
     country: string
-    gasemissiondata: T_Gases_Emission
+    gasemissiondata: T_Sector[]
     onHoverArc: (label: string) => void
     onSelectedArc: (label: string) => void
 }
@@ -157,18 +157,13 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
     }[] | null> => {
 
         const { gasemissiondata } = this.props;
-        const countryData = gasemissiondata[this.props.year][this.props.country];
-
-        if (countryData === undefined) {
-            return null;
-        }
-
-        const maxValue = countryData.reduce((previousValue: number, currentValue: T_Sector) =>
+      
+        const maxValue = gasemissiondata.reduce((previousValue: number, currentValue: T_Sector) =>
             previousValue + currentValue["value"], 0
         );
 
         const dataValue: { label: string, value: string }[] = [];
-        countryData.map(d => {
+        gasemissiondata.map(d => {
             if (this.state.excludeSector.includes(d["name"])) {
                 return;
             }
@@ -213,7 +208,6 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
             .attr("id", "first-g");
 
         this.createArc(data);
-        this.buildLegend(data);
 
     };
 
@@ -251,10 +245,11 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
                 d3.selectAll(".slice:not(.selected)")
                     .classed("fade-inactive", true);
 
+                this.props.onHoverArc(d.data["label"]);
                 this.props.onSelectedArc(d.data["label"]);
             })
             .on("mouseover", (event, d: any) => {
-                
+
                 d3.select(event.currentTarget)
                     .classed("selected", true);
 
@@ -267,7 +262,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
                     .transition()
                     .duration(200)
                     .style("opacity", 1)
-                    .text(d["data"]["label"] + " " +d["data"]["value"] + "MtCO");
+                    .text(d["data"]["label"] + " " + d["data"]["value"] + "MtCO");
 
 
                 // this.props.onHoverArc(d.data["label"]);
@@ -326,33 +321,6 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
             })
             .attr("x", "0")
             .attr("dy", "1.2em");
-    };
-
-    buildLegend = async (data: {
-        label: string;
-        value: string;
-    }[]) => {
-
-        const labels = data.map((d) => d["label"]);
-        const svg = d3.select("#legend-circle").select("#svg-legend");
-
-        const colorScale = d3
-            .scaleOrdinal()
-            .domain(labels)
-            .range(this.state.color);
-
-        const legend = legendColor()
-            .title("Sector Type")
-            .scale(colorScale);
-
-        svg.append("g")
-            .attr("id", "legend-circle")
-            .attr("transform", "translate(30,30)");
-
-        svg.select("#legend-circle")
-            .call(legend as any);
-
-
     };
 
     reBuildCircle = async () => {
