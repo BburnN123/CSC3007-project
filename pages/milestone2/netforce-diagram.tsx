@@ -11,8 +11,6 @@ import NetForceDiagramToolTips from "@base/components/netforce-diagram/netforce-
 
 
 interface I_Props {
-    netforcedata: T_Gases_Emission
-    netforcelink: T_Gases_Link
     router: NextRouter;
 }
 
@@ -37,21 +35,41 @@ class NodePage extends React.PureComponent<I_Props, I_State> {
             hoverNetForce:    "",
             selectedDataInfo: [],
             country:          "Afghanistan",
-            year:             2019
-
+            year:             2019,
         };
     }
 
     async componentDidMount() {
+
+        const netforcedata = await d3.json("../../assets/historical_emission.json") as T_Gases_Emission;
+        this.setState({
+            netforcedata
+        });
         await this.getUrlQurey();
     }
 
 
     render(): JSX.Element {
 
-        const { netforcedata } = this.props;
-        const { country, year, selectedDataInfo } = this.state;
+
+        const {
+            country, year, selectedDataInfo, netforcedata
+        } = this.state;
+
+
+        if (Object.keys(netforcedata).length === 0) {
+            return (
+                <>
+                    <div>
+                        Processing
+                    </div>
+                </>
+            );
+        }
+
         const yearList = Object.keys(netforcedata);
+        const data = netforcedata[year][country];
+
 
         return (
             <div>
@@ -84,12 +102,10 @@ class NodePage extends React.PureComponent<I_Props, I_State> {
 
                 <div className="ctn-body">
                     <Container fluid>
-
-                        
                         <D3ForceNetWork
                             country={country}
                             year={year}
-                            netforcedata={netforcedata}
+                            netforcedata={data}
                             selectedNetForce={this.state.selectedNetForce}
                             hoverNetForce={this.state.hoverNetForce}
                             getArcInformation={this.getArcInformation}
@@ -100,11 +116,10 @@ class NodePage extends React.PureComponent<I_Props, I_State> {
                             year={year}
                             handleOnChangeDDL={this.setYear}
                             selectedDataInfo={selectedDataInfo}
-                            netforcedata={this.props.netforcedata}
+                            netforcedata={data}
                             onHoverArc={this.onHoverArc}
                             onSelectedArc={this.onSelectedArc}
                             country={country} />
-
 
                     </Container>
 
@@ -158,25 +173,25 @@ class NodePage extends React.PureComponent<I_Props, I_State> {
 
 }
 
-export const getStaticProps = async (context: NextPageContext) => {
+// export const getStaticProps = async (context: NextPageContext) => {
 
 
-    // // Fetch data from external API
+//     // // Fetch data from external API
 
-    // const location = "http://localhost:3000/";
+//     // const location = "http://localhost:3000/";
 
-    const location = "${location}/assets/historical_emission.json";
-    const url = "https://storage.googleapis.com/jsonstoragefile/historical_emission.json";
-    const netforcedata = await d3.json(url) as T_Gases_Emission;
+//     const location = "${location}/assets/historical_emission.json";
+//     const url = "https://storage.googleapis.com/jsonstoragefile/historical_emission.json";
+//     const netforcedata = await d3.json(url) as T_Gases_Emission;
 
-    // Pass data to the page via props
-    return {
-        props: {
-            netforcedata,
+//     // Pass data to the page via props
+//     return {
+//         props: {
+//             netforcedata,
 
-        }
-    };
-};
+//         }
+//     };
+// };
 
 
 export default withRouter(NodePage);

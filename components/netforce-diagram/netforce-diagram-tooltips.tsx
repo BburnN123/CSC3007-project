@@ -8,7 +8,7 @@ import {
 import D3BarChart from "../d3/d3-barchart";
 
 interface I_Props {
-    netforcedata: T_Gases_Emission
+    netforcedata: T_Sector[]
 
     country: string
     selectedDataInfo: T_Sector[]
