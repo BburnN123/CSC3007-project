@@ -97,7 +97,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
                         background : rgba(0,0,0,0.4);
                     
                         color: #FFFFFF;
-                        width : 300px;
+                        width : 100%;
                         text-align : center;
                    }
 
