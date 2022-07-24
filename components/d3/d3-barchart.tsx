@@ -134,7 +134,7 @@ class D3BarChart extends React.PureComponent<I_Props, I_State>{
 
         const { data } = this.props;
         const { gasColorScale } = this.state;
-        const svg = d3.select("#ctn-barchart").select("svg");
+        const svg = d3.select("#ctn-barchart").select("#svg-bar");
 
         const margin = { top: 20, right: 30, bottom: 40, left: 90 };
 
