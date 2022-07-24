@@ -243,6 +243,9 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
 
         const arcs = svg.selectAll("g.slice") //this selects all <g> elements with class slice (there aren't any yet)
             .data(pie as any)
+            .enter()//associate the generated pie data (an array of arcs, each having startAngle, endAngle and value properties)
+            .append("svg:g")
+            .attr("class", "slice")
             .on("mouseover", (event, d: any) => {
 
 
@@ -294,10 +297,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
 
                 this.props.onHoverArc(d.data["label"]);
                 this.props.onSelectedArc(d.data["label"]);
-            })
-            .enter()//associate the generated pie data (an array of arcs, each having startAngle, endAngle and value properties)
-            .append("svg:g")
-            .attr("class", "slice");
+            });
 
         arcs.append("svg:path")
             .attr("class", "arcs")
