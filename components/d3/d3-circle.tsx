@@ -251,6 +251,8 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
                 d3.selectAll(".slice:not(.selected)")
                     .classed("fade-inactive", true);
 
+                console.log("YES");
+
                 this.props.onHoverArc(d.data["label"]);
                 this.props.onSelectedArc(d.data["label"]);
             })
@@ -270,8 +272,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
                     .style("opacity", 1)
                     .text(d["data"]["label"] + " " + d["data"]["value"] + "MtCO");
 
-
-                // this.props.onHoverArc(d.data["label"]);
+                this.props.onHoverArc(d.data["label"]);
 
                 // this.props.onHoverArc(d.data["label"]);
 
@@ -291,7 +292,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
                     .style("opacity", 1)
                     .text("Please hover and click on the slices");
 
-                // this.props.onHoverArc("");
+                this.props.onHoverArc("");
             })
             .enter()//associate the generated pie data (an array of arcs, each having startAngle, endAngle and value properties)
             .append("svg:g")
