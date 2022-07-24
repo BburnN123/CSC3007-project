@@ -5,9 +5,10 @@ import * as d3 from "d3";
 import { NextPageContext } from "next";
 import { NextRouter, withRouter } from "next/router";
 import React from "react";
-import { Container } from "react-bootstrap";
+import { Button, Container } from "react-bootstrap";
 import Text from "@base/design/text";
 import NetForceDiagramToolTips from "@base/components/netforce-diagram/netforce-diagram-tooltips";
+import Link from "next/link";
 
 
 interface I_Props {
@@ -91,7 +92,20 @@ class NodePage extends React.PureComponent<I_Props, I_State> {
 
                 `}</style>
 
+
                 <div className="ctn-heading">
+                    <div>
+                        <Link href="global-warming">
+
+                            <Button style={{
+                                margin: "10px 0px"
+                            }}>
+                                Back to Map
+                            </Button>
+                        </Link>
+                    </div>
+
+
                     <Text
                         type="heading"
                         fontweight="bold"
@@ -122,10 +136,9 @@ class NodePage extends React.PureComponent<I_Props, I_State> {
                             country={country} />
 
                     </Container>
-
-
                 </div >
-            </div>
+
+            </div >
 
         );
     }
