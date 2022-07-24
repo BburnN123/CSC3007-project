@@ -95,45 +95,45 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
         await this.drawCanvas(data);
     }
 
-    // async componentDidUpdate() {
+    async componentDidUpdate() {
 
-    //     if (this.props.hoverNetForce !== this.state.hoverNetForce) {
+        if (this.props.hoverNetForce !== this.state.hoverNetForce) {
 
-    //         const { hoverNetForce } = this.props;
-    //         this.setState({
-    //             hoverNetForce
-    //         });
+            const { hoverNetForce } = this.props;
+            this.setState({
+                hoverNetForce
+            });
 
-    //         this.handleOnHoverArc();
+            this.handleOnHoverArc();
 
-    //     }
-
-
-    //     if (this.props.selectedNetForce !== this.state.selectedNetForce) {
-
-    //         const { selectedNetForce } = this.props;
-    //         this.setState({
-    //             selectedNetForce
-    //         });
-
-    //         if (this.props.selectedNetForce.trim() === "") {
-    //             d3.selectAll("circle")
-    //                 .classed("fade-inactive", false)
-    //                 .classed("fade-active", false);
-    //         }
+        }
 
 
-    //         this.handleOnSubmitArcInformation();
+        if (this.props.selectedNetForce !== this.state.selectedNetForce) {
 
-    //     }
+            const { selectedNetForce } = this.props;
+            this.setState({
+                selectedNetForce
+            });
 
-    //     if (this.props.year !== this.state.year) {
-    //         this.setState({ year: this.props.year });
-    //         const data = await this.getNodeData();
+            if (this.props.selectedNetForce.trim() === "") {
+                d3.selectAll("circle")
+                    .classed("fade-inactive", false)
+                    .classed("fade-active", false);
+            }
 
-    //         this.updateNetWorkNode(data);
-    //     }
-    // }
+
+            this.handleOnSubmitArcInformation();
+
+        }
+
+        if (this.props.year !== this.state.year) {
+            this.setState({ year: this.props.year });
+            const data = await this.getNodeData();
+
+            this.updateNetWorkNode(data);
+        }
+    }
 
 
     render(): JSX.Element {
