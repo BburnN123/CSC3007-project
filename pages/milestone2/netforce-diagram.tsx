@@ -102,14 +102,14 @@ class NodePage extends React.PureComponent<I_Props, I_State> {
 
                 <div className="ctn-body">
                     <Container fluid>
-                        {/* <D3ForceNetWork
+                        <D3ForceNetWork
                             country={country}
                             year={year}
                             netforcedata={data}
                             selectedNetForce={this.state.selectedNetForce}
                             hoverNetForce={this.state.hoverNetForce}
                             getArcInformation={this.getArcInformation}
-                        /> */}
+                        />
 
                         <NetForceDiagramToolTips
                             yearList={yearList}
