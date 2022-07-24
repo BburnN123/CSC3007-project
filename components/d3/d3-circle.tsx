@@ -1,8 +1,7 @@
 import React from "react";
 import * as d3 from "d3";
 import { Container } from "react-bootstrap";
-import { T_Gases_Emission, T_Sector } from "@base/components/d3/d3-force-network";
-import { legendColor } from "d3-svg-legend";
+import { T_Sector } from "@base/components/d3/d3-force-network";
 
 
 interface I_Props {
@@ -131,13 +130,12 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
                 }
 
                 `}</style>
-                <Container>
 
+                <Container>
                     <div id="ctn-piechart">
                         <svg id="svg-piechart"></svg>
-
-
                     </div>
+
                     <div className="ctn-tooltip">
 
                         <div id="circle-tooltip">
@@ -157,7 +155,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
     }[] | null> => {
 
         const { gasemissiondata } = this.props;
-      
+
         const maxValue = gasemissiondata.reduce((previousValue: number, currentValue: T_Sector) =>
             previousValue + currentValue["value"], 0
         );
@@ -193,19 +191,27 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
     createCircle = async () => {
 
         const { width, height } = this.state;
+
+        const svg = d3.selectAll("#ctn-piechart").selectAll("#first-g");
         const data = await this.getData();
-        if (data === null) {
+
+        if (!data) {
+            return;
+        }
+
+        if (svg.size() > 0) {
             return;
         }
 
         d3.select("#ctn-piechart")
-            .select("svg") //create the SVG element inside the <body>
+            .select("#svg-piechart")
             .attr("viewBox", `0 0 ${width} ${height}`)
             .attr("preserveAspectRatio", "xMidYMid meet")
             .append("svg:g") //make a group to hold our pie chart
             .attr("transform", "translate(" + (width / 2) + "," + (height / 2) + ")")//move the center of the pie chart from 0, 0 to radius, radius
-
             .attr("id", "first-g");
+
+
 
         this.createArc(data);
 
@@ -333,6 +339,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
         if (data === null) {
             return;
         }
+
         const width = 1000;
         const height = 300; //this is the double because are showing just the half of the pie
         const radius = Math.min(width, height) / 2;
