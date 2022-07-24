@@ -265,7 +265,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
                     .text(d["data"]["label"] + " " + d["data"]["value"] + "MtCO");
 
 
-                this.props.onHoverArc(d.data["label"]);
+                // this.props.onHoverArc(d.data["label"]);
 
                 // this.props.onHoverArc(d.data["label"]);
 
