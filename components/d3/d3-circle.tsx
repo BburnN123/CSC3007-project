@@ -290,7 +290,7 @@ class D3Circle extends React.PureComponent<I_Props, I_State> {
                 d3.selectAll(".slice:not(.selected)")
                     .classed("fade-inactive", true);
 
-                console.log("YES");
+                console.log("Click");
 
                 this.props.onHoverArc(d.data["label"]);
                 this.props.onSelectedArc(d.data["label"]);
