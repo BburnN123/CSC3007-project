@@ -11,7 +11,7 @@ import PresentationProsContsList, { T_ProConList } from "@base/components/presen
 
 /* UTILS */
 
-import { E_CARTOON, E_Layout } from "@base/utils/presentation-layout";
+import { E_CARTOON } from "@base/utils/presentation-layout";
 
 
 

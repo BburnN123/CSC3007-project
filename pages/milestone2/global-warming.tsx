@@ -94,7 +94,7 @@ class GlobalWarming extends React.PureComponent {
                         </Col>
                         <Col>
                             <div style={{
-                                height: "100%",
+                                height:  "100%",
                                 display: "flex",
 
                                 alignItems: "center"

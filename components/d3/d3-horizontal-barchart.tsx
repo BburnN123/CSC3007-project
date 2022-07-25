@@ -44,12 +44,12 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
 
             // optional second annotation for better type inference
             gasColorScale: GasColorScale,
-            yearchosen: 2018,
-            width: 1000,
-            height: 800,
-            sector: "Total excluding LUCF",
-            country: "Singapore",
-            countryList: []
+            yearchosen:    2018,
+            width:         1000,
+            height:        800,
+            sector:        "Total excluding LUCF",
+            country:       "Singapore",
+            countryList:   []
         };
     }
     async componentDidMount() {
@@ -59,7 +59,7 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
     }
 
     render(): JSX.Element {
-        const ddlOptions = ["Total including LUCF",
+        const ddlOptions = [ "Total including LUCF",
             "Total excluding LUCF",
             "Energy",
             "Electricity/Heat",
@@ -72,7 +72,7 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
             "Land-Use Change and Forestry",
             "Waste",
             "Bunker Fuels",
-            "Other Fuel Combustion"];
+            "Other Fuel Combustion" ];
 
         return (
             <>
@@ -268,7 +268,7 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
 
         const x = d3.scaleTime()
             .domain(d3.extent(years, d => d3.timeParse("%Y")(d)) as any)
-            .range([0, width]);
+            .range([ 0, width ]);
 
         const xAxis = d3.select("#x-axis") as any;
 
@@ -285,10 +285,10 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
         /* Y AXIS */
 
         const y = d3.scaleLinear()
-            .domain([0, d3.max(flatArrayGas, d => parseInt(d["value"])) as number])
+            .domain([ 0, d3.max(flatArrayGas, d => parseInt(d["value"])) as number ])
 
             // .clamp(true)
-            .range([height, 0]);
+            .range([ height, 0 ]);
 
         const yAxis = d3.select("#y-axis") as any;
 
@@ -315,14 +315,14 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
                     .duration(50)
                     .style("opacity", 1);
 
-                var xPosition = x.invert(d3.pointer((event))[0]);//xScale.invert(d3.mouse(this)[0]), //<-- give me the date at the x mouse position
+                const xPosition = x.invert(d3.pointer((event))[0]);//xScale.invert(d3.mouse(this)[0]), //<-- give me the date at the x mouse position
                 const date = new Date(xPosition);
-                let year = date.getFullYear();
+                const year = date.getFullYear();
 
                 const yearValue = d[1].filter((d: any) => d["year"] as any === year.toString()) as any;
 
                 // const tipString = <></>year.toString() + " " + yearValue[0]["value"];
-                const tipString = `Gas : ${d[0]} <br/> Year : ${year.toString()} <br/> Value : ${yearValue[0]["value"].toFixed(2)}`
+                const tipString = `Gas : ${d[0]} <br/> Year : ${year.toString()} <br/> Value : ${yearValue[0]["value"].toFixed(2)}`;
                 const posX = event.pageX + 10;
                 const posY = event.pageY + 10;
 
