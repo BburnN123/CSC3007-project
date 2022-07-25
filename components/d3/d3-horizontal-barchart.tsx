@@ -54,7 +54,6 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
     }
     async componentDidMount() {
         await this.getCountry();
-        const data = await this.getData();
         this.drawLineChart();
     }
 
@@ -166,7 +165,7 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
 
     getData = async (): Promise<(T_Sector & { year: string })[]> => {
 
-        const jsonData = await d3.json("/assets/historical_emission.json") as T_Gases_Emission;
+        const jsonData = await d3.json("../../assets/historical_emission.json") as T_Gases_Emission;
 
         const years = Object.keys(jsonData);
         const data: (T_Sector & { year: string })[] = [];
