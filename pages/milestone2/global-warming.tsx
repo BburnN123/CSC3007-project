@@ -10,11 +10,40 @@ import GlobalWarmingSpeedometer from "@base/components/gloabl-warming/global-war
 import {
     Row, Col, Container
 } from "react-bootstrap";
+import { T_Gases_Emission } from "@base/components/d3/d3-force-network";
+import * as d3 from "d3";
 
+interface I_State {
+    emissionDataset: T_Gases_Emission
+}
+class GlobalWarming extends React.PureComponent<unknown, I_State> {
 
-class GlobalWarming extends React.PureComponent {
+    constructor(props: unknown) {
+        super(props);
+        this.state = {
+            emissionDataset: []
+        };
+
+    }
+
+    async componentDidMount() {
+        const emissionDataset = await d3.json("./../assets/historical_emission.json") as T_Gases_Emission;
+        this.setState({
+            emissionDataset
+        });
+    }
 
     render(): JSX.Element {
+
+        if (Object.keys(this.state.emissionDataset).length === 0) {
+            return (
+                <>
+                    <div>
+                        Processing
+                    </div>
+                </>
+            );
+        }
         return (
             <>
                 <Container>
@@ -67,8 +96,9 @@ class GlobalWarming extends React.PureComponent {
                                 Greenhouse gas composition in 2018
                             </Text>
                         </div>
-
-                        <GlobalWarmingSpeedometer />
+                        {this.state.emissionDataset && (
+                            <GlobalWarmingSpeedometer emissionData={this.state.emissionDataset} />
+                        )}
                         <Text
                             type="sub-heading"
                             textAlign="center"
@@ -90,7 +120,11 @@ class GlobalWarming extends React.PureComponent {
 
                     <Row>
                         <Col>
-                            <D3HorizontalBarChart country={"World"} />
+                            {this.state.emissionDataset && (
+                                <D3HorizontalBarChart
+                                    emissionData={this.state.emissionDataset} />
+                            )}
+
                         </Col>
                         <Col>
                             <div style={{
@@ -122,6 +156,7 @@ class GlobalWarming extends React.PureComponent {
             </>
         );
     }
+
 }
 
 export default GlobalWarming;

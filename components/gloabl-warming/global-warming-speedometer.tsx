@@ -12,9 +12,13 @@ interface I_State {
     totalValue: number
     gasesValue: { [key: string]: number }
 }
-class GlobalWarmingSpeedometer extends React.PureComponent<unknown, I_State> {
 
-    constructor(props: unknown) {
+interface I_Props {
+    emissionData: T_Gases_Emission
+}
+class GlobalWarmingSpeedometer extends React.PureComponent<I_Props, I_State> {
+
+    constructor(props: I_Props) {
         super(props);
         this.state = {
             totalValue: 0,
@@ -88,13 +92,12 @@ class GlobalWarmingSpeedometer extends React.PureComponent<unknown, I_State> {
     };
 
     getTotalGasValue = async () => {
-        const data = await d3.json("../../assets/historical_emission.json") as T_Gases_Emission;
-
+        const { emissionData } = this.props;
         const gasesValue: { [name: string]: number } = {};
 
-        Object.keys(data[2019]).map(country => {
+        Object.keys(emissionData[2019]).map(country => {
 
-            data[2019][country].map(value => {
+            emissionData[2019][country].map(value => {
 
                 const gases = value["gases"];
                 if (gases.length < 1) {
