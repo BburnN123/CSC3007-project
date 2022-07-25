@@ -2,6 +2,7 @@
 import React from "react";
 import * as d3 from "d3";
 import { Container } from "react-bootstrap";
+import { legendColor } from "d3-svg-legend";
 
 
 type T_Gases_Emission = {
@@ -22,8 +23,7 @@ type T_Sector = {
 type I_State = {
     width: number
     height: number
-    color: any
-    colorScale: { [key: string | number]: string | boolean }
+    gasColorScale: { [key: string | number]: string | boolean }
     yearchosen: number
     sector: string
 }
@@ -40,13 +40,17 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
         this.state = {
 
             // optional second annotation for better type inference
-            color: d3.scaleOrdinal()
-                .range([ "#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00", "#ffff33", "#a65628", "#f781bf", "#999999" ]),
+            gasColorScale: {
+                "CO2":   "#F1FAEE",
+                "CH4":   "#A8DADC",
+                "N2O":   "#457B9D",
+                "F-Gas": "#1D3557"
+            },
             yearchosen: 2019,
             width:      1000,
-            height:     800,
-            colorScale: {},
-            sector:     "Waste"
+            height:     1000,
+
+            sector: "Total excluding LUCF"
         };
     }
     async componentDidMount() {
@@ -104,7 +108,7 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
                     }
                     #ctn-line{
                         position:relative;
-                        width:60%;
+                        width:100%;
                         height:500px;
                     }
                 `}</style>
@@ -224,7 +228,7 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
 
     updateLineGraph = async () => {
 
-        const { color, height: ctnHeight, width: ctnWidth } = this.state;
+        const { gasColorScale, height: ctnHeight, width: ctnWidth } = this.state;
 
         // const margin = { top: 30, right: 30, bottom: 70, left: 60 };
         const margin = { top: 70, right: 30, bottom: 70, left: 60 };
@@ -316,7 +320,7 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
             .duration(1000)
             .attr("fill", "none")
             .attr("stroke", (d) => {
-                return color(d[0]) as any;
+                return gasColorScale[d[0]] as any;
             })
             .attr("d", (d) => {
 
@@ -339,50 +343,30 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
         groupDataByGas: d3.InternMap<string, T_Gases[]>
     ) => {
 
-        const { color } = this.state;
+        const { gasColorScale } = this.state;
 
-        const svg = d3.select("#ctn-line").select("#svg-line")
+
+
+
+        const ordinal = d3.scaleOrdinal()
+            .domain(Object.keys(gasColorScale))
+            .range(Object.values(gasColorScale));
+
+
+        const legend = legendColor()
+            .shapeWidth(30)
+            .title("Gases")
+            .scale(ordinal);
+
+
+        d3.select("#ctn-line").select("#svg-line")
             .append("g")
-            .attr("class", "legend");
-
-        // Add the Legend
-        // Add one dot in the legend for each name.
-
-        svg.selectAll("mydots")
-            .data(groupDataByGas.keys())
-            .enter()
-            .append("circle")
-            .attr("cx", (d, i) => {
-                return this.handleLegendXAxis();
+            .attr("class", "bar-legend")
+            .attr("transform", "translate(30,300)")
+            .on("click", (event, d) => {
+                console.log(event);
             })
-            .attr("cy", (d, i) => {
-                return this.handleLegendYAxis();
-
-            }) // 100 is where the first dot appears. 25 is the distance between dots
-            .attr("r", 5)
-            .style("fill", (d) => {
-                return color(d);
-            });
-
-        // Add one dot in the legend for each name.
-        const tempvar = 0;
-        svg.selectAll("mylabels")
-            .data(groupDataByGas.keys())
-            .enter()
-            .append("text")
-            .attr("x", (d, i) => {
-                return this.handleLegendXAxis() + 10;
-            }) // Distance from dot
-            .attr("y", (d, i) => {
-                return this.handleLegendYAxis() + 1;
-            }) // 100 is where the first dot appears. 25 is the distance between dots
-            .style("fill", (d) => {
-                return color(d);
-            })
-            .text((d) => d)
-            .attr("text-anchor", "left")
-            .style("alignment-baseline", "middle")
-            .style("font-size", "10px");
+            .call(legend as any);
     };
 
     handleLegendXAxis = () => {
