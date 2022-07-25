@@ -266,7 +266,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
             dataForceNetWork.push({
                 id:     d["id"],
                 name:   d["name"],
-                value:  100,
+                value:  150,
                 type:   "sector",
                 sector: d["name"],
             });
