@@ -92,7 +92,7 @@ class HomePage extends React.PureComponent<unknown, I_State> {
 
                     .btn-image{
                         cursor:pointer;
-                        width:fit-content;
+                        // width:fit-content;
                         margin:auto;
                         transition: transform .2s; /* Animation */
                     }
@@ -134,23 +134,32 @@ class HomePage extends React.PureComponent<unknown, I_State> {
                         </div>
 
                     </Link>
-                    
-                    <Link href={{
-                        pathname: "/milestone2/global-warming",
-                    }}>
-                        <div className="btn-image"
-                            ref={this._ref2}
-                            onMouseEnter={() => this.showPreview("milestone2", this._ref2)}
-                            onMouseLeave={this.resetBox}
 
-                        >
-                            <Image src="/icon/btn_milestone2.png"
-                                width={300}
-                                height={100}
-                                alt="case study 1" />
-                        </div>
+                    <div className="btn-image">
 
-                    </Link>
+                        <a href="https://docs.google.com/presentation/d/1OM5Xk_0BxvN_3ILXP_mp-WOleuQJU_q-40DbZesOHuY/edit?usp=sharing">Slides</a>
+                        <Link href={{
+                            pathname: "/milestone2/global-warming",
+                        }}>
+                            <div 
+                                ref={this._ref2}
+                                onMouseEnter={() => this.showPreview("milestone2", this._ref2)}
+                                onMouseLeave={this.resetBox}
+
+                            >
+
+
+                                <Image src="/icon/btn_milestone2.png"
+                                    width={300}
+                                    height={100}
+                                    alt="case study 1" />
+
+
+                            </div>
+
+                        </Link>
+                    </div>
+
                 </div>
 
                 {this.state.showBox &&
