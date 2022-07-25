@@ -119,7 +119,7 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props, I_State>
                 <div className="ctn-slider">
                     <GlobalWarmingSlider
                         minYear={1996}
-                        maxYear={2018}
+                        maxYear={2013}
                         handleOnSliderChange={this.handleOnSliderChange} />
                 </div>
                 <Container fluid>
@@ -266,7 +266,13 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props, I_State>
             .enter()
             .append("path")
             .classed("countries-path", true)
-            .attr("d", d => geopath(d as any))
+            .attr("d", d => {
+                if (d["properties"]["name"] === "Antarctica") {
+                    return null;
+                }
+                return geopath(d as any);
+            }
+            )
             .attr("fill", (d: any) => {
 
                 const country = d.properties.name;
@@ -380,24 +386,24 @@ class D3GlobalWarmingChoroplethMap extends React.PureComponent<I_Props, I_State>
 
         const svg = d3.select("#ctn-map").select("svg");
 
-        let temp = -0.25;
-        const colorScale = d3.scaleSequentialQuantile(d3.range(6).map((i) => {
-            temp = temp + 0.25;
+        let temp = -5;
+        const colorScale = d3.scaleSequentialQuantile(d3.range(12).map((i) => {
+            temp = temp + 3;
             return temp;
-        }), d3.interpolateReds);
+        }), d3.interpolateOranges);
 
 
         const legend = legendColor()
             .shapeWidth(30)
-            .cells(6)
+            .cells(12)
             .orient("horizontal")
             .labelFormat(d3.format(".2f"))
-            .title("Tempature ℃")
+            .title("Temparture ℃")
             .scale(colorScale);
 
         svg.append("g")
             .attr("class", "legendQuant")
-            .attr("transform", "translate(30,300)")
+            .attr("transform", "translate(15,400)")
             .on("click", (event, d) => {
                 console.log(event);
             });

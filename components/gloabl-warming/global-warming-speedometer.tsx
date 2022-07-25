@@ -95,9 +95,9 @@ class GlobalWarmingSpeedometer extends React.PureComponent<I_Props, I_State> {
         const { emissionData } = this.props;
         const gasesValue: { [name: string]: number } = {};
 
-        Object.keys(emissionData[2019]).map(country => {
+        Object.keys(emissionData[2013]).map(country => {
 
-            emissionData[2019][country].map(value => {
+            emissionData[2013][country].map(value => {
 
                 const gases = value["gases"];
                 if (gases.length < 1) {

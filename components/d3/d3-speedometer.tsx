@@ -1,7 +1,6 @@
 import React from "react";
 import ReactSpeedometer from "react-d3-speedometer";
 import Text from "@base/design/text";
-import * as d3 from "d3";
 
 interface I_Props {
     value: number

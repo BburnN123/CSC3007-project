@@ -93,7 +93,7 @@ class GlobalWarming extends React.PureComponent<unknown, I_State> {
                             <Text
                                 type="hero-heading"
                                 fontweight="bold" >
-                                Greenhouse gas composition in 2018
+                                Greenhouse gas composition in 2013
                             </Text>
                         </div>
                         {this.state.emissionDataset && (
