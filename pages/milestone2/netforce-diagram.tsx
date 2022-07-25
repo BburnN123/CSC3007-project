@@ -2,7 +2,6 @@ import D3ForceNetWork, {
     T_Gases_Emission, T_Gases_Link, T_Sector
 } from "@base/components/d3/d3-force-network";
 import * as d3 from "d3";
-import { NextPageContext } from "next";
 import { NextRouter, withRouter } from "next/router";
 import React from "react";
 import { Button, Container } from "react-bootstrap";

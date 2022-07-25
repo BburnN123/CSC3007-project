@@ -3,6 +3,7 @@ import React from "react";
 import * as d3 from "d3";
 import { Container } from "react-bootstrap";
 import { legendColor } from "d3-svg-legend";
+import { GasColorScale } from "@base/utils/colorscale";
 
 
 type T_Gases_Emission = {
@@ -26,6 +27,8 @@ type I_State = {
     gasColorScale: { [key: string | number]: string | boolean }
     yearchosen: number
     sector: string
+    country: string
+    countryList: string[]
 }
 
 interface I_Props {
@@ -40,20 +43,17 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
         this.state = {
 
             // optional second annotation for better type inference
-            gasColorScale: {
-                "CO2":   "#F1FAEE",
-                "CH4":   "#A8DADC",
-                "N2O":   "#457B9D",
-                "F-Gas": "#1D3557"
-            },
-            yearchosen: 2019,
-            width:      1000,
-            height:     1000,
-
-            sector: "Total excluding LUCF"
+            gasColorScale: GasColorScale,
+            yearchosen:    2018,
+            width:         1000,
+            height:        800,
+            sector:        "Total excluding LUCF",
+            country:       "Singapore",
+            countryList:   []
         };
     }
     async componentDidMount() {
+        await this.getCountry();
         const data = await this.getData();
         this.drawLineChart(data);
     }
@@ -84,23 +84,34 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
                     }
                 `}</style>
                 <style jsx>{`
-                    .tooltip{
+                    // #tooltip-horizontal-bar{
+                    //     position: absolute;
+                    //     text-align: center;
+                    //     width: 60px;
+                    //     height: 50px;
+                    //     padding: 2px;
+                    //     background: rgba(0,0,0,0.8);
+                    //     color: #FFFFFF;
+                    //     border-radius: 8px;
+                    //     pointer-events: none;
+                    //     opacity : 1;
+                    // }
+                    
+                    #tooltip-horizontal-bar{
                         position: absolute;
-                        text-align: center;
-                        width: 60px;
-                        height: 50px;
-                        padding: 2px;
-                        background: rgba(0,0,0,0.8);
+                        opacity : 1;
+                        background : rgba(0,0,0,0.4);
                         color: #FFFFFF;
-                        border-radius: 8px;
-                        pointer-events: none;
-                        opacity : 0;
+                        width : 100px;
+                        text-align : center;
+                      
                     }
                     #ddl-sector{
                         margin-bottom:20px;
+                        width: 300px;
                     }
                     #svg-line{
-                        position:absolute;
+                        position:relative;
                         left:0; 
                         top:0;
                         width:100%;
@@ -113,11 +124,22 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
                     }
                 `}</style>
 
-                <Container>
+                <Container fluid>
+                    <select
+                        value={this.state.country}
+                        id="ddl-sector"
+                        onChange={this.handleOnChangeDDLCountry}
+                    >
+                        {this.state.countryList.map(ddl => (
+                            <option key={ddl} value={ddl}>{ddl}</option>
+                        ))}
+
+                    </select>
+
                     <select
                         value={this.state.sector}
                         id="ddl-sector"
-                        onChange={this.handleOnChangeDDL}
+                        onChange={this.handleOnChangeDDLSector}
                     >
                         {ddlOptions.map(ddl => (
                             <option key={ddl} value={ddl}>{ddl}</option>
@@ -126,11 +148,22 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
                     </select>
 
                     <div id="ctn-line" ></div>
-                    <div className="tooltip">doog</div>
+                    <div id="tooltip-horizontal-bar">doog</div>
                 </Container>
             </>
         );
     }
+
+    getCountry = async () => {
+
+        const jsonData = await d3.json("../../assets/historical_emission.json") as T_Gases_Emission;
+        const objCountry = Object.values(jsonData);
+        const countryList = Object.keys(objCountry[0]);
+
+        this.setState({
+            countryList
+        });
+    };
 
     getYear = async (): Promise<string[]> => {
 
@@ -151,7 +184,7 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
 
             // Change to integer year
             const parseYear = parseInt(year);
-            const country = this.props.country;
+            const country = this.state.country;
 
             jsonData[parseYear][country].map(sector => {
 
@@ -203,13 +236,6 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
             .attr("transform",
                 "translate(" + margin.left + "," + margin.top + ")");
 
-        const arrayGas = data.map((d) => {
-            return d["gases"];
-        });
-
-        const flatArrayGas = arrayGas.flat();
-        const groupDataByGas = d3.group(flatArrayGas, d => d["name"]); // nest function allows to group the calculation per level of a factor
-
         // Create the X axis
         svg
             .append("g")
@@ -222,8 +248,7 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
 
 
         this.updateLineGraph();
-
-        this.addLegend(groupDataByGas);
+        this.addLegend();
     };
 
     updateLineGraph = async () => {
@@ -263,18 +288,21 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
             .style("text-anchor", "end")
             .attr("dx", "-8px")
             .attr("dy", "15px")
-            .attr("transform", "rotate(-45)");
+            .attr("transform", "rotate(-45)")
+            .style("font-size", "18");
 
         /* Y AXIS */
 
         const y = d3.scaleLinear()
             .domain([ 0, d3.max(flatArrayGas, d => parseInt(d["value"])) as number ])
-            .clamp(true)
+
+            // .clamp(true)
             .range([ height, 0 ]);
 
         const yAxis = d3.select("#y-axis") as any;
 
-        yAxis.transition().duration(1000).call(d3.axisLeft(y));
+        yAxis.transition().duration(1000).call(d3.axisLeft(y)).style("font-size", "18");
+
 
         const line = svg.selectAll("path.line-path")
             .data(groupDataByGas);
@@ -285,20 +313,25 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
             .attr("class", "line-path")
             .on("mouseover", function (event, d) {
 
+            
                 /* Line Graph */
                 d3.select(this).transition()
                     .duration(50)
                     .attr("opacity", ".5");
 
                 /* Makes the new div appear on hover */
-                d3.select(".tooltip").transition()
+                d3.select("#tooltip-horizontal-bar").transition()
                     .duration(50)
                     .style("opacity", 1);
 
                 const tipString = d[0];
-                d3.select(".tooltip").html(tipString)
-                    .style("left", (event.pageX + 10) + "px")
-                    .style("top", (event.pageY - 15) + "px");
+                const posX = event.pageX - 90 ;
+                const posY = event.pageY - 1560;
+
+                d3.select("#tooltip-horizontal-bar").html(tipString)
+                    .style("left", (posX) + "px")
+
+                    .style("top", (posY) + "px");
             })
             .on("mouseout", function (d, i) {
 
@@ -308,10 +341,10 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
                     .attr("opacity", "1");
 
                 //Makes the new div disappear:
-                d3.select(".tooltip")
-                    .transition()
-                    .duration(50)
-                    .style("opacity", 0);
+                // d3.select("#tooltip-horizontal-bar")
+                //     .transition()
+                //     .duration(50)
+                //     .style("opacity", 0);
             })
             .merge(line as any)
             .attr("transform",
@@ -340,13 +373,9 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
     };
 
     addLegend = (
-        groupDataByGas: d3.InternMap<string, T_Gases[]>
     ) => {
 
         const { gasColorScale } = this.state;
-
-
-
 
         const ordinal = d3.scaleOrdinal()
             .domain(Object.keys(gasColorScale))
@@ -362,7 +391,7 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
         d3.select("#ctn-line").select("#svg-line")
             .append("g")
             .attr("class", "bar-legend")
-            .attr("transform", "translate(30,300)")
+            .attr("transform", "translate(100,0)")
             .on("click", (event, d) => {
                 console.log(event);
             })
@@ -376,13 +405,24 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
         return 200;
     };
 
-    handleOnChangeDDL: React.ChangeEventHandler<HTMLSelectElement> = (e): void => {
+    handleOnChangeDDLSector: React.ChangeEventHandler<HTMLSelectElement> = (e): void => {
 
         // console.log(selectedGroup)
         const selectedValue = e.target.value;
 
         this.setState({
             sector: selectedValue
+        }, this.updateLineGraph);
+    };
+
+    handleOnChangeDDLCountry: React.ChangeEventHandler<HTMLSelectElement> = (e): void => {
+
+        // console.log(selectedGroup)
+        const selectedValue = e.target.value;
+        console.log(selectedValue);
+
+        this.setState({
+            country: selectedValue
         }, this.updateLineGraph);
     };
 

@@ -35,6 +35,7 @@ class GlobalWarmingSpeedometer extends React.PureComponent<unknown, I_State> {
         const coValue = this.getGasValueInPercentage("CO2");
         const ch4Value = this.getGasValueInPercentage("CH4");
         const n20Value = this.getGasValueInPercentage("N2O");
+        const fgasValue = this.getGasValueInPercentage("F-Gas");
 
         return (
             <>
@@ -52,12 +53,23 @@ class GlobalWarmingSpeedometer extends React.PureComponent<unknown, I_State> {
                                 header={<>CH<sub>4</sub></>} />
 
                         </Col>
+
+                    </Row>
+                    <Row className="align-items-center justify-content-center">
                         <Col>
                             <D3Speedometer
                                 value={n20Value}
                                 header={<>N<sub>2</sub>O</>}
                             />
                         </Col>
+
+                        <Col >
+                            <D3Speedometer
+                                value={fgasValue}
+                                header={<>F-Gas</>} />
+
+                        </Col>
+
                     </Row>
 
                 </Container>
