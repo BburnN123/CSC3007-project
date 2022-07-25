@@ -1,6 +1,7 @@
 import React from "react";
 import * as d3 from "d3";
 import { T_Node } from "@base/components/d3/d3-force-network";
+import { GasColorScale } from "@base/utils/colorscale";
 
 import Text from "@base/design/text";
 
@@ -25,14 +26,9 @@ class D3BarChart extends React.PureComponent<I_Props, I_State>{
         this.state = {
             width:         1000,
             height:        700,
-            gasColorScale: {
-                "CO2":   "#F1FAEE",
-                "CH4":   "#A8DADC",
-                "N2O":   "#457B9D",
-                "F-Gas": "#1D3557"
-            },
-            year:   this.props.year,
-            sector: this.props.sector
+            gasColorScale: GasColorScale,
+            year:          this.props.year,
+            sector:        this.props.sector
 
         };
     }
@@ -91,7 +87,7 @@ class D3BarChart extends React.PureComponent<I_Props, I_State>{
                     {this.props.sector}
                 </Text>
                 <div id="ctn-barchart"></div>
-           
+
 
             </>
         );
@@ -197,7 +193,7 @@ class D3BarChart extends React.PureComponent<I_Props, I_State>{
                 return gasColorScale[d["name"]];
             })
             .attr("height", y.bandwidth())
-            
+
             .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
         rect

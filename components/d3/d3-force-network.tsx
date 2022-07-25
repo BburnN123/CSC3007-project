@@ -1,7 +1,7 @@
 /* NODE MODULES */
 import React from "react";
 import * as d3 from "d3";
-import axios from "axios";
+import { GasColorScale } from "@base/utils/colorscale";
 
 /* COMPONENTS */
 
@@ -65,15 +65,10 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
     constructor(props: I_Props) {
         super(props);
         this.state = {
-            width:         2400,
-            height:        2000,
-            year:          this.props.year,
-            gasColorScale: {
-                "CO2":   "#F1FAEE",
-                "CH4":   "#A8DADC",
-                "N2O":   "#457B9D",
-                "F-Gas": "#1D3557"
-            },
+            width:            2400,
+            height:           2000,
+            year:             this.props.year,
+            gasColorScale:    GasColorScale,
             sectorColor:      d3.schemeGreys[9],
             sectorColorScale: {},
             tooltipValue:     {
@@ -370,7 +365,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
             .attr("refX", 22)
             .attr("refY", 0)
             .attr("markerWidth", 13)
-            .attr("markerHeight", 10)
+            .attr("markerHeight", 1000)
 
             .attr("orient", "auto")
             .append("svg:path")
