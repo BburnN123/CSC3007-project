@@ -365,7 +365,7 @@ class D3ForceNetWork extends React.PureComponent<I_Props, I_State>{
             .attr("refX", 22)
             .attr("refY", 0)
             .attr("markerWidth", 13)
-            .attr("markerHeight", 10)
+            .attr("markerHeight", 1000)
 
             .attr("orient", "auto")
             .append("svg:path")
