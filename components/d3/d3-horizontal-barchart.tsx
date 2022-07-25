@@ -44,22 +44,22 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
 
             // optional second annotation for better type inference
             gasColorScale: GasColorScale,
-            yearchosen:    2018,
-            width:         1000,
-            height:        800,
-            sector:        "Total excluding LUCF",
-            country:       "Singapore",
-            countryList:   []
+            yearchosen: 2018,
+            width: 1000,
+            height: 800,
+            sector: "Total excluding LUCF",
+            country: "Singapore",
+            countryList: []
         };
     }
     async componentDidMount() {
         await this.getCountry();
         const data = await this.getData();
-        this.drawLineChart(data);
+        this.drawLineChart();
     }
 
     render(): JSX.Element {
-        const ddlOptions = [ "Total including LUCF",
+        const ddlOptions = ["Total including LUCF",
             "Total excluding LUCF",
             "Energy",
             "Electricity/Heat",
@@ -72,7 +72,7 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
             "Land-Use Change and Forestry",
             "Waste",
             "Bunker Fuels",
-            "Other Fuel Combustion" ];
+            "Other Fuel Combustion"];
 
         return (
             <>
@@ -84,28 +84,19 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
                     }
                 `}</style>
                 <style jsx>{`
-                    // #tooltip-horizontal-bar{
-                    //     position: absolute;
-                    //     text-align: center;
-                    //     width: 60px;
-                    //     height: 50px;
-                    //     padding: 2px;
-                    //     background: rgba(0,0,0,0.8);
-                    //     color: #FFFFFF;
-                    //     border-radius: 8px;
-                    //     pointer-events: none;
-                    //     opacity : 1;
-                    // }
-                    
                     #tooltip-horizontal-bar{
                         position: absolute;
-                        opacity : 1;
-                        background : rgba(0,0,0,0.4);
+                        text-align: center;
+                        width: 150px;
+                        height: 100px;
+                        padding: 2px;
+                        background: rgba(0,0,0,0.8);
                         color: #FFFFFF;
-                        width : 100px;
-                        text-align : center;
-                      
+                        border-radius: 8px;
+                        pointer-events: none;
+                        opacity : 0;
                     }
+                    
                     #ddl-sector{
                         margin-bottom:20px;
                         width: 300px;
@@ -148,7 +139,7 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
                     </select>
 
                     <div id="ctn-line" ></div>
-                    <div id="tooltip-horizontal-bar">doog</div>
+                    <div id="tooltip-horizontal-bar"></div>
                 </Container>
             </>
         );
@@ -209,7 +200,7 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
         return data;
     };
 
-    drawLineChart = (data: (T_Sector & { year: string })[]) => {
+    drawLineChart = () => {
 
         const lineChartSVG = d3.select("#ctn-line").select("#svg-line");
 
@@ -277,7 +268,7 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
 
         const x = d3.scaleTime()
             .domain(d3.extent(years, d => d3.timeParse("%Y")(d)) as any)
-            .range([ 0, width ]);
+            .range([0, width]);
 
         const xAxis = d3.select("#x-axis") as any;
 
@@ -294,10 +285,10 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
         /* Y AXIS */
 
         const y = d3.scaleLinear()
-            .domain([ 0, d3.max(flatArrayGas, d => parseInt(d["value"])) as number ])
+            .domain([0, d3.max(flatArrayGas, d => parseInt(d["value"])) as number])
 
             // .clamp(true)
-            .range([ height, 0 ]);
+            .range([height, 0]);
 
         const yAxis = d3.select("#y-axis") as any;
 
@@ -313,7 +304,7 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
             .attr("class", "line-path")
             .on("mouseover", function (event, d) {
 
-            
+
                 /* Line Graph */
                 d3.select(this).transition()
                     .duration(50)
@@ -324,13 +315,19 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
                     .duration(50)
                     .style("opacity", 1);
 
-                const tipString = d[0];
-                const posX = event.pageX - 90 ;
-                const posY = event.pageY - 1560;
+                var xPosition = x.invert(d3.pointer((event))[0]);//xScale.invert(d3.mouse(this)[0]), //<-- give me the date at the x mouse position
+                const date = new Date(xPosition);
+                let year = date.getFullYear();
+
+                const yearValue = d[1].filter((d: any) => d["year"] as any === year.toString()) as any;
+
+                // const tipString = <></>year.toString() + " " + yearValue[0]["value"];
+                const tipString = `Gas : ${d[0]} <br/> Year : ${year.toString()} <br/> Value : ${yearValue[0]["value"].toFixed(2)}`
+                const posX = event.pageX + 10;
+                const posY = event.pageY + 10;
 
                 d3.select("#tooltip-horizontal-bar").html(tipString)
                     .style("left", (posX) + "px")
-
                     .style("top", (posY) + "px");
             })
             .on("mouseout", function (d, i) {
@@ -341,10 +338,10 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
                     .attr("opacity", "1");
 
                 //Makes the new div disappear:
-                // d3.select("#tooltip-horizontal-bar")
-                //     .transition()
-                //     .duration(50)
-                //     .style("opacity", 0);
+                d3.select("#tooltip-horizontal-bar")
+                    .transition()
+                    .duration(50)
+                    .style("opacity", 0);
             })
             .merge(line as any)
             .attr("transform",
@@ -392,9 +389,6 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
             .append("g")
             .attr("class", "bar-legend")
             .attr("transform", "translate(100,0)")
-            .on("click", (event, d) => {
-                console.log(event);
-            })
             .call(legend as any);
     };
 

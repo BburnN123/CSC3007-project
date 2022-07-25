@@ -86,9 +86,6 @@ class NodePage extends React.PureComponent<I_Props, I_State> {
                     .txt-header{
                        margin-bottom:20px;
                     }
-
-
-
                 `}</style>
 
 

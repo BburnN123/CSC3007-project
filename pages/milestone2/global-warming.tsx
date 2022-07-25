@@ -8,7 +8,7 @@ import D3HorizontalBarChart from "@base/components/d3/d3-horizontal-barchart";
 import Reveal from "@base/design/reveal";
 import GlobalWarmingSpeedometer from "@base/components/gloabl-warming/global-warming-speedometer";
 import {
-    Row, Col, Container 
+    Row, Col, Container
 } from "react-bootstrap";
 
 
@@ -42,14 +42,9 @@ class GlobalWarming extends React.PureComponent {
                             size={{ width: 1000, height: 500 }}
                         />
 
-                        <div style={{
-                            width:   800,
-                            margin:  "auto",
-                            padding: 30
-
-                        }}>
+                        <div>
                             <Text
-                                type="sub-title"
+                                type="sub-heading"
                                 textAlign="center">
 
                                 Reducing your carbon footprint is important because it
@@ -60,42 +55,68 @@ class GlobalWarming extends React.PureComponent {
                         </div>
 
                     </div>
+
+
+                    <br />
+
                     <Reveal>
                         <div className="ctn-heading">
                             <Text
                                 type="hero-heading"
                                 fontweight="bold" >
-                                2018 Gas Emission
+                                Greenhouse gas composition in 2018
                             </Text>
                         </div>
 
                         <GlobalWarmingSpeedometer />
+                        <Text
+                            type="sub-heading"
+                            textAlign="center"
+                        >
+                            The speedometer shows the 4 GHG (CO<sub>2</sub>, N<sub>2</sub>O, NH<sub>4</sub>, F-Gas ) that was emitted on 2018. Through this visualisation,
+                            it shows which gases is the main contributor to the GHG emission.
+                        </Text>
+
                     </Reveal>
 
-                    <Reveal>
-                        <div className="ctn-heading">
-                            <Text
-                                type="hero-heading"
-                                fontweight="bold" >
-                                2018 Gas Emission Trend By Sector
-                            </Text>
-                        </div>
 
-                        <Row>
-                            <Col>
-                                <D3HorizontalBarChart country={"World"} />
-                            </Col>
-                            <Col>
+                    <div className="ctn-heading">
+                        <Text
+                            type="hero-heading"
+                            fontweight="bold" >
+                            General trend for different gases
+                        </Text>
+                    </div>
+
+                    <Row>
+                        <Col>
+                            <D3HorizontalBarChart country={"World"} />
+                        </Col>
+                        <Col>
+                            <div style={{
+                                height: "100%",
+                                display: "flex",
+
+                                alignItems: "center"
+                            }}>
                                 <Text
-                                    type="title"
-                                    fontweight="bold" >
-                                    Trend emission
+                                    type="sub-heading"
+
+                                >
+                                    Greenhouse gases emission has increase significantly, the line chart
+                                    presents the general trend of the different gases over the periods from the 1990s to 2018s
+                                    <br />
+                                    <br />
+                                    The lines on the graph represent the gases emission (CO<sub>2</sub>, N<sub>2</sub>O, NH<sub>4</sub>, F-Gas ) in each sector
                                 </Text>
-                            </Col>
-                        </Row>
+
+                            </div>
 
 
-                    </Reveal>
+                        </Col>
+                    </Row>
+
+                    <br />
 
                 </Container>
             </>
