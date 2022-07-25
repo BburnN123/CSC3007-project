@@ -4,23 +4,10 @@ import * as d3 from "d3";
 import { Container } from "react-bootstrap";
 import { legendColor } from "d3-svg-legend";
 import { GasColorScale } from "@base/utils/colorscale";
+import { T_Gases_Emission, T_Sector } from "@base/components/d3/d3-force-network";
 
 
-type T_Gases_Emission = {
-    [year: number]: {
-        [country: string]: T_Sector[]
-    }
-}
-type T_Gases = {
-    name: string
-    value: string
-}
 
-type T_Sector = {
-    name: string
-    value: number
-    gases: T_Gases[]
-}
 type I_State = {
     width: number
     height: number
@@ -32,7 +19,7 @@ type I_State = {
 }
 
 interface I_Props {
-    country: string
+    emissionData: T_Gases_Emission
 }
 
 class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
@@ -146,8 +133,8 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
 
     getCountry = async () => {
 
-        const jsonData = await d3.json("../../assets/historical_emission.json") as T_Gases_Emission;
-        const objCountry = Object.values(jsonData);
+        const { emissionData } = this.props;
+        const objCountry = Object.values(emissionData);
         const countryList = Object.keys(objCountry[0]);
 
         this.setState({
@@ -157,17 +144,17 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
 
     getYear = async (): Promise<string[]> => {
 
-        const jsonData = await d3.json("../../assets/historical_emission.json") as T_Gases_Emission;
-        const years = Object.keys(jsonData);
+        const { emissionData } = this.props;
+        const years = Object.keys(emissionData);
 
         return years;
     };
 
     getData = async (): Promise<(T_Sector & { year: string })[]> => {
 
-        const jsonData = await d3.json("../../assets/historical_emission.json") as T_Gases_Emission;
+        const { emissionData } = this.props;
 
-        const years = Object.keys(jsonData);
+        const years = Object.keys(emissionData);
         const data: (T_Sector & { year: string })[] = [];
 
         years.map(year => {
@@ -176,7 +163,7 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
             const parseYear = parseInt(year);
             const country = this.state.country;
 
-            jsonData[parseYear][country].map(sector => {
+            emissionData[parseYear][country].map(sector => {
 
                 if (sector["name"] != this.state.sector) {
                     return;
@@ -284,7 +271,7 @@ class D3HorizontalBarChart extends React.PureComponent<I_Props, I_State> {
         /* Y AXIS */
 
         const y = d3.scaleLinear()
-            .domain([ 0, d3.max(flatArrayGas, d => parseInt(d["value"])) as number ])
+            .domain([ 0, d3.max(flatArrayGas, d => d["value"]) as number ])
 
             // .clamp(true)
             .range([ height, 0 ]);
