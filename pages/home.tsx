@@ -137,7 +137,11 @@ class HomePage extends React.PureComponent<unknown, I_State> {
 
                     <div className="btn-image">
 
-                        <a href="https://docs.google.com/presentation/d/1OM5Xk_0BxvN_3ILXP_mp-WOleuQJU_q-40DbZesOHuY/edit?usp=sharing">Slides</a>
+                        
+                        <a href="https://docs.google.com/presentation/d/1OM5Xk_0BxvN_3ILXP_mp-WOleuQJU_q-40DbZesOHuY/edit?usp=sharing">| Slides |</a>
+                        |
+
+                        <a href="https://github.com/BburnN123/CSC3007-project">| Github Desktop |</a>
                         <Link href={{
                             pathname: "/milestone2/global-warming",
                         }}>
