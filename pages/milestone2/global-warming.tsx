@@ -103,7 +103,7 @@ class GlobalWarming extends React.PureComponent<unknown, I_State> {
                             type="sub-heading"
                             textAlign="center"
                         >
-                            The speedometer shows the 4 GHG (CO<sub>2</sub>, N<sub>2</sub>O, NH<sub>4</sub>, F-Gas ) that was emitted on 2018. Through this visualisation,
+                            The speedometer shows the 4 GHG (CO<sub>2</sub>, N<sub>2</sub>O, NH<sub>4</sub>, F-Gas ) that was emitted on 2013. Through this visualisation,
                             it shows which gases is the main contributor to the GHG emission.
                         </Text>
 
@@ -138,7 +138,7 @@ class GlobalWarming extends React.PureComponent<unknown, I_State> {
 
                                 >
                                     Greenhouse gases emission has increase significantly, the line chart
-                                    presents the general trend of the different gases over the periods from the 1990s to 2018s
+                                    presents the general trend of the different gases over the periods from the 1990s to 2013s
                                     <br />
                                     <br />
                                     The lines on the graph represent the gases emission (CO<sub>2</sub>, N<sub>2</sub>O, NH<sub>4</sub>, F-Gas ) in each sector
