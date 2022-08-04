@@ -31,5 +31,14 @@ Add this at package.json
 ```
 
 # JSON Processing
-Dataset can be found at
-- https://www.fao.org/faostat/en/#data/ET
+
+Folder : Preprocessing
+
+- Dataset can be found at
+ https://www.fao.org/faostat/en/#data/ET
+
+- Data for temperature:
+ https://crudata.uea.ac.uk/cru/data/hrg/cru_ts_3.23/crucy.1506241137.v3.23/countries/tmp/ 
+
+- Data for gases and sectors:
+https://github.com/owid/co2-data
