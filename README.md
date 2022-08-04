@@ -34,11 +34,16 @@ Add this at package.json
 
 Folder : Preprocessing
 
-- Dataset can be found at
- https://www.fao.org/faostat/en/#data/ET
+ Data for temperature: 
 
-- Data for temperature:
- https://crudata.uea.ac.uk/cru/data/hrg/cru_ts_3.23/crucy.1506241137.v3.23/countries/tmp/ 
+- https://www.fao.org/faostat/en/#data/ET
+- https://crudata.uea.ac.uk/cru/data/hrg/cru_ts_3.23/crucy.1506241137.v3.23/countries/tmp/ (Actual Link and Dataset)
 
-- Data for gases and sectors:
-https://github.com/owid/co2-data
+ Data for gases and sectors:
+
+- https://ourworldindata.org/emissions-by-sector (Actual Link)
+- https://ourworldindata.org/grapher/ghg-emissions-by-sector (Actual DataSet)
+- https://github.com/owid/co2-data
+
+
+
