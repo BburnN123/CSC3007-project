@@ -66,11 +66,20 @@ class GlobalWarming extends React.PureComponent<unknown, I_State> {
 
                     <div>
 
+
                         <D3GlobalWarmingChoroplethMap
                             type="map"
                             size={{ width: 1000, height: 500 }}
                         />
+                        <Text
+                            type="body"
+                            fontweight="bold"
+                            textAlign="center"
 
+                        >
+                            Click the country to view the gas contribution by sector
+                        </Text>
+                        <br />
                         <div>
                             <Text
                                 type="sub-heading"
